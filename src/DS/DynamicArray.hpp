@@ -153,12 +153,12 @@ public:
     }
 
     void echo() {
-        std::cout << "range-based `for loop` => ";
+        std::cout << "range-based loop => ";
         for (const T& element : *this) {
             std::cout << element << " ";
         }
         std::cout << std::endl;
-        std::cout << "  old-style `for loop` => ";
+        std::cout << "  old-style loop => ";
         for (int i = 0; i < size; ++i) {
             std::cout << data[i] << " ";
         }

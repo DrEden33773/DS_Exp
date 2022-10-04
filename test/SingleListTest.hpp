@@ -1,7 +1,7 @@
 /**
- * @file DynamicArrayTest.hpp
+ * @file SingleListTest.hpp
  * @author Eden (edwardwang33773@gmail.com)
- * @brief DynamicArrayTest
+ * @brief
  * @version 0.1
  * @date 2022-10-04
  *
@@ -9,13 +9,13 @@
  *
  */
 
-#include "../src/DS/DynamicArray.hpp"
+#include "../src/DS/LinkedList/SingleList.hpp"
 
 namespace Test {
 
-void DynamicArrayTest() {
+void SingleListTest() {
     std::cout << std::endl;
-    DS::DynamicArray<int> test = { 1, 2, 5, 9, 1, 2 };
+    DS::SingleList<int> test = { 1, 5, 9, 2, 7, 4, 9, 0, 1 };
     test.echo();
 }
 

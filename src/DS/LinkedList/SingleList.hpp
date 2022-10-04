@@ -28,7 +28,8 @@ private:
     struct node {
         T     element;
         node* next = nullptr;
-        explicit node(T& element) { this->element = element; }
+        node()     = default;
+        explicit node(const T& element) { this->element = element; }
     };
     node*  head    = nullptr; // head node never maintain data
     node*  tail    = nullptr; // tail node always maintain data
@@ -57,21 +58,40 @@ private:
     }
 
 public:
-    SingleList() = default;
+    SingleList() { // default constructor (not recommended!)
+        init_head();
+    }
     SingleList(const SingleList& copied) { // copy constructor
+        init_head();
     }
     SingleList(SingleList&& moved) noexcept { // move constructor
+        node* curr      = head;
+        node* tmp_moved = moved.head;
+        while (curr != nullptr) {
+            curr                 = tmp_moved;
+            curr                 = curr->next;
+            node* tmp_moved_next = tmp_moved->next;
+            tmp_moved            = nullptr;
+            tmp_moved            = tmp_moved_next;
+        }
+        if_init = true;
+        size    = moved.size;
     }
     SingleList(std::initializer_list<T>&& initList) {
+        init_head();
+        for (const T& element : initList) {
+            push_back(element);
+        }
     }
-    ~SingleList() {
-        for (int remained = size; remained > 0; --remained) {
+    ~SingleList() noexcept { // impossible to throw exception
+        for (size_t remained = size; remained > 0; --remained) {
             pop();
         }
         delete_head();
     }
 
     void init_head() {
+        head    = new node();
         if_init = true;
     }
     void delete_head() {
@@ -81,7 +101,7 @@ public:
     }
 
     T pop() {
-        if (tail != nullptr) {
+        if (tail == nullptr) {
             throw std::out_of_range("There's NO node in this linked list!");
         };
         // locate tail
@@ -91,9 +111,14 @@ public:
         } // tmp->next == tail
         node* deleted_tail = tmp->next;
         delete tmp->next;
+        tail = tmp;
+        --size;
         return deleted_tail->element;
     }
     void push_back(const T& input) {
+        if (!if_init) {
+            throw std::out_of_range("The linked list hasn't been initialized!");
+        }
         node* to_add = new node(input);
         if (tail == nullptr) {
             head->next = to_add;
@@ -105,6 +130,9 @@ public:
         ++size;
     }
     void push_front(const T& input) {
+        if (!if_init) {
+            throw std::out_of_range("The linked list hasn't been initialized!");
+        }
         node* to_add = new node(input);
         if (tail == nullptr) {
             head->next = to_add;
@@ -114,6 +142,26 @@ public:
             head->next   = to_add;
         }
         ++size;
+    }
+    void add_back(const T& input) {
+        push_back(input);
+    }
+    void add_front(const T& input) {
+        add_front(input);
+    }
+    void echo() {
+        std::cout << "range-based loop => ";
+        for (const T& element : *this) {
+            std::cout << element << " ";
+        }
+        std::cout << std::endl;
+        std::cout << "  old-style loop => ";
+        node* tmp = head->next;
+        while (tmp != nullptr) {
+            std::cout << tmp->element << " ";
+            tmp = tmp->next;
+        }
+        std::cout << std::endl;
     }
 };
 
