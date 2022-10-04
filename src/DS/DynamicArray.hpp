@@ -25,6 +25,7 @@ private:
     size_t        size     = 0;
     size_t        capacity = 0;
     static size_t init_capacity;
+
     class iterator : public std::iterator<std::random_access_iterator_tag, T> {
     public:
         T* ptr;
@@ -58,6 +59,10 @@ private:
         T&   operator*() { return *ptr; }
         T*   operator->() { return ptr; }
         bool operator!=(const iterator& rhs) { return ptr != rhs.ptr; }
+        bool operator>(const iterator& rhs) { return ptr > rhs.ptr; }
+        bool operator<(const iterator& rhs) { return ptr < rhs.ptr; }
+        bool operator>=(const iterator& rhs) { return ptr >= rhs.ptr; }
+        bool operator<=(const iterator& rhs) { return ptr <= rhs.ptr; }
         // do not use `operator==` , it will cause infinite loop (ambiguous)
     };
     iterator begin() {
@@ -74,8 +79,7 @@ private:
     }
 
 public:
-    DynamicArray()
-        = default;
+    DynamicArray() = default;
     DynamicArray(const DynamicArray& copied) { // copy constructor
         data     = new T[copied.capacity];
         size     = copied.size;
@@ -95,6 +99,9 @@ public:
         for (const T& element : initList) {
             emplace_back(element);
         }
+    }
+    ~DynamicArray() {
+        delete[] data;
     }
 
     void push_back(const T& input) {
@@ -156,6 +163,9 @@ public:
             std::cout << data[i] << " ";
         }
         std::cout << std::endl;
+    }
+    void std_sort() {
+        // TODO(eden):
     }
 };
 
