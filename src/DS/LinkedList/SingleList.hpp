@@ -65,6 +65,7 @@ public:
         init_head();
     }
     SingleList(SingleList&& moved) noexcept { // move constructor
+        // 1. guarantee `this`
         node* curr      = head;
         node* tmp_moved = moved.head;
         while (curr != nullptr) {
@@ -76,6 +77,11 @@ public:
         }
         if_init = true;
         size    = moved.size;
+        // 2. clear the property of `moved` one
+        moved.head    = nullptr;
+        moved.tail    = nullptr;
+        moved.size    = 0;
+        moved.if_init = false;
     }
     SingleList(std::initializer_list<T>&& initList) {
         init_head();
