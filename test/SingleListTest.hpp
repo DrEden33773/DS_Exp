@@ -17,6 +17,8 @@ void SingleListTest() {
     std::cout << std::endl;
     DS::SingleList<int> test = { 1, 5, 9, 2, 7, 4, 9, 0, 1 };
     test.echo();
+    test.std_sort();
+    test.echo();
 }
 
 }

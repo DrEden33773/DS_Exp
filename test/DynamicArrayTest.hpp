@@ -17,6 +17,8 @@ void DynamicArrayTest() {
     std::cout << std::endl;
     DS::DynamicArray<int> test = { 1, 2, 5, 9, 1, 2 };
     test.echo();
+    test.std_sort();
+    test.echo();
 }
 
 }

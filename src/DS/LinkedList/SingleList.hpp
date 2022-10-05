@@ -31,12 +31,13 @@ private:
         node()     = default;
         explicit node(const T& element) { this->element = element; }
     };
-    node*  head    = nullptr; // head node never maintain data
-    node*  tail    = nullptr; // tail node always maintain data
-    bool   if_init = false;   // if init head node
-    size_t size    = 0;       // size of nodes (except head node)
-                              // (size of effective nodes)
+    node* head    = nullptr; // head node never maintain data
+    node* tail    = nullptr; // tail node always maintain data
+    bool  if_init = false;   // if init head node
+    int   size    = 0;       // num of nodes (except head node)
+                             // (num of effective nodes)
 
+    /// @brief iterator (input_iterator)
     class iterator : public std::iterator<std::input_iterator_tag, T> {
     public:
         node* ptr = nullptr;
@@ -45,10 +46,49 @@ private:
             ptr = ptr->next;
             return *this;
         }
-        T&   operator*() { return ptr->element; }
-        T*   operator->() { return &(ptr->element); }
-        bool operator!=(const iterator& rhs) { return ptr != rhs.ptr; }
-        // bool operator==(const iterator& rhs) { return ptr == rhs.ptr; }
+        iterator& operator+(int distance) {
+            iterator res = *this;
+            if (distance > 0) {
+                for (int tmp = 0; tmp < distance; ++tmp) {
+                    res.ptr = res.ptr->next;
+                }
+            } else if (distance < 0) { // change to the abs value
+                distance *= -1;
+                for (int tmp = 0; tmp < distance; ++tmp) {
+                    res.ptr = res.ptr->next;
+                }
+            }
+            return res;
+        }
+        int operator-(const iterator& rhs) {
+            // assume that `rhs` -> ... -> `lhs`
+            int distance = 0;
+            for (node* curr = ptr; ptr != rhs.ptr; ptr = ptr->next) {
+                ++distance;
+            }
+            return distance;
+        }
+
+        T&   operator*() const { return ptr->element; }
+        T*   operator->() const { return &(ptr->element); }
+        bool operator!=(const iterator& rhs) const { return ptr != rhs.ptr; }
+        bool operator==(const iterator& rhs) const { return ptr == rhs.ptr; }
+        bool operator>(const iterator& rhs) const {
+            return SingleList::if_A_behind_B(this->ptr, rhs.ptr);
+        }
+        bool operator>=(const iterator& rhs) const {
+            bool behind = SingleList::if_A_behind_B(this->ptr, rhs.ptr);
+            bool eq     = SingleList::if_A_is_B(this->ptr, rhs.ptr);
+            return behind || eq;
+        }
+        bool operator<(const iterator& rhs) const {
+            return SingleList::if_A_ahead_B(this->ptr, rhs.ptr);
+        }
+        bool operator<=(const iterator& rhs) const {
+            bool ahead = SingleList::if_A_ahead_B(this->ptr, rhs.ptr);
+            bool eq    = SingleList::if_A_is_B(this->ptr, rhs.ptr);
+            return ahead || eq;
+        }
     };
     iterator begin() {
         return iterator(head->next);
@@ -57,7 +97,42 @@ private:
         return iterator(tail->next);
     }
 
+    /// @brief relative location relation resolver
+
+    static constexpr bool if_A_ahead_B(node* A, node* B) {
+        bool  res = false;
+        node* tmp = A;
+        while (tmp != nullptr) {
+            if (tmp == B) {
+                res = true;
+                break;
+            }
+            tmp = tmp->next;
+        }
+        return res;
+    }
+    static constexpr bool if_A_behind_B(node* A, node* B) {
+        bool  res = false;
+        node* tmp = B;
+        while (tmp != nullptr) {
+            if (tmp == A) {
+                res = true;
+                break;
+            }
+            tmp = tmp->next;
+        }
+        return res;
+    }
+    static constexpr bool if_A_is_B(node* A, node* B) {
+        return A == B;
+    }
+    static constexpr bool if_A_is_not_B(node* A, node* B) {
+        return A != B;
+    }
+
 public:
+    /// @brief object management
+
     SingleList() { // default constructor (not recommended!)
         init_head();
     }
@@ -96,6 +171,8 @@ public:
         delete_head();
     }
 
+    /// @brief head_node operation
+
     void init_head() {
         head    = new node();
         if_init = true;
@@ -105,6 +182,8 @@ public:
             delete head;
         }
     }
+
+    /// @brief data_io operation
 
     T pop() {
         if (tail == nullptr) {
@@ -155,6 +234,9 @@ public:
     void add_front(const T& input) {
         add_front(input);
     }
+
+    /// @brief function
+
     void echo() {
         std::cout << "range-based loop => ";
         for (const T& element : *this) {
@@ -168,6 +250,16 @@ public:
             tmp = tmp->next;
         }
         std::cout << std::endl;
+    }
+    void std_sort() {
+        std::cout << std::endl;
+        std::cout << "Single-direction linked list cannot use std::sort()!" << std::endl;
+        std::cout << std::endl;
+    }
+    void reverse() {
+        if (size == 0) {
+            return; // don't need to!
+        }
     }
 };
 

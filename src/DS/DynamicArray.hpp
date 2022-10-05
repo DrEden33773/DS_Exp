@@ -10,26 +10,30 @@
  */
 
 #pragma once
+#include <algorithm>
 #include <cassert>
 #include <cstddef>
 #include <initializer_list>
 #include <iostream>
 #include <iterator>
+#include <stdexcept>
+#include <type_traits>
 
 namespace DS {
 
 template <typename T = int> // default type = int
 class DynamicArray {
 private:
-    T*            data     = nullptr;
-    size_t        size     = 0;
-    size_t        capacity = 0;
-    static size_t init_capacity;
+    T*         data     = nullptr;
+    int        size     = 0;
+    int        capacity = 0;
+    static int init_capacity;
 
-    class iterator : public std::iterator<std::random_access_iterator_tag, T> {
+    class iterator : public std::iterator<std::contiguous_iterator_tag, T> {
     public:
         T* ptr;
         explicit iterator(T* ptr) { this->ptr = ptr; }
+        // prefix ++X/--X
         iterator& operator++() {
             ++ptr;
             return *this;
@@ -38,32 +42,50 @@ private:
             --ptr;
             return *this;
         }
-        iterator& operator+=(size_t n) {
+        // postfix X++/X--
+        iterator& operator++(int any) {
+            iterator* old = *this;
+
+            operator++();
+            return old;
+        }
+        iterator& operator--(int any) {
+            iterator* old = *this;
+
+            operator--();
+            return old;
+        }
+        iterator& operator+=(int n) {
             ptr += n;
             return *this;
         }
-        iterator& operator-=(size_t n) {
+        iterator& operator-=(int n) {
             ptr -= n;
             return *this;
         }
-        iterator operator+(size_t n) {
+        iterator operator+(int n) {
             iterator tmp = *this;
             tmp += n;
             return tmp;
         }
-        iterator operator-(size_t n) {
+        iterator operator-(int n) {
             iterator tmp = *this;
             tmp -= n;
             return tmp;
         }
-        T&   operator*() { return *ptr; }
-        T*   operator->() { return ptr; }
-        bool operator!=(const iterator& rhs) { return ptr != rhs.ptr; }
-        bool operator>(const iterator& rhs) { return ptr > rhs.ptr; }
-        bool operator<(const iterator& rhs) { return ptr < rhs.ptr; }
-        bool operator>=(const iterator& rhs) { return ptr >= rhs.ptr; }
-        bool operator<=(const iterator& rhs) { return ptr <= rhs.ptr; }
-        // do not use `operator==` , it will cause infinite loop (ambiguous)
+        int operator-(const iterator& rhs) { // get distance
+            iterator curr     = *this;
+            int      distance = curr.ptr - rhs.ptr;
+            return distance;
+        }
+        T&   operator*() const { return *ptr; }
+        T*   operator->() const { return ptr; }
+        bool operator!=(const iterator& rhs) const { return ptr != rhs.ptr; }
+        bool operator==(const iterator& rhs) const { return ptr == rhs.ptr; }
+        bool operator>(const iterator& rhs) const { return ptr > rhs.ptr; }
+        bool operator<(const iterator& rhs) const { return ptr < rhs.ptr; }
+        bool operator>=(const iterator& rhs) const { return ptr >= rhs.ptr; }
+        bool operator<=(const iterator& rhs) const { return ptr <= rhs.ptr; }
     };
     iterator begin() {
         if (size == 0) {
@@ -104,24 +126,91 @@ public:
         delete[] data;
     }
 
-    void push_back(const T& input) {
+    /// @brief data_input processing
+
+    void push_back(const T& element) {
         if (size >= capacity) {
             realloc(capacity * 2);
         }
-        data[size] = input;
+        data[size] = element;
         ++size;
     }
-    void push(const T& input) {
-        push_back(input);
+    void push(const T& element) {
+        push_back(element);
     }
-    void emplace_back(const T& input) {
-        data[size] = input;
+    void emplace_back(const T& element) {
+        data[size] = element;
         ++size;
     }
-    void emplace(const T& input) {
-        emplace_back(input);
+    void emplace(const T& element) {
+        emplace_back(element);
     }
-    void reserve(size_t new_capacity) {
+    void insert_to(const T& element, int index) {
+        if (index < 0 || index > size - 1) {
+            throw std::out_of_range("The insert position is out of range!");
+        }
+        if (index == size - 1) {
+            push_back(element);
+            return;
+        }
+        // occasion: need to move
+        if (size == capacity) {
+            realloc(capacity + 4); // do not need to alloc big space
+        }
+        int new_size = size + 1;
+        for (int tmp = new_size - 1; tmp - 1 >= index; --tmp) {
+            data[tmp] = data[tmp - 1];
+        }
+        data[index] = element;
+        size        = new_size;
+    }
+    void insert(const T& element, int index) {
+        insert_to(element, index);
+    }
+    void pop_back() {
+        if (size == 0) {
+            throw std::logic_error("The size is zero, cannot pop the tail element!");
+        }
+        --size;
+    }
+    void pop() {
+        pop_back();
+    }
+    void delete_index(int index) {
+        if (size == 0) {
+            throw std::logic_error("The size is zero, cannot delete any index!");
+        }
+        if (index < 0 || index > size - 1) {
+            throw std::out_of_range("The insert position is out of range!");
+        }
+        if (index == size - 1) {
+            pop_back();
+            return;
+        }
+        for (int tmp = index; tmp + 1 < size; ++tmp) {
+            data[tmp] = data[tmp + 1];
+        }
+        --size;
+    }
+
+    /// @brief general data management
+
+    void clear() {
+        size = 0;
+    }
+    void erase() {
+        size = 0;
+    }
+    void reverse() {
+        for (int front = 0; front <= (size - 1) / 2; ++front) {
+            int back = size - 1 - front;
+            std::swap(data[front], data[back]); // implemented by `std::sort()`
+        }
+    }
+
+    /// @brief memory management
+
+    void reserve(int new_capacity) {
         if (new_capacity < capacity) {
             std::cout << std::endl;
             std::cout << "new_capacity " << new_capacity;
@@ -136,7 +225,7 @@ public:
         }
         data = tmp;
     }
-    void realloc(size_t new_capacity) {
+    void realloc(int new_capacity) {
         if (new_capacity < size) {
             std::cout << std::endl;
             std::cout << "new_capacity " << new_capacity;
@@ -150,6 +239,9 @@ public:
             tmp[i] = data[i];
         }
         data = tmp;
+    }
+    void shrink_to_fit() {
+        realloc(size);
     }
 
     void echo() {
@@ -165,11 +257,14 @@ public:
         std::cout << std::endl;
     }
     void std_sort() {
-        // TODO(eden):
+        std::sort(begin(), end());
+        std::cout << std::endl;
+        std::cout << "Dynamic array called std::sort()" << std::endl;
+        std::cout << std::endl;
     }
 };
 
 template <typename T>
-size_t DynamicArray<T>::init_capacity = 4;
+int DynamicArray<T>::init_capacity = 4;
 
 } // namespace DS
