@@ -27,6 +27,7 @@ private:
     T*         data     = nullptr;
     int        size     = 0;
     int        capacity = 0;
+    bool       if_moved = false;
     static int init_capacity;
 
     class iterator : public std::iterator<std::contiguous_iterator_tag, T> {
@@ -101,6 +102,34 @@ private:
     }
 
 public:
+    /// @brief static constructor
+
+    static DynamicArray<T>&& CreateDynamicArray(
+        std::initializer_list<T>&& initList
+    ) {
+        using original_type = std::initializer_list<T>;
+        DynamicArray<T> created(std::forward<original_type>(initList));
+        created.if_moved = true;
+        return std::move(created);
+    }
+
+    /// @brief constexpr functions
+
+    constexpr bool if_empty() noexcept {
+        return this->size == 0;
+    }
+    constexpr int get_length() noexcept {
+        return this->size;
+    }
+    constexpr int get_size() noexcept {
+        return this->size;
+    }
+    constexpr int get_capacity() noexcept {
+        return this->capacity;
+    }
+
+    /// @brief object management
+
     DynamicArray() = default;
     DynamicArray(const DynamicArray& copied) { // copy constructor
         data     = new T[copied.capacity];
@@ -123,7 +152,11 @@ public:
         }
     }
     ~DynamicArray() {
-        delete[] data;
+        if (!if_moved) {
+            delete[] data;
+        } else {
+            return;
+        }
     }
 
     /// @brief data_input processing
@@ -145,7 +178,19 @@ public:
     void emplace(const T& element) {
         emplace_back(element);
     }
-    void insert_to(const T& element, int index) {
+    void pop_back() {
+        if (size == 0) {
+            throw std::logic_error("The size is zero, cannot pop the tail element!");
+        }
+        --size;
+    }
+    void pop() {
+        pop_back();
+    }
+
+    /// @brief element operation
+
+    void insert_elem(const T& element, int index) {
         if (index < 0 || index > size - 1) {
             throw std::out_of_range("The insert position is out of range!");
         }
@@ -164,21 +209,12 @@ public:
         data[index] = element;
         size        = new_size;
     }
-    void insert(const T& element, int index) {
-        insert_to(element, index);
+    void insert_to(const T& element, int index) {
+        insert_elem(element, index);
     }
-    void pop_back() {
+    void delete_elem(int index) {
         if (size == 0) {
-            throw std::logic_error("The size is zero, cannot pop the tail element!");
-        }
-        --size;
-    }
-    void pop() {
-        pop_back();
-    }
-    void delete_index(int index) {
-        if (size == 0) {
-            throw std::logic_error("The size is zero, cannot delete any index!");
+            throw std::logic_error("The size is zero, cannot delete any element!");
         }
         if (index < 0 || index > size - 1) {
             throw std::out_of_range("The insert position is out of range!");
@@ -192,20 +228,70 @@ public:
         }
         --size;
     }
+    void set_elem(const T& element, int index) {
+        if (index < 0 || index > size - 1) {
+            throw std::out_of_range("The insert position is out of range!");
+        }
+        data[index] = element;
+    }
+    void set_to(const T& element, int index) {
+        set_elem(element, index);
+    }
+    T get_elem(int index) {
+        if (size == 0) {
+            throw std::logic_error("The size is zero, cannot get any element!");
+        }
+        if (index < 0 || index > size - 1) {
+            throw std::out_of_range("The insert position is out of range!");
+        }
+        return data[index];
+    }
+    T get(int index) {
+        get_elem(index);
+    }
+    int locate_elem(const T& elem) {
+        if (size == 0) {
+            throw std::logic_error("The size is zero, cannot locate any element!");
+        }
+        int res = -1;
+        for (int index = 0; index < size; ++index) {
+            if (data[index] == elem) {
+                res = index;
+                break;
+            }
+        }
+        return res;
+    }
+    T prior_elem(const T& elem) {
+        int elem_index = locate_elem(elem);
+        if (elem_index == -1) {
+            throw std::logic_error("Cannot find input element!");
+        } else if (elem_index == 0) {
+            throw std::logic_error(
+                "The first input element lies in the head, without any prior element!"
+            );
+        }
+        return data[elem_index - 1];
+    }
+    T next_elem(const T& elem) {
+        int elem_index = locate_elem(elem);
+        if (elem_index == -1) {
+            throw std::logic_error("Cannot find input element!");
+        } else if (elem_index == size - 1) {
+            throw std::logic_error(
+                "The first input element lies in the tail, without any next element!"
+            );
+        }
+        return data[elem_index + 1];
+    }
 
     /// @brief general data management
 
-    void clear() {
+    void clear() noexcept { // ClearDynamicArray
         size = 0;
     }
-    void erase() {
+    void erase() noexcept {
         size = 0;
-    }
-    void reverse() {
-        for (int front = 0; front <= (size - 1) / 2; ++front) {
-            int back = size - 1 - front;
-            std::swap(data[front], data[back]); // implemented by `std::sort()`
-        }
     }
 
     /// @brief memory management
@@ -244,7 +330,10 @@ public:
         realloc(size);
     }
 
+    /// @brief functional
+
     void echo() {
+        std::cout << std::endl;
         std::cout << "range-based loop => ";
         for (const T& element : *this) {
             std::cout << element << " ";
@@ -261,6 +350,12 @@ public:
         std::cout << std::endl;
         std::cout << "Dynamic array called std::sort()" << std::endl;
         std::cout << std::endl;
+    }
+    void reverse() {
+        for (int front = 0; front <= (size - 1) / 2; ++front) {
+            int back = size - 1 - front;
+            std::swap(data[front], data[back]); // implemented by `std::sort()`
+        }
     }
 };
 

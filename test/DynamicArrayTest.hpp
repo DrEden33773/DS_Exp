@@ -16,9 +16,19 @@ namespace Test {
 void DynamicArrayTest() {
     std::cout << std::endl;
     DS::DynamicArray<int> test = { 1, 2, 5, 9, 1, 2 };
+
+    DS::DynamicArray<int> static_created
+        = DS::DynamicArray<int>::CreateDynamicArray(
+            { 1, 2, 5, 9, 1, 2 }
+        );
+
     test.echo();
     test.std_sort();
     test.echo();
+
+    static_created.echo();
+    static_created.std_sort();
+    static_created.echo();
 }
 
-}
+} // namespace Test

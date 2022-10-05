@@ -16,9 +16,19 @@ namespace Test {
 void SingleListTest() {
     std::cout << std::endl;
     DS::SingleList<int> test = { 1, 5, 9, 2, 7, 4, 9, 0, 1 };
+
     test.echo();
-    test.std_sort();
+    test.reverse();
     test.echo();
+
+    DS::SingleList<int> static_generated
+        = DS::SingleList<int>::CreateSingleList(
+            { 1, 5, 9, 2, 7, 4, 9, 0, 1 }
+        );
+
+    static_generated.echo();
+    static_generated.reverse();
+    static_generated.echo();
 }
 
 }

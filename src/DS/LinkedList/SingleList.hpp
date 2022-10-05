@@ -36,8 +36,9 @@ private:
     bool  if_init = false;   // if init head node
     int   size    = 0;       // num of nodes (except head node)
                              // (num of effective nodes)
+    bool if_moved = false;   // if temporarily created object will be moved
+                             // if so, deleter won't be called
 
-    /// @brief iterator (input_iterator)
     class iterator : public std::iterator<std::input_iterator_tag, T> {
     public:
         node* ptr = nullptr;
@@ -131,6 +132,28 @@ private:
     }
 
 public:
+    /// @brief static constructor
+    static SingleList<T>&& CreateSingleList(
+        std::initializer_list<T>&& initList
+    ) {
+        using original_type = std::initializer_list<T>;
+        SingleList<T> created(std::forward<original_type>(initList));
+        created.if_moved = true;
+        return std::move(created);
+    }
+
+    /// @brief constexpr operation
+
+    constexpr bool if_empty() noexcept {
+        return this->size == 0;
+    }
+    constexpr int get_length() noexcept {
+        return this->size;
+    }
+    constexpr int get_size() noexcept {
+        return this->size;
+    }
+
     /// @brief object management
 
     SingleList() { // default constructor (not recommended!)
@@ -140,18 +163,23 @@ public:
         init_head();
     }
     SingleList(SingleList&& moved) noexcept { // move constructor
+
         // 1. guarantee `this`
+        if_init = true;
+        size    = moved.size;
+        // (1) => locate head and tail
+        head = moved.head;
+        tail = moved.tail;
+        // (2) => locate each node of `this` && set null to each node of `moved`
         node* curr      = head;
         node* tmp_moved = moved.head;
-        while (curr != nullptr) {
+        while (tmp_moved != nullptr) {
             curr                 = tmp_moved;
             curr                 = curr->next;
             node* tmp_moved_next = tmp_moved->next;
             tmp_moved            = nullptr;
             tmp_moved            = tmp_moved_next;
         }
-        if_init = true;
-        size    = moved.size;
         // 2. clear the property of `moved` one
         moved.head    = nullptr;
         moved.tail    = nullptr;
@@ -165,6 +193,9 @@ public:
         }
     }
     ~SingleList() noexcept { // impossible to throw exception
+        if (if_moved) {
+            return;
+        }
         for (size_t remained = size; remained > 0; --remained) {
             pop();
         }
@@ -238,6 +269,7 @@ public:
     /// @brief function
 
     void echo() {
+        std::cout << std::endl;
         std::cout << "range-based loop => ";
         for (const T& element : *this) {
             std::cout << element << " ";
@@ -260,6 +292,19 @@ public:
         if (size == 0) {
             return; // don't need to!
         }
+        node* new_tail = head->next;
+        node* to_opt   = head->next;
+        head->next     = nullptr;
+        while (to_opt != nullptr) {
+            node* next_to_opt = to_opt->next;
+            to_opt->next      = head->next;
+            head->next        = to_opt;
+            to_opt            = next_to_opt;
+        }
+        tail = new_tail;
+        std::cout << std::endl;
+        std::cout << "Single list called `reverse()`. " << std::endl;
+        std::cout << std::endl;
     }
 };
 
