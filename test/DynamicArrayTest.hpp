@@ -9,12 +9,16 @@
  *
  */
 
+#pragma once
 #include "../src/DS/DynamicArray.hpp"
 
 namespace Test {
 
 void DynamicArrayTest() {
     std::cout << std::endl;
+    std::cout << "Test Basic Function of the `DynamicArray`. " << std::endl;
+    std::cout << std::endl;
+
     DS::DynamicArray<int> test = { 1, 2, 5, 9, 1, 2 };
 
     DS::DynamicArray<int> static_created
@@ -29,6 +33,10 @@ void DynamicArrayTest() {
     static_created.echo();
     static_created.std_sort();
     static_created.echo();
+
+    std::cout << std::endl;
+    std::cout << "Test of `DynamicArray` is ended. " << std::endl;
+    std::cout << std::endl;
 }
 
 } // namespace Test
