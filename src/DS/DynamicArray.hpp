@@ -140,10 +140,11 @@ public:
         }
     }
     DynamicArray(DynamicArray&& moved) noexcept { // move constructor
-        data       = moved.data;
-        size       = moved.size;
-        capacity   = moved.capacity;
-        moved.data = nullptr;
+        size     = moved.size;
+        capacity = moved.capacity;
+        data     = moved.data;
+
+        // moved.data = nullptr;
     }
     DynamicArray(std::initializer_list<T>&& initList) {
         reserve(initList.size() * 2);
@@ -316,7 +317,8 @@ public:
         for (int i = 0; i < size; ++i) {
             tmp[i] = data[i];
         }
-        data = tmp;
+        data     = tmp;
+        capacity = new_capacity;
     }
     void realloc(int new_capacity) {
         if (new_capacity < size) {
@@ -331,7 +333,8 @@ public:
         for (int i = 0; i < size; ++i) {
             tmp[i] = data[i];
         }
-        data = tmp;
+        data     = tmp;
+        capacity = new_capacity;
     }
     void shrink_to_fit() {
         realloc(size);
