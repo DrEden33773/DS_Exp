@@ -40,7 +40,7 @@ private:
     bool if_moved = false;   // if temporarily created object will be moved
                              // if so, deleter won't be called
 
-    class iterator : public std::iterator<std::input_iterator_tag, T> {
+    class iterator : public std::iterator<std::forward_iterator_tag, T> { // could get and set value
     public:
         node* ptr = nullptr;
         explicit iterator(node* ptr) { this->ptr = ptr; }
