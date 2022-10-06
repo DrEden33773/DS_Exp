@@ -18,6 +18,7 @@
 #include <iterator>
 #include <stdexcept>
 #include <type_traits>
+#include <unordered_map>
 
 namespace DS {
 
@@ -140,11 +141,10 @@ public:
         }
     }
     DynamicArray(DynamicArray&& moved) noexcept { // move constructor
-        size     = moved.size;
-        capacity = moved.capacity;
-        data     = moved.data;
-
-        // moved.data = nullptr;
+        data       = moved.data;
+        size       = moved.size;
+        capacity   = moved.capacity;
+        moved.data = nullptr;
     }
     DynamicArray(std::initializer_list<T>&& initList) {
         reserve(initList.size() * 2);
@@ -216,7 +216,7 @@ public:
         insert_elem(element, pos);
     }
     void delete_elem(int pos) {
-        int index = pos;
+        int index = pos - 1;
         if (size == 0) {
             throw std::logic_error("The size is zero, cannot delete any element!");
         }
@@ -233,7 +233,7 @@ public:
         --size;
     }
     T set_elem(const T& element, int pos) {
-        int index = pos;
+        int index = pos - 1;
         if (index < 0 || index > size - 1) {
             throw std::out_of_range("The insert position is out of range!");
         }
@@ -245,7 +245,7 @@ public:
         return set_elem(element, pos);
     }
     T get_elem(int pos) {
-        int index = pos;
+        int index = pos - 1;
         if (size == 0) {
             throw std::logic_error("The size is zero, cannot get any element!");
         }
@@ -282,7 +282,7 @@ public:
         return data[elem_index - 1];
     }
     T next_elem(const T& elem) {
-        int elem_index = locate_elem(elem);
+        int elem_index = locate_elem(elem) - 1;
         if (elem_index == -1) {
             throw std::logic_error("Cannot find input element!");
         } else if (elem_index == size - 1) {
@@ -367,6 +367,26 @@ public:
         }
         std::cout << "Dynamic array called `reverse()`. " << std::endl;
         std::cout << std::endl;
+    }
+    void emplace_unique() {
+        // TODO(eden):
+    }
+    void hash_unique() {
+        // TODO(eden):
+        std::unordered_map<T, bool> hash_table;
+        for (int index = 0; index < size - 1; ++index) {
+            int pos       = index + 1;
+            T   curr_elem = this->get_elem(pos);
+            if (!hash_table.contains(curr_elem)) {
+                hash_table[curr_elem] = true;
+            } else if (hash_table[curr_elem]) {
+                this->delete_elem(pos);
+                hash_table[curr_elem] = false;
+            }
+        }
+    }
+    void unique(bool if_emplace = false) {
+        // TODO(eden):
     }
 };
 

@@ -19,6 +19,7 @@
 #include <iostream>
 #include <iterator>
 #include <stdexcept>
+#include <unordered_map>
 
 namespace DS {
 
@@ -438,6 +439,26 @@ public:
         tail = new_tail;
         std::cout << "Single list called `reverse()`. " << std::endl;
         std::cout << std::endl;
+    }
+    void emplace_unique() {
+        // TODO(eden):
+    }
+    void hash_unique() {
+        // TODO(eden):
+        std::unordered_map<T, bool> hash_table;
+        for (int index = 0; index < size - 1; ++index) {
+            int pos       = index + 1;
+            T   curr_elem = this->get_elem(pos);
+            if (!hash_table.contains(curr_elem)) {
+                hash_table[curr_elem] = true;
+            } else if (hash_table[curr_elem]) {
+                this->delete_elem(pos);
+                hash_table[curr_elem] = false;
+            }
+        }
+    }
+    void unique(bool if_emplace = false) {
+        // TODO(eden):
     }
 };
 
