@@ -387,7 +387,6 @@ public:
         std::cout << std::endl;
     }
     void emplace_unique() {
-        // TODO(eden):
         for (int index = 0; index < size; ++index) {
             T head_elem = *(begin() + index);
             for (int t_index = index + 1; t_index < size;) {
@@ -402,7 +401,6 @@ public:
         }
     }
     void hash_unique() {
-        // TODO(eden):
         std::unordered_map<T, bool> hash_table;
         for (int index = 0; index < size; ++index) {
             int pos       = index + 1;
@@ -416,7 +414,6 @@ public:
         }
     }
     void unique(bool if_emplace = false) {
-        // TODO(eden):
         if (!if_emplace) {
             hash_unique();
         } else {
