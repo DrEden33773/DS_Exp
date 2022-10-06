@@ -48,6 +48,10 @@ void DynamicArrayTest() {
     // static_generated.delete_elem(0); // error, throw exception
     static_generated.echo();
 
+    /// @brief @b hash_unique()
+    static_generated.hash_unique();
+    static_generated.echo();
+
     Tool::end_info("Dynamic_Array");
 }
 
