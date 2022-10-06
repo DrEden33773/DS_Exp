@@ -61,6 +61,10 @@ void SingleListTest() {
     static_generated.unique(false); // hash_unique => O(n)
     static_generated.echo();        /* shows the outcome of emplace_unique */
 
+    /// @brief @b insert_sort()
+    static_generated.insert_sort();
+    static_generated.echo();
+
     Tool::end_info("Single_List");
 }
 

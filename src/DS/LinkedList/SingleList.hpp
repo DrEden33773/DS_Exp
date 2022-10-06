@@ -1,7 +1,7 @@
 /**
  * @file SingleList.hpp
  * @author Eden (edwardwang33773@gmail.com)
- * @brief Linked list with only one pointer
+ * @brief Linked list with only one direction
  * @structure:
         head->[data|ptr]->[data|ptr]->...->[data|ptr]-> nullptr
                                             ^^^^------> tail
@@ -48,6 +48,12 @@ private:
             ptr = ptr->next;
             return *this;
         }
+        iterator operator++(int any) {
+            iterator old = *this;
+
+            operator++();
+            return old;
+        }
         iterator operator+(int distance) {
             iterator res = *this;
             if (distance > 0) {
@@ -61,6 +67,11 @@ private:
                 }
             }
             return res;
+        }
+        iterator operator+=(int n) {
+            iterator tmp = (*this) + n;
+            this->ptr    = tmp.ptr;
+            return *this;
         }
         int operator-(const iterator& rhs) {
             // assume that `rhs` -> ... -> `lhs`
@@ -100,7 +111,7 @@ private:
     iterator end() {
         return iterator(tail->next);
     }
-    /// @brief each options related to iterator will be in [ begin(),end() ) range
+    /// @b each options related to iterator will be in @b [begin(),end()) range
 
     /// @brief relative location relation resolver
 
@@ -423,6 +434,42 @@ public:
         std::cout << "Single-direction linked list cannot use std::sort()!" << std::endl;
         std::cout << std::endl;
     }
+    void insert_sort() { // ascending order
+        SingleList<T>& curr = *this;
+        for (int index = 1; index < size; ++index) {
+            int opt = index;
+            while (opt > 0 && curr[opt] < curr[opt - 1]) {
+                // from: front => ahead => back => end
+                //   to: front => back => ahead => end
+                node* front = nullptr;
+                node* ahead = nullptr;
+                node* back  = nullptr;
+                node* end   = nullptr;
+                ahead       = (begin() + (opt - 1)).ptr;
+                back        = (begin() + (opt)).ptr;
+                end         = (begin() + (opt + 1)).ptr;
+                if (opt - 2 == -1) {
+                    front = head; // important operation
+                } else {
+                    front = (begin() + (opt - 2)).ptr;
+                }
+
+                front->next = back;
+                back->next  = ahead;
+                ahead->next = end;
+                --opt;
+            }
+        }
+        std::cout << "Single-direction linked list called insert_sort()" << std::endl;
+        std::cout << std::endl;
+    }
+    void sort(bool if_std_sort = true) { // ascending order
+        if (if_std_sort) {
+            std_sort();
+        } else {
+            insert_sort();
+        }
+    }
     void reverse() {
         if (size == 0) {
             return; // don't need to!
@@ -442,9 +489,9 @@ public:
     }
     void emplace_unique() {
         // TODO(eden):
-        for (int index = 0; index < size - 1; ++index) {
+        for (int index = 0; index < size; ++index) {
             T head_elem = *(begin() + index);
-            for (int t_index = index + 1; t_index < size - 1;) {
+            for (int t_index = index + 1; t_index < size;) {
                 T curr_elem = *(begin() + t_index);
                 if (curr_elem == head_elem) {
                     this->delete_elem(t_index + 1);
@@ -458,7 +505,7 @@ public:
     void hash_unique() {
         // TODO(eden):
         std::unordered_map<T, bool> hash_table;
-        for (int index = 0; index < size - 1; ++index) {
+        for (int index = 0; index < size; ++index) {
             int pos       = index + 1;
             T   curr_elem = this->get_elem(pos);
             if (!hash_table.contains(curr_elem)) {
@@ -476,6 +523,18 @@ public:
         } else {
             emplace_unique();
         }
+    }
+
+    /// @brief operator overloads
+
+    T& operator[](int index) {
+        if (size == 0) {
+            throw std::logic_error("The size is zero, cannot get any element!");
+        }
+        if (index < 0 || index > size - 1) {
+            throw std::out_of_range("The input index is out of range!");
+        }
+        return *(begin() + index);
     }
 };
 

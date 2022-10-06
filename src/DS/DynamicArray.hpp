@@ -355,10 +355,28 @@ public:
         // }
         // std::cout << std::endl;
     }
-    void std_sort() {
+    void std_sort() { // ascending order
         std::sort(begin(), end());
         std::cout << "Dynamic array called std::sort()" << std::endl;
         std::cout << std::endl;
+    }
+    void insert_sort() { // ascending order
+        for (int index = 1; index < size; ++index) {
+            int opt = index;
+            while (opt > 0 && data[opt] < data[opt - 1]) {
+                std::swap(data[opt], data[opt - 1]);
+                --opt;
+            }
+        }
+        std::cout << "Dynamic array called insert_sort()" << std::endl;
+        std::cout << std::endl;
+    }
+    void sort(bool if_std_sort = true) { // ascending order
+        if (if_std_sort) {
+            std_sort();
+        } else {
+            insert_sort();
+        }
     }
     void reverse() {
         for (int front = 0; front <= (size - 1) / 2; ++front) {
@@ -370,9 +388,9 @@ public:
     }
     void emplace_unique() {
         // TODO(eden):
-        for (int index = 0; index < size - 1; ++index) {
+        for (int index = 0; index < size; ++index) {
             T head_elem = *(begin() + index);
-            for (int t_index = index + 1; t_index < size - 1;) {
+            for (int t_index = index + 1; t_index < size;) {
                 T curr_elem = *(begin() + t_index);
                 if (curr_elem == head_elem) {
                     this->delete_elem(t_index + 1);
@@ -386,7 +404,7 @@ public:
     void hash_unique() {
         // TODO(eden):
         std::unordered_map<T, bool> hash_table;
-        for (int index = 0; index < size - 1; ++index) {
+        for (int index = 0; index < size; ++index) {
             int pos       = index + 1;
             T   curr_elem = this->get_elem(pos);
             if (!hash_table.contains(curr_elem)) {
@@ -404,6 +422,18 @@ public:
         } else {
             emplace_unique();
         }
+    }
+
+    /// @brief operator overloads
+
+    T& operator[](int index) {
+        if (size == 0) {
+            throw std::logic_error("The size is zero, cannot get any element!");
+        }
+        if (index < 0 || index > size - 1) {
+            throw std::out_of_range("The input index is out of range!");
+        }
+        return *(begin() + index);
     }
 };
 
