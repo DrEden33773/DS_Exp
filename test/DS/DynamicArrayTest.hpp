@@ -57,9 +57,10 @@ void DynamicArrayTest() {
     std::cout << std::endl;
     std::cout << std::endl;
 
-    /// @brief @b hash_unique()
-    static_generated.hash_unique();
-    static_generated.echo();
+    /// @brief @b unique()
+    static_generated.unique(true);  // emplace_unique => O(n^2)
+    static_generated.unique(false); // hash_unique => O(n)
+    static_generated.echo();        /* shows the outcome of emplace_unique */
 
     Tool::end_info("Dynamic_Array");
 }

@@ -370,6 +370,18 @@ public:
     }
     void emplace_unique() {
         // TODO(eden):
+        for (int index = 0; index < size - 1; ++index) {
+            T head_elem = *(begin() + index);
+            for (int t_index = index + 1; t_index < size - 1;) {
+                T curr_elem = *(begin() + t_index);
+                if (curr_elem == head_elem) {
+                    this->delete_elem(t_index + 1);
+                    // in this case, do not ++t_index
+                } else {
+                    ++t_index;
+                }
+            }
+        }
     }
     void hash_unique() {
         // TODO(eden):
@@ -387,6 +399,11 @@ public:
     }
     void unique(bool if_emplace = false) {
         // TODO(eden):
+        if (!if_emplace) {
+            hash_unique();
+        } else {
+            emplace_unique();
+        }
     }
 };
 
