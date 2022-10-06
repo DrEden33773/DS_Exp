@@ -48,6 +48,15 @@ void DynamicArrayTest() {
     // static_generated.delete_elem(0); // error, throw exception
     static_generated.echo();
 
+    /// @brief @b locate_elem()
+    int POS   = static_generated.locate_elem(5);
+    int index = POS - 1;
+    std::cout << "To locate elem 5 => ";
+    std::cout << "POS: " << POS << ", ";
+    std::cout << "Index: " << index << ". ";
+    std::cout << std::endl;
+    std::cout << std::endl;
+
     /// @brief @b hash_unique()
     static_generated.hash_unique();
     static_generated.echo();
