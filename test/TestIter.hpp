@@ -10,8 +10,8 @@
  */
 
 #pragma once
-#include "DynamicArrayTest.hpp"
-#include "SingleListTest.hpp"
+#include "DS/DynamicArrayTest.hpp"
+#include "DS/SingleListTest.hpp"
 #include <functional>
 
 namespace Test {
