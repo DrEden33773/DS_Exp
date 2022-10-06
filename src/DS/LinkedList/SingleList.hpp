@@ -91,12 +91,15 @@ private:
             return ahead || eq;
         }
     };
+    /// @brief return the iterator wrapped with `head->next` (first data)
     iterator begin() {
         return iterator(head->next);
     }
+    /// @brief return the iterator wrapped with `tail->next` (nullptr)
     iterator end() {
         return iterator(tail->next);
     }
+    /// @brief each options related to iterator will be in [ begin(),end() ) range
 
     /// @brief relative location relation resolver
 
@@ -197,7 +200,7 @@ public:
             return;
         }
         for (size_t remained = size; remained > 0; --remained) {
-            pop();
+            pop_back();
         }
         delete_head();
     }
@@ -216,10 +219,10 @@ public:
 
     /// @brief data_io operation
 
-    T pop() {
+    T pop_back() { // remove `tail`
         if (tail == nullptr) {
             throw std::out_of_range("There's NO node in this linked list!");
-        };
+        }
         // locate tail
         node* tmp = head;
         while (tmp->next != tail) {
@@ -230,6 +233,17 @@ public:
         tail = tmp;
         --size;
         return deleted_tail->element;
+    }
+    T pop_front() { // remove `head->next`
+        if (tail == nullptr) {
+            throw std::out_of_range("There's NO node in this linked list!");
+        }
+        node* deleted_tail  = head->next;
+        T     returned_elem = deleted_tail->element;
+        head->next          = deleted_tail->next;
+        delete deleted_tail;
+        --size;
+        return returned_elem;
     }
     void push_back(const T& input) {
         if (!if_init) {
@@ -266,15 +280,137 @@ public:
         add_front(input);
     }
 
+    /// @brief element operation
+    /// => each input/output int is `actual index + 1` (position)!
+
+    void insert_elem(const T& element, int pos) {
+        int index = pos - 1;
+        if (index < 0 || index > size - 1) {
+            throw std::out_of_range("The insert position is out of range!");
+        }
+        if (index == size - 1) {
+            push_back(element);
+            return;
+        }
+        // common occasion => insert into the middle part
+        iterator locator           = begin() + (index - 1); // column is a must
+        node*    before_insert_pos = locator.ptr;
+        node*    insert_pos        = before_insert_pos->next;
+        // ptr operations
+        node* to_insert         = new node(element);
+        before_insert_pos->next = to_insert;
+        to_insert->next         = insert_pos;
+        ++size;
+    }
+    void insert_to(const T& element, int pos) {
+        insert_elem(element, pos);
+    }
+    T set_elem(const T& element, int pos) {
+        int index = pos - 1;
+        if (index < 0 || index > size - 1) {
+            throw std::out_of_range("The insert position is out of range!");
+        }
+        iterator locator    = begin() + index; // let the iterator jump instead
+        node*    index_node = locator.ptr;     // unwrap the iterator, get the raw ptr
+        T        old        = index_node->element;
+        index_node->element = element;
+        return old;
+    }
+    T set_to(const T& element, int pos) {
+        set_elem(element, pos);
+    }
+    T get_elem(int pos) {
+        int index = pos - 1;
+        if (size == 0) {
+            throw std::logic_error("The size is zero, cannot get any element!");
+        }
+        if (index < 0 || index > size - 1) {
+            throw std::out_of_range("The insert position is out of range!");
+        }
+        iterator locator    = begin() + index; // let the iterator jump instead
+        node*    index_node = locator.ptr;     // unwrap the iterator, get the raw ptr
+        return index_node->element;
+    }
+    T get(int pos) {
+        return get_elem(pos);
+    }
+    void delete_elem(int pos) {
+        int index = pos - 1;
+        if (size == 0) {
+            throw std::logic_error("The size is zero, cannot delete any element!");
+        }
+        if (index < 0 || index > size - 1) {
+            throw std::out_of_range("The insert position is out of range!");
+        }
+        // remove `tail` or `head->next`
+        if (index == size - 1) {
+            pop_back();
+            return;
+        } else if (index == 0) {
+            pop_front();
+            return;
+        }
+        iterator locator       = begin() + (index - 1); // column is a must
+        node*    before_delete = locator.ptr;
+        node*    to_delete     = before_delete->next;
+        before_delete->next    = to_delete->next;
+        delete to_delete;
+        --size;
+    }
+    int locate_elem(const T& elem) {
+        if (size == 0) {
+            throw std::logic_error("The size is zero, cannot locate any element!");
+        }
+        int      res        = 0;
+        iterator iter       = begin();
+        int      curr_index = 0;
+        while (iter.ptr != nullptr) {
+            if (iter.ptr->element == elem) {
+                res = curr_index + 1;
+                break;
+            }
+            ++iter;
+            ++curr_index;
+        }
+        return res;
+    }
+    T prior_elem(const T& elem) {
+        int elem_index = locate_elem(elem) - 1;
+        if (elem_index == -1) {
+            throw std::logic_error("Cannot find input element!");
+        } else if (elem_index == 0) {
+            throw std::logic_error(
+                "The first input element lies in the head, without any prior element!"
+            );
+        }
+        iterator res_iter = begin() + (elem_index - 1);
+        node*    res_ptr  = res_iter.ptr;
+        return res_ptr->element;
+    }
+    T next_elem(const T& elem) {
+        int elem_index = locate_elem(elem) - 1;
+        if (elem_index == -1) {
+            throw std::logic_error("Cannot find input element!");
+        } else if (elem_index == size - 1) {
+            throw std::logic_error(
+                "The first input element lies in the tail, without any next element!"
+            );
+        }
+        iterator res_iter = begin() + (elem_index + 1);
+        node*    res_ptr  = res_iter.ptr;
+        return res_ptr->element;
+    }
+
     /// @brief function
 
     void echo() {
         std::cout << std::endl;
         std::cout << "range-based loop => ";
-        for (const T& element : *this) {
+        for (const T& element : *this) { // this will use the iterator
             std::cout << element << " ";
         }
         std::cout << std::endl;
+
         std::cout << "  old-style loop => ";
         node* tmp = head->next;
         while (tmp != nullptr) {

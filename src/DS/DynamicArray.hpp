@@ -30,7 +30,7 @@ private:
     bool       if_moved = false;
     static int init_capacity;
 
-    class iterator : public std::iterator<std::contiguous_iterator_tag, T> {
+    class iterator : public std::iterator<std::random_access_iterator_tag, T> {
     public:
         T* ptr;
         explicit iterator(T* ptr) { this->ptr = ptr; }
@@ -189,8 +189,10 @@ public:
     }
 
     /// @brief element operation
+    /// => each input/output int is `actual index + 1` (position)!
 
-    void insert_elem(const T& element, int index) {
+    void insert_elem(const T& element, int pos) {
+        int index = pos - 1;
         if (index < 0 || index > size - 1) {
             throw std::out_of_range("The insert position is out of range!");
         }
@@ -209,10 +211,11 @@ public:
         data[index] = element;
         size        = new_size;
     }
-    void insert_to(const T& element, int index) {
-        insert_elem(element, index);
+    void insert_to(const T& element, int pos) {
+        insert_elem(element, pos);
     }
-    void delete_elem(int index) {
+    void delete_elem(int pos) {
+        int index = pos;
         if (size == 0) {
             throw std::logic_error("The size is zero, cannot delete any element!");
         }
@@ -228,16 +231,20 @@ public:
         }
         --size;
     }
-    void set_elem(const T& element, int index) {
+    T set_elem(const T& element, int pos) {
+        int index = pos;
         if (index < 0 || index > size - 1) {
             throw std::out_of_range("The insert position is out of range!");
         }
+        T old       = data[index];
         data[index] = element;
+        return old;
     }
-    void set_to(const T& element, int index) {
-        set_elem(element, index);
+    T set_to(const T& element, int pos) {
+        return set_elem(element, pos);
     }
-    T get_elem(int index) {
+    T get_elem(int pos) {
+        int index = pos;
         if (size == 0) {
             throw std::logic_error("The size is zero, cannot get any element!");
         }
@@ -246,24 +253,24 @@ public:
         }
         return data[index];
     }
-    T get(int index) {
-        get_elem(index);
+    T get(int pos) {
+        return get_elem(pos);
     }
     int locate_elem(const T& elem) {
         if (size == 0) {
             throw std::logic_error("The size is zero, cannot locate any element!");
         }
-        int res = -1;
+        int res = 0;
         for (int index = 0; index < size; ++index) {
             if (data[index] == elem) {
-                res = index;
+                res = index + 1;
                 break;
             }
         }
         return res;
     }
     T prior_elem(const T& elem) {
-        int elem_index = locate_elem(elem);
+        int elem_index = locate_elem(elem) - 1;
         if (elem_index == -1) {
             throw std::logic_error("Cannot find input element!");
         } else if (elem_index == 0) {
