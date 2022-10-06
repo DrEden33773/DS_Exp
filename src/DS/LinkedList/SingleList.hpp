@@ -111,10 +111,9 @@ private:
     iterator end() {
         return iterator(tail->next);
     }
-    /// @b each options related to iterator will be in @b [begin(),end()) range
+    /// @b each operation related to iterator will be in @b [begin(),end()) range
 
     /// @brief relative location relation resolver
-
     static constexpr bool if_A_ahead_B(node* A, node* B) {
         bool  res = false;
         node* tmp = A;
@@ -158,7 +157,6 @@ public:
     }
 
     /// @brief constexpr operation
-
     constexpr bool if_empty() noexcept {
         return this->size == 0;
     }
@@ -170,7 +168,6 @@ public:
     }
 
     /// @brief object management
-
     SingleList() { // default constructor (not recommended!)
         init_head();
     }
@@ -218,7 +215,6 @@ public:
     }
 
     /// @brief head_node operation
-
     void init_head() {
         head    = new node();
         if_init = true;
@@ -230,7 +226,6 @@ public:
     }
 
     /// @brief data_io operation
-
     T pop_back() { // remove `tail`
         if (tail == nullptr) {
             throw std::out_of_range("There's NO node in this linked list!");
@@ -294,7 +289,6 @@ public:
 
     /// @brief element operation
     /// => each input/output int is `actual index + 1` (position)!
-
     void insert_elem(const T& element, int pos) {
         int index = pos - 1;
         if (index < 0 || index > size - 1) {
@@ -414,7 +408,6 @@ public:
     }
 
     /// @brief function
-
     void echo() {
         std::cout << "range-based loop => ";
         for (const T& element : *this) { // this will use the iterator
@@ -435,6 +428,7 @@ public:
         std::cout << std::endl;
     }
     void insert_sort() { // ascending order
+        /// @a only_for_reference ==> (discarded)
         SingleList<T>& curr = *this;
         for (int index = 1; index < size; ++index) {
             int opt = index;
@@ -453,7 +447,6 @@ public:
                 } else {
                     front = (begin() + (opt - 2)).ptr;
                 }
-
                 front->next = back;
                 back->next  = ahead;
                 ahead->next = end;
@@ -461,13 +454,43 @@ public:
             }
         }
         std::cout << "Single-direction linked list called insert_sort()" << std::endl;
+        std::cout << "but this is not recommended! Consider use select_sort() instead" << std::endl;
+        std::cout << std::endl;
+    }
+    void select_sort() { // ascending order
+        SingleList<T>& curr = *this;
+        for (node* outer = head->next; outer != tail; outer = outer->next) {
+            T&    outer_elem = outer->element;
+            node* min_ptr    = outer;
+            for (node* inner = outer->next; inner != nullptr; inner = inner->next) {
+                T& inner_elem = inner->element;
+                if (inner_elem < min_ptr->element) {
+                    min_ptr = inner;
+                }
+            } // min_ptr found the correct place
+            T& min_elem = min_ptr->element;
+            if (min_ptr != outer) {
+                auto tmp   = std::move(min_elem);
+                min_elem   = std::move(outer_elem);
+                outer_elem = std::move(tmp);
+                // this is the best way!
+                // A = std::move(B) send the ownership of B to A (move B to A),
+                // instead of copy the B to A
+                // so there's no copy-time-cost!
+
+                // if you still want to use the `node exchange`
+                // then you have to use iterator to get the prior node,
+                // which will cost more time (because there's no `prev` ptr in the node)
+            }
+        }
+        std::cout << "Single-direction linked list called select_sort()" << std::endl;
         std::cout << std::endl;
     }
     void sort(bool if_std_sort = true) { // ascending order
         if (if_std_sort) {
             std_sort();
         } else {
-            insert_sort();
+            select_sort();
         }
     }
     void reverse() {
@@ -526,7 +549,6 @@ public:
     }
 
     /// @brief operator overloads
-
     T& operator[](int index) {
         if (size == 0) {
             throw std::logic_error("The size is zero, cannot get any element!");

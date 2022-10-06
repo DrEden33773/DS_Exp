@@ -134,19 +134,16 @@ class DoubleList {
             return ahead || eq;
         }
     };
-    /// @brief return the iterator wrapped with `head->next` (first data)
     iterator begin() {
         return iterator(head->next);
     }
-    /// @brief return the iterator wrapped with `tail->next` (nullptr)
     iterator end() {
         return iterator(tail->next);
     }
-    /// @b each options related to iterator will be in @b [begin(),end()) range
+    /// @b each operation related to iterator will be in @b [begin(),end()) range
 
     /// @brief relative location relation resolver
-
-    static constexpr bool if_A_ahead_B(node* A, node* B) {
+    static bool if_A_ahead_B(node* A, node* B) {
         bool  res = false;
         node* tmp = A;
         while (tmp != nullptr) {
@@ -158,7 +155,7 @@ class DoubleList {
         }
         return res;
     }
-    static constexpr bool if_A_behind_B(node* A, node* B) {
+    static bool if_A_behind_B(node* A, node* B) {
         bool  res = false;
         node* tmp = B;
         while (tmp != nullptr) {

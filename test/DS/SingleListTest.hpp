@@ -62,7 +62,7 @@ void SingleListTest() {
     static_generated.echo();        /* shows the outcome of emplace_unique */
 
     /// @brief @b insert_sort()
-    static_generated.insert_sort();
+    static_generated.select_sort();
     static_generated.echo();
 
     Tool::end_info("Single_List");
