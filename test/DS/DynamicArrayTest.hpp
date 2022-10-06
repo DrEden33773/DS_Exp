@@ -11,32 +11,44 @@
 
 #pragma once
 #include "../../src/DS/DynamicArray.hpp"
+#include "../../tools/TestTool.hpp"
 
 namespace Test {
 
 void DynamicArrayTest() {
-    std::cout << std::endl;
-    std::cout << "Test Basic Function of the `DynamicArray`. " << std::endl;
-    std::cout << std::endl;
+    Tool::title_info("Dynamic_Array");
 
-    DS::DynamicArray<int> test = { 1, 2, 5, 9, 1, 2 };
-
-    DS::DynamicArray<int> static_created
+    DS::DynamicArray<int> static_generated
         = DS::DynamicArray<int>::CreateDynamicArray(
             { 1, 2, 5, 9, 1, 2 }
         );
 
-    test.echo();
-    test.std_sort();
-    test.echo();
+    /// @brief @b echo()
+    static_generated.echo();
 
-    static_created.echo();
-    static_created.std_sort();
-    static_created.echo();
+    /// @brief @b reverse()
+    static_generated.reverse();
+    static_generated.echo();
+    static_generated.reverse();
 
-    std::cout << std::endl;
-    std::cout << "Test of `DynamicArray` is ended. " << std::endl;
-    std::cout << std::endl;
+    /// @brief @b insert_elem()
+    static_generated.insert_elem(12, 3);
+    static_generated.insert_elem(2, 1);
+    // static_generated.insert_elem(12, 0);  // error, throw exception
+    // static_generated.insert_elem(12, 10); // error, throw exception
+    static_generated.echo();
+
+    /// @brief @b push_back()
+    static_generated.push_back(15);
+    static_generated.echo();
+
+    /// @brief @b delete_elem()
+    static_generated.delete_elem(4);
+    static_generated.delete_elem(1);
+    // static_generated.delete_elem(0); // error, throw exception
+    static_generated.echo();
+
+    Tool::end_info("Dynamic_Array");
 }
 
 } // namespace Test

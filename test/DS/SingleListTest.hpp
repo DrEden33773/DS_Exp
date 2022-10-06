@@ -11,32 +11,43 @@
 
 #pragma once
 #include "../../src/DS/LinkedList/SingleList.hpp"
+#include "../../tools/TestTool.hpp"
 
 namespace Test {
 
 void SingleListTest() {
-    std::cout << std::endl;
-    std::cout << "Test Basic Function of the `SingleList`. " << std::endl;
-    std::cout << std::endl;
-
-    DS::SingleList<int> test = { 1, 5, 9, 2, 7, 4, 9, 0, 1 };
-
-    test.echo();
-    test.reverse();
-    test.echo();
+    Tool::title_info("Single_List");
 
     DS::SingleList<int> static_generated
         = DS::SingleList<int>::CreateSingleList(
             { 1, 5, 9, 2, 7, 4, 9, 0, 1 }
         );
-
+    /// @brief @b echo()
     static_generated.echo();
+
+    /// @brief @b reverse()
     static_generated.reverse();
     static_generated.echo();
+    static_generated.reverse();
 
-    std::cout << std::endl;
-    std::cout << "Test of `SingleList` is ended. " << std::endl;
-    std::cout << std::endl;
+    /// @brief @b insert_elem()
+    static_generated.insert_elem(12, 3);
+    static_generated.insert_elem(2, 1);
+    // static_generated.insert_elem(12, 0);  // error, throw exception
+    // static_generated.insert_elem(12, 10); // error, throw exception
+    static_generated.echo();
+
+    /// @brief @b push_back()
+    static_generated.push_back(15);
+    static_generated.echo();
+
+    /// @brief @b delete_elem()
+    static_generated.delete_elem(4);
+    static_generated.delete_elem(1);
+    // static_generated.delete_elem(0); // error, throw exception
+    static_generated.echo();
+
+    Tool::end_info("Single_List");
 }
 
 } // namespace Test

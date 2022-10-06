@@ -43,11 +43,11 @@ private:
     public:
         node* ptr = nullptr;
         explicit iterator(node* ptr) { this->ptr = ptr; }
-        iterator& operator++() {
+        iterator operator++() {
             ptr = ptr->next;
             return *this;
         }
-        iterator& operator+(int distance) {
+        iterator operator+(int distance) {
             iterator res = *this;
             if (distance > 0) {
                 for (int tmp = 0; tmp < distance; ++tmp) {
@@ -404,23 +404,21 @@ public:
     /// @brief function
 
     void echo() {
-        std::cout << std::endl;
         std::cout << "range-based loop => ";
         for (const T& element : *this) { // this will use the iterator
             std::cout << element << " ";
         }
         std::cout << std::endl;
-
-        std::cout << "  old-style loop => ";
-        node* tmp = head->next;
-        while (tmp != nullptr) {
-            std::cout << tmp->element << " ";
-            tmp = tmp->next;
-        }
         std::cout << std::endl;
+        // std::cout << "  old-style loop => ";
+        // node* tmp = head->next;
+        // while (tmp != nullptr) {
+        //     std::cout << tmp->element << " ";
+        //     tmp = tmp->next;
+        // }
+        // std::cout << std::endl;
     }
     void std_sort() {
-        std::cout << std::endl;
         std::cout << "Single-direction linked list cannot use std::sort()!" << std::endl;
         std::cout << std::endl;
     }
@@ -438,7 +436,6 @@ public:
             to_opt            = next_to_opt;
         }
         tail = new_tail;
-        std::cout << std::endl;
         std::cout << "Single list called `reverse()`. " << std::endl;
         std::cout << std::endl;
     }

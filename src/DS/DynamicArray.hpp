@@ -35,32 +35,32 @@ private:
         T* ptr;
         explicit iterator(T* ptr) { this->ptr = ptr; }
         // prefix ++X/--X
-        iterator& operator++() {
+        iterator operator++() {
             ++ptr;
             return *this;
         }
-        iterator& operator--() {
+        iterator operator--() {
             --ptr;
             return *this;
         }
         // postfix X++/X--
-        iterator& operator++(int any) {
-            iterator* old = *this;
+        iterator operator++(int any) {
+            iterator old = *this;
 
             operator++();
             return old;
         }
-        iterator& operator--(int any) {
-            iterator* old = *this;
+        iterator operator--(int any) {
+            iterator old = *this;
 
             operator--();
             return old;
         }
-        iterator& operator+=(int n) {
+        iterator operator+=(int n) {
             ptr += n;
             return *this;
         }
-        iterator& operator-=(int n) {
+        iterator operator-=(int n) {
             ptr -= n;
             return *this;
         }
@@ -340,21 +340,20 @@ public:
     /// @brief functional
 
     void echo() {
-        std::cout << std::endl;
         std::cout << "range-based loop => ";
         for (const T& element : *this) {
             std::cout << element << " ";
         }
         std::cout << std::endl;
-        std::cout << "  old-style loop => ";
-        for (int i = 0; i < size; ++i) {
-            std::cout << data[i] << " ";
-        }
         std::cout << std::endl;
+        // std::cout << "  old-style loop => ";
+        // for (int i = 0; i < size; ++i) {
+        //     std::cout << data[i] << " ";
+        // }
+        // std::cout << std::endl;
     }
     void std_sort() {
         std::sort(begin(), end());
-        std::cout << std::endl;
         std::cout << "Dynamic array called std::sort()" << std::endl;
         std::cout << std::endl;
     }
@@ -363,6 +362,8 @@ public:
             int back = size - 1 - front;
             std::swap(data[front], data[back]); // implemented by `std::sort()`
         }
+        std::cout << "Dynamic array called `reverse()`. " << std::endl;
+        std::cout << std::endl;
     }
 };
 
