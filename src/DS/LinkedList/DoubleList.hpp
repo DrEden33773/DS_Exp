@@ -44,6 +44,7 @@ class DoubleList {
     class iterator : public std::iterator<std::bidirectional_iterator_tag, T> {
         node* ptr = nullptr;
 
+    public:
         explicit iterator(node* ptr) { this->ptr = ptr; }
 
         iterator operator++() {
@@ -172,6 +173,178 @@ class DoubleList {
     }
     static constexpr bool if_A_is_not_B(node* A, node* B) {
         return A != B;
+    }
+
+public:
+    /// @brief static constructor
+    static DoubleList<T>&& CreateDoubleList(
+        std::initializer_list<T>&& initList
+    ) {
+        using original_type = std::initializer_list<T>;
+        DoubleList<T> created(std::forward<original_type>(initList));
+        created.if_moved = true;
+        return std::move(created);
+    }
+
+    /// @brief constexpr operation
+    constexpr bool if_empty() noexcept {
+        return this->size == 0;
+    }
+    constexpr int get_length() noexcept {
+        return this->size;
+    }
+    constexpr int get_size() noexcept {
+        return this->size;
+    }
+
+    /// @brief object management
+    DoubleList() { // default constructor (not recommended!)
+        init_head();
+    }
+    DoubleList(const DoubleList& copied) { // copy constructor
+        init_head();
+    }
+    DoubleList(DoubleList&& moved) noexcept { // move constructor
+
+        // 1. guarantee `this`
+        if_init = true;
+        size    = moved.size;
+        // (1) => locate head and tail
+        head = moved.head;
+        tail = moved.tail;
+        // (2) => locate each node of `this` && set null to each node of `moved`
+        node* curr      = head;
+        node* tmp_moved = moved.head;
+        while (tmp_moved != nullptr) {
+            // link node in `this` with moved
+            curr       = tmp_moved;
+            curr->next = tmp_moved->next;
+            curr->prev = tmp_moved->prev;
+            curr       = curr->next;
+            // free moved
+            node* tmp_moved_next = tmp_moved->next;
+            tmp_moved            = nullptr;
+            tmp_moved            = tmp_moved_next;
+        }
+        // 2. clear the property of `moved` one
+        moved.head    = nullptr;
+        moved.tail    = nullptr;
+        moved.size    = 0;
+        moved.if_init = false;
+    }
+    DoubleList(std::initializer_list<T>&& initList) {
+        init_head();
+        for (const T& element : initList) {
+            push_back(element);
+        }
+    }
+    ~DoubleList() noexcept { // impossible to throw exception
+        if (if_moved) {
+            return;
+        }
+        for (size_t remained = size; remained > 0; --remained) {
+            pop_back();
+        }
+        delete_head();
+    }
+
+    /// @brief head_node operation
+    void init_head() {
+        head    = new node();
+        if_init = true;
+    }
+    void delete_head() {
+        if (head) {
+            delete head;
+        }
+    }
+
+    /// @brief data_io operation
+    T pop_back() { // remove `tail`
+        if (tail == nullptr) {
+            throw std::out_of_range("There's NO node in this linked list!");
+        }
+        node* new_tail = tail->prev;
+        node* old_tail = tail;
+        new_tail->next = nullptr;
+        delete tail;
+        tail = new_tail;
+        --size;
+        return old_tail->element;
+    }
+    T pop_front() { // remove `head->next`
+        if (tail == nullptr) {
+            throw std::out_of_range("There's NO node in this linked list!");
+        }
+        node* deleted       = head->next;
+        node* new_head_next = deleted->next;
+        T     returned_elem = deleted->element;
+        head->next          = new_head_next;
+        new_head_next->prev = head;
+        delete deleted;
+        --size;
+        return returned_elem;
+    }
+    void push_back(const T& input) {
+        if (!if_init) {
+            throw std::out_of_range("The linked list hasn't been initialized!");
+        }
+        node* to_add = new node(input);
+        if (tail == nullptr) {
+            head->next = to_add;
+            tail       = to_add;
+            tail->prev = head;
+        } else {
+            tail->next   = to_add;
+            to_add->prev = tail;
+            tail         = to_add;
+        }
+        ++size;
+    }
+    void push_front(const T& input) {
+        if (!if_init) {
+            throw std::out_of_range("The linked list hasn't been initialized!");
+        }
+        node* to_add = new node(input);
+        if (tail == nullptr) {
+            head->next = to_add;
+            tail       = to_add;
+            tail->prev = head;
+        } else {
+            node* the_next = head->next;
+            to_add->next   = the_next;
+            the_next->prev = to_add;
+            to_add->prev   = head;
+            head->next     = to_add;
+        }
+        ++size;
+    }
+    void add_back(const T& input) {
+        push_back(input);
+    }
+    void add_front(const T& input) {
+        add_front(input);
+    }
+
+    /// @brief function
+    void echo() {
+        std::cout << "range-based loop => ";
+        for (const T& element : *this) { // this will use the iterator
+            std::cout << element << " ";
+        }
+        std::cout << std::endl;
+        std::cout << std::endl;
+        // std::cout << "  old-style loop => ";
+        // node* tmp = head->next;
+        // while (tmp != nullptr) {
+        //     std::cout << tmp->element << " ";
+        //     tmp = tmp->next;
+        // }
+        // std::cout << std::endl;
+    }
+    void std_sort() {
+        std::cout << "Double-direction linked list cannot use std::sort()!" << std::endl;
+        std::cout << std::endl;
     }
 };
 

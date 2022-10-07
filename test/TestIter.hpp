@@ -10,6 +10,7 @@
  */
 
 #pragma once
+#include "DS/DoubleListTest.hpp"
 #include "DS/DynamicArrayTest.hpp"
 #include "DS/SingleListTest.hpp"
 #include <functional>
@@ -20,6 +21,7 @@ void run_all_test() {
     std::vector<std::function<void()>> all_test = {
         DynamicArrayTest,
         SingleListTest,
+        DoubleListTest,
     };
     for (auto&& func : all_test) {
         func();

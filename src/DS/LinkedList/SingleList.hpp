@@ -186,8 +186,11 @@ public:
         node* curr      = head;
         node* tmp_moved = moved.head;
         while (tmp_moved != nullptr) {
-            curr                 = tmp_moved;
-            curr                 = curr->next;
+            // link node in `this` with moved
+            curr       = tmp_moved;
+            curr->next = tmp_moved->next;
+            curr       = curr->next;
+            // free moved
             node* tmp_moved_next = tmp_moved->next;
             tmp_moved            = nullptr;
             tmp_moved            = tmp_moved_next;
@@ -245,10 +248,10 @@ public:
         if (tail == nullptr) {
             throw std::out_of_range("There's NO node in this linked list!");
         }
-        node* deleted_tail  = head->next;
-        T     returned_elem = deleted_tail->element;
-        head->next          = deleted_tail->next;
-        delete deleted_tail;
+        node* deleted       = head->next;
+        T     returned_elem = deleted->element;
+        head->next          = deleted->next;
+        delete deleted;
         --size;
         return returned_elem;
     }
