@@ -19,13 +19,13 @@
 namespace Test {
 
 void run_all_test() {
-    std::vector<std::function<void()>> all_test = {
-        // DynamicArrayTest, // success
-        // SingleListTest,   // success
-        // DoubleListTest,   // success
-        MergeUniqueTest,
+    std::vector<std::function<void()>> test_list = {
+        DynamicArrayTest, // success
+        SingleListTest,   // success
+        DoubleListTest,   // success
+        MergeUniqueTest,  // success
     };
-    for (auto&& func : all_test) {
+    for (auto&& func : test_list) {
         func();
     }
 }

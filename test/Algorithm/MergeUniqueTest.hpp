@@ -37,7 +37,7 @@ void MergeUniqueTest() {
     SingleList_A.echo();
     SingleList_B.echo();
 
-    {
+    { // empty list check => succeed!
         auto SingleList_A
             = DS::SingleList<int>::CreateSingleList(
                 {}

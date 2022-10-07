@@ -25,7 +25,7 @@
 namespace DS {
 
 template <typename T = int> // default type = int
-struct DoubleList {         // all public, for algorithm
+class DoubleList {          // all public, for algorithm
     static const std::string DSname;
 
     struct node {
