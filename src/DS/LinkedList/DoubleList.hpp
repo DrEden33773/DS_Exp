@@ -25,7 +25,9 @@
 namespace DS {
 
 template <typename T = int> // default type = int
-class DoubleList {
+struct DoubleList {         // all public, for algorithm
+    static const std::string DSname;
+
     struct node {
         T     element;
         node* next = nullptr;
@@ -48,9 +50,9 @@ class DoubleList {
 
     /// @brief @b bidirectional_iterator
     class iterator : public std::iterator<std::bidirectional_iterator_tag, T> {
+    public:
         node* ptr = nullptr;
 
-    public:
         explicit iterator(node* ptr) { this->ptr = ptr; }
 
         iterator operator++() {
@@ -381,5 +383,8 @@ public:
         std::cout << std::endl;
     }
 };
+
+template <typename T>
+const std::string DoubleList<T>::DSname = "DoubleList";
 
 } // namespace DS

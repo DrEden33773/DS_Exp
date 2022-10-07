@@ -23,8 +23,7 @@
 namespace DS {
 
 template <typename T = int> // default type = int
-class DynamicArray {
-private:
+struct DynamicArray {       // all public, for algorithm
     T*         data     = nullptr;
     int        size     = 0;
     int        capacity = 0;

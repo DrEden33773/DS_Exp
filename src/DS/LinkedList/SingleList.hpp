@@ -24,8 +24,9 @@
 namespace DS {
 
 template <typename T = int> // default type = int
-class SingleList {
-private:
+struct SingleList {         // all public, for algorithm
+    static const std::string DSname;
+
     struct node {
         T     element;
         node* next = nullptr;
@@ -48,6 +49,7 @@ private:
     class iterator : public std::iterator<std::forward_iterator_tag, T> { // could get and set value
     public:
         node* ptr = nullptr;
+
         explicit iterator(node* ptr) { this->ptr = ptr; }
         iterator operator++() {
             ptr = ptr->next;
@@ -186,13 +188,13 @@ public:
 
     /// @brief constexpr operation
     constexpr bool if_empty() noexcept {
-        return this->size == 0;
+        return size == 0;
     }
     constexpr int get_length() noexcept {
-        return this->size;
+        return size;
     }
     constexpr int get_size() noexcept {
-        return this->size;
+        return size;
     }
 
     /// @brief object management
@@ -605,5 +607,8 @@ public:
         return *(begin() + index);
     }
 };
+
+template <typename T>
+const std::string SingleList<T>::DSname = "SingleList";
 
 } // namespace DS
