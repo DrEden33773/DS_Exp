@@ -23,7 +23,7 @@ void run_all_test() {
         DynamicArrayTest, // success
         SingleListTest,   // success
         DoubleListTest,   // success
-        MergeUniqueTest,  //
+        MergeUniqueTest,  // success
     };
     for (auto&& func : test_list) {
         func();
