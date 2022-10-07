@@ -444,8 +444,13 @@ public:
     /// @brief function
     void echo() {
         std::cout << "range-based loop => ";
+        bool if_empty = true;
         for (const T& element : *this) { // this will use the iterator
             std::cout << element << " ";
+            if_empty = false;
+        }
+        if (if_empty) {
+            std::cout << "empty. ";
         }
         std::cout << std::endl;
         std::cout << std::endl;
