@@ -672,10 +672,10 @@ public:
         SingleList<int>& A, SingleList<int>& B
     ) {
         /// @brief this is to make sure the descending order, could escape
+        A.select_sort(false); // descending
+        B.select_sort(false); // descending
 
-        A.select_sort(false);  // descending
-        B.select_sort(false);  // descending
-        auto C = std::move(A); // A is cleared (without head)
+        SingleList<int> C = std::move(A); // A is cleared (without head)
         A.init_head();
 
         node* prior_C_ptr = C.head;

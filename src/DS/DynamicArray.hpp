@@ -144,10 +144,12 @@ public:
         }
     }
     DynamicArray(DynamicArray&& moved) noexcept { // move constructor
-        data       = moved.data;
-        size       = moved.size;
-        capacity   = moved.capacity;
-        moved.data = nullptr;
+        data           = moved.data;
+        size           = moved.size;
+        capacity       = moved.capacity;
+        moved.data     = nullptr;
+        moved.size     = 0;
+        moved.capacity = 0;
     }
     DynamicArray(std::initializer_list<T>&& initList) {
         reserve(initList.size() * 2);
@@ -372,27 +374,33 @@ public:
         std::cout << "Dynamic array called std::sort()" << std::endl;
         std::cout << std::endl;
     }
-    void insert_sort() { // ascending order
+    void insert_sort(bool if_ascending = true) { // ascending order
         if (size == 0) {
             std::cout << return_name() << " is empty, will escape sorting. " << std::endl;
             std::cout << std::endl;
         }
-        for (int index = 1; index < size; ++index) {
-            int opt = index;
-            while (opt > 0 && data[opt] < data[opt - 1]) {
-                std::swap(data[opt], data[opt - 1]);
-                --opt;
+        if (if_ascending) {
+            for (int index = 1; index < size; ++index) {
+                int opt = index;
+                while (opt > 0 && data[opt] < data[opt - 1]) {
+                    std::swap(data[opt], data[opt - 1]);
+                    --opt;
+                }
+            }
+        } else {
+            for (int index = 1; index < size; ++index) {
+                int opt = index;
+                while (opt > 0 && data[opt] > data[opt - 1]) {
+                    std::swap(data[opt], data[opt - 1]);
+                    --opt;
+                }
             }
         }
         std::cout << "Dynamic array called insert_sort()" << std::endl;
         std::cout << std::endl;
     }
-    void sort(bool if_std_sort = true) { // ascending order
-        if (if_std_sort) {
-            std_sort();
-        } else {
-            insert_sort();
-        }
+    void sort(bool if_ascending = true) { // ascending order
+        insert_sort(if_ascending);
     }
     void reverse() {
         for (int front = 0; front <= (size - 1) / 2; ++front) {
@@ -435,6 +443,66 @@ public:
         } else {
             emplace_unique();
         }
+    }
+    void ordered_unique() {
+        DynamicArray& curr_list = *this;
+        if (size == 0) { // empty list
+            return;
+        }
+        T tmp_elem = data[0];
+        for (int index = 1; index < size - 1;) {
+            T curr_elem = data[index];
+            if (curr_elem == tmp_elem) {
+                curr_list.delete_elem(index + 1); // pos = index + 1
+            } else {
+                tmp_elem = curr_elem;
+                ++index;
+            }
+        }
+    }
+    static void Merge_Unique(
+        DynamicArray<int>& A,
+        DynamicArray<int>& B
+    ) {
+        /// @brief this is to make sure the descending order, could escape
+        A.insert_sort(false); // descending
+        B.insert_sort(false); // descending
+
+        DynamicArray<int> C = std::move(A);
+        A.realloc(C.size + B.size + 8);
+
+        int  index_C = 0;
+        int  index_B = 0;
+        auto data_C  = C.data;
+        auto data_B  = B.data;
+        while (index_C < C.size && index_B < B.size) {
+            if (data_C[index_C] > data_B[index_B]) { // B < C
+                int C_elem = data_C[index_C];
+                A.emplace_back(C_elem);
+                ++index_C;
+            } else if (data_C[index_C] == data_B[index_B]) { // B == C
+                int B_elem = data_B[index_B];
+                A.emplace_back(B_elem);
+                ++index_C;
+                ++index_B;
+            } else { // B > C
+                int B_elem = data_B[index_B];
+                A.emplace_back(B_elem);
+                ++index_B;
+            }
+        }
+        while (index_C < C.size) {
+            int C_elem = data_C[index_C];
+            A.emplace_back(C_elem);
+            ++index_C;
+        }
+        while (index_B < B.size) {
+            int B_elem = data_B[index_B];
+            A.emplace_back(B_elem);
+            ++index_B;
+        }
+
+        A.emplace_unique();
     }
 
     /// @brief operator overloads

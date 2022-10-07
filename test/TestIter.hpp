@@ -20,10 +20,10 @@ namespace Test {
 
 void run_all_test() {
     std::vector<std::function<void()>> test_list = {
-        DynamicArrayTest, // success
-        SingleListTest,   // success
-        DoubleListTest,   // success
-        MergeUniqueTest,  // success
+        // DynamicArrayTest, // success
+        // SingleListTest,   // success
+        // DoubleListTest,   // success
+        MergeUniqueTest, //
     };
     for (auto&& func : test_list) {
         func();
