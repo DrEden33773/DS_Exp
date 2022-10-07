@@ -241,7 +241,7 @@ public:
         if (if_moved) {
             return;
         }
-        for (size_t remained = size; remained > 0; --remained) {
+        while (tail != head) { // do not rely on size, will be better!
             pop_back();
         }
         delete_head();
@@ -250,6 +250,7 @@ public:
     /// @brief head_node operation
     void init_head() {
         head    = new node();
+        tail    = head;
         if_init = true;
     }
     void delete_head() {
@@ -460,34 +461,58 @@ public:
         std::cout << "Single-direction linked list cannot use std::sort()!" << std::endl;
         std::cout << std::endl;
     }
-    void insert_sort() { // ascending order
+    void insert_sort(bool if_ascending = true) { // ascending order
         /// @a only_for_reference ==> (discarded)
         if (head->next == nullptr) {
             std::cout << return_name() << " is empty, will escape sorting. " << std::endl;
             std::cout << std::endl;
+            return;
         }
         SingleList<T>& curr = *this;
         for (int index = 1; index < size; ++index) {
             int opt = index;
-            while (opt > 0 && curr[opt] < curr[opt - 1]) {
-                // from: front => ahead => back => end
-                //   to: front => back => ahead => end
-                node* front = nullptr;
-                node* ahead = nullptr;
-                node* back  = nullptr;
-                node* end   = nullptr;
-                ahead       = (begin() + (opt - 1)).ptr;
-                back        = (begin() + (opt)).ptr;
-                end         = (begin() + (opt + 1)).ptr;
-                if (opt - 2 == -1) {
-                    front = head; // important operation
-                } else {
-                    front = (begin() + (opt - 2)).ptr;
+            if (if_ascending) {
+                while (opt > 0 && curr[opt] < curr[opt - 1]) {
+                    // from: front => ahead => back => end
+                    //   to: front => back => ahead => end
+                    node* front = nullptr;
+                    node* ahead = nullptr;
+                    node* back  = nullptr;
+                    node* end   = nullptr;
+                    ahead       = (begin() + (opt - 1)).ptr;
+                    back        = (begin() + (opt)).ptr;
+                    end         = (begin() + (opt + 1)).ptr;
+                    if (opt - 2 == -1) {
+                        front = head; // important operation
+                    } else {
+                        front = (begin() + (opt - 2)).ptr;
+                    }
+                    front->next = back;
+                    back->next  = ahead;
+                    ahead->next = end;
+                    --opt;
                 }
-                front->next = back;
-                back->next  = ahead;
-                ahead->next = end;
-                --opt;
+            } else {
+                while (opt > 0 && curr[opt] > curr[opt - 1]) {
+                    // from: front => ahead => back => end
+                    //   to: front => back => ahead => end
+                    node* front = nullptr;
+                    node* ahead = nullptr;
+                    node* back  = nullptr;
+                    node* end   = nullptr;
+                    ahead       = (begin() + (opt - 1)).ptr;
+                    back        = (begin() + (opt)).ptr;
+                    end         = (begin() + (opt + 1)).ptr;
+                    if (opt - 2 == -1) {
+                        front = head; // important operation
+                    } else {
+                        front = (begin() + (opt - 2)).ptr;
+                    }
+                    front->next = back;
+                    back->next  = ahead;
+                    ahead->next = end;
+                    --opt;
+                }
             }
         }
         std::cout << return_name() << " called insert_sort()" << std::endl;
@@ -495,34 +520,45 @@ public:
         std::cout << "or `perfect_insert_sort()` instead" << std::endl;
         std::cout << std::endl;
     }
-    void perfect_insert_sort() { // ascending order
+    void perfect_insert_sort(bool if_ascending = true) { // ascending order
         /// @a the_best_insert_sort ==> (recommended)
         if (head->next == nullptr) {
             std::cout << return_name() << " is empty, will escape sorting. " << std::endl;
             std::cout << std::endl;
+            return;
         }
         node* prior_scanner = head->next;
         node* scanner       = prior_scanner->next;
     }
-    void select_sort() { // ascending order
+    void select_sort(bool if_ascending = true) { // ascending order
         if (head->next == nullptr) {
             std::cout << return_name() << " is empty, will escape sorting. " << std::endl;
             std::cout << std::endl;
+            return;
         }
         SingleList<T>& curr = *this;
         for (node* outer = head->next; outer != tail; outer = outer->next) {
             T&    outer_elem = outer->element;
-            node* min_ptr    = outer;
-            for (node* inner = outer->next; inner != nullptr; inner = inner->next) {
-                T& inner_elem = inner->element;
-                if (inner_elem < min_ptr->element) {
-                    min_ptr = inner;
-                }
-            } // min_ptr found the correct place
-            T& min_elem = min_ptr->element;
-            if (min_ptr != outer) {
-                auto tmp   = std::move(min_elem);
-                min_elem   = std::move(outer_elem);
+            node* lim_ptr    = outer;
+            if (if_ascending) {
+                for (node* inner = outer->next; inner != nullptr; inner = inner->next) {
+                    T& inner_elem = inner->element;
+                    if (inner_elem < lim_ptr->element) {
+                        lim_ptr = inner;
+                    }
+                } // lim_ptr found the correct place
+            } else {
+                for (node* inner = outer->next; inner != nullptr; inner = inner->next) {
+                    T& inner_elem = inner->element;
+                    if (inner_elem > lim_ptr->element) {
+                        lim_ptr = inner;
+                    }
+                } // lim_ptr found the correct place
+            }
+            T& lim_elem = lim_ptr->element;
+            if (lim_ptr != outer) {
+                auto tmp   = std::move(lim_elem);
+                lim_elem   = std::move(outer_elem);
                 outer_elem = std::move(tmp);
                 // this is the best way!
                 // A = std::move(B) send the ownership of B to A (move B to A),
@@ -537,12 +573,8 @@ public:
         std::cout << return_name() << " called select_sort()" << std::endl;
         std::cout << std::endl;
     }
-    void sort(bool if_std_sort = true) { // ascending order
-        if (if_std_sort) {
-            std_sort();
-        } else {
-            select_sort();
-        }
+    void sort(bool if_ascending = true) { // ascending order
+        select_sort(if_ascending);
     }
     void reverse() {
         if (size == 0) {
@@ -562,30 +594,45 @@ public:
         std::cout << std::endl;
     }
     void emplace_unique() {
-        for (int index = 0; index < size; ++index) {
-            T head_elem = *(begin() + index);
-            for (int t_index = index + 1; t_index < size;) {
-                T curr_elem = *(begin() + t_index);
-                if (curr_elem == head_elem) {
-                    this->delete_elem(t_index + 1);
-                    // in this case, do not ++t_index
+        node* curr       = head->next;
+        node* prior_curr = head;
+        while (curr != nullptr) {
+            node* cmp       = curr->next;
+            node* prior_cmp = curr;
+            while (cmp != nullptr) {
+                node* next_cmp = cmp->next;
+                if (cmp->element == curr->element) {
+                    // remove cmp
+                    prior_cmp->next = cmp->next;
+                    delete cmp;
+                    --size; // important!
+                    cmp = next_cmp;
                 } else {
-                    ++t_index;
+                    cmp       = next_cmp;
+                    prior_cmp = prior_cmp->next;
                 }
             }
+            curr = curr->next;
         }
     }
     void hash_unique() {
         std::unordered_map<T, bool> hash_table;
-        for (int index = 0; index < size; ++index) {
-            int pos       = index + 1;
-            T   curr_elem = this->get_elem(pos);
+
+        node* prior_curr = head;
+        node* curr       = head->next;
+        while (curr != nullptr) {
+            node* next_curr = curr->next;
+            T&    curr_elem = curr->element;
             if (!hash_table.contains(curr_elem)) {
                 hash_table[curr_elem] = true;
             } else if (hash_table[curr_elem]) {
-                this->delete_elem(pos);
+                prior_curr->next = curr->next;
+                delete curr;
+                --size;
                 hash_table[curr_elem] = false;
             }
+            curr       = next_curr;
+            prior_curr = prior_curr->next;
         }
     }
     void unique(bool if_emplace = false) {
@@ -594,6 +641,104 @@ public:
         } else {
             emplace_unique();
         }
+    }
+    void ordered_unique() {
+        if (head->next == nullptr) { // empty list
+            return;
+        }
+        T tmp_elem = head->next->element; // do not use reference!
+        // cause you need to reassign `tmp_elem` but hate to change `head->next->element`
+        node* curr       = head->next->next;
+        node* prior_curr = head->next;
+        while (curr != nullptr) {
+            if (curr->element == tmp_elem) {
+                prior_curr->next = curr->next;
+                delete curr;
+                --size;
+                curr = prior_curr->next;
+            } else {
+                tmp_elem   = curr->element;
+                curr       = curr->next;
+                prior_curr = prior_curr->next;
+            }
+        }
+    }
+    static void Merge_Unique(
+        SingleList<int>& A, SingleList<int>& B
+    ) {
+        /// @brief this is to make sure the descending order, could escape
+
+        A.select_sort(false);  // descending
+        B.select_sort(false);  // descending
+        auto C = std::move(A); // A is cleared (without head)
+        A.init_head();
+
+        node* prior_C_ptr = C.head;
+        node* C_ptr       = C.head->next;
+        node* prior_B_ptr = B.head;
+        node* B_ptr       = B.head->next;
+        while (C_ptr != nullptr && B_ptr != nullptr) {
+            if (C_ptr->element < B_ptr->element) {
+                // move from B
+                prior_B_ptr->next = B_ptr->next;
+                A.tail->next      = B_ptr;
+                A.tail            = B_ptr;
+                A.tail->next      = nullptr; // we need to move a single node
+                ++A.size;
+                B_ptr = prior_B_ptr->next;
+                --B.size;
+            } else if (C_ptr->element == B_ptr->element) {
+                // move from B
+                prior_B_ptr->next = B_ptr->next;
+                A.tail->next      = B_ptr;
+                A.tail            = B_ptr;
+                A.tail->next      = nullptr; // we need to move a single node
+                ++A.size;
+                B_ptr = prior_B_ptr->next;
+                --B.size;
+                // remove the C
+                prior_C_ptr->next = C_ptr->next;
+                delete C_ptr;
+                C_ptr = prior_C_ptr->next;
+                --C.size;
+            } else {
+                // move from C
+                prior_C_ptr->next = C_ptr->next;
+                A.tail->next      = C_ptr;
+                A.tail            = C_ptr;
+                A.tail->next      = nullptr; // we need to move a single node
+                ++A.size;
+                C_ptr = prior_C_ptr->next;
+                --C.size;
+            }
+        }
+        while (C_ptr != nullptr) {
+            // move from C
+            prior_C_ptr->next = C_ptr->next;
+            A.tail->next      = C_ptr;
+            A.tail            = C_ptr;
+            ++A.size;
+            C_ptr = prior_C_ptr->next;
+            --C.size;
+        }
+        while (B_ptr != nullptr) {
+            // move from B
+            prior_B_ptr->next = B_ptr->next;
+            A.tail->next      = B_ptr;
+            A.tail            = B_ptr;
+            ++A.size;
+            B_ptr = prior_B_ptr->next;
+            --B.size;
+        }
+
+        // B and C List is totally empty right now
+        // but we need to relocate their tail, for correct destruction
+        // it's easy 'cause `tail = head` is the default state of any empty list
+
+        B.tail = B.head;
+        C.tail = C.head;
+
+        A.ordered_unique();
     }
 
     /// @brief operator overloads
