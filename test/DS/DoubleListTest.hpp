@@ -26,6 +26,10 @@ void DoubleListTest() {
     /// @brief @b echo()
     static_generated.echo();
 
+    /// @brief @b std_sort()
+    static_generated.std_sort();
+    static_generated.echo();
+
     Tool::end_info("Double_List");
 }
 

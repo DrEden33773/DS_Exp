@@ -31,6 +31,10 @@ private:
     bool       if_moved = false;
     static int init_capacity;
 
+    /// @brief @b return_name
+    virtual const char* return_name() final {
+        return "Dynamic-array";
+    }
     class iterator : public std::iterator<std::random_access_iterator_tag, T> {
     public:
         T* ptr;
@@ -356,11 +360,19 @@ public:
         // std::cout << std::endl;
     }
     void std_sort() { // ascending order
+        if (size == 0) {
+            std::cout << return_name() << " is empty, will escape sorting. " << std::endl;
+            std::cout << std::endl;
+        }
         std::sort(begin(), end());
         std::cout << "Dynamic array called std::sort()" << std::endl;
         std::cout << std::endl;
     }
     void insert_sort() { // ascending order
+        if (size == 0) {
+            std::cout << return_name() << " is empty, will escape sorting. " << std::endl;
+            std::cout << std::endl;
+        }
         for (int index = 1; index < size; ++index) {
             int opt = index;
             while (opt > 0 && data[opt] < data[opt - 1]) {

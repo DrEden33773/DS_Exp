@@ -40,6 +40,11 @@ private:
     bool if_moved = false;   // if temporarily created object will be moved
                              // if so, deleter won't be called
 
+    /// @brief @b return_name
+    virtual const char* return_name() final {
+        return "Single-List";
+    }
+
     class iterator : public std::iterator<std::forward_iterator_tag, T> { // could get and set value
     public:
         node* ptr = nullptr;
@@ -74,10 +79,33 @@ private:
             return *this;
         }
         int operator-(const iterator& rhs) {
-            // assume that `rhs` -> ... -> `lhs`
-            int distance = 0;
-            for (node* curr = ptr; ptr != rhs.ptr; ptr = ptr->next) {
+            // assume that `rhs` -> ... -> `this` (will be verified later)
+            int   distance           = 0;
+            node* this_ptr           = this->ptr;
+            node* rhs_ptr            = rhs.ptr;
+            node* original_rhs_ptr   = rhs.ptr;
+            bool  if_rhs_behind_this = false;
+            while (rhs_ptr != nullptr) {
+                if (rhs_ptr == this->ptr) {
+                    break;
+                }
+                rhs_ptr = rhs_ptr->next;
                 ++distance;
+            } // maybe rhs.ptr == nullptr
+            if (rhs_ptr == nullptr) {
+                if_rhs_behind_this = true;
+            }
+            if (if_rhs_behind_this) {
+                rhs_ptr  = original_rhs_ptr;
+                distance = 0;
+                // now `this` -> ... -> `rhs`
+                while (this_ptr != nullptr) {
+                    if (this_ptr == rhs_ptr) {
+                        break;
+                    }
+                    this_ptr = this_ptr->next;
+                    ++distance;
+                }
             }
             return distance;
         }
@@ -432,6 +460,10 @@ public:
     }
     void insert_sort() { // ascending order
         /// @a only_for_reference ==> (discarded)
+        if (head->next == nullptr) {
+            std::cout << return_name() << " is empty, will escape sorting. " << std::endl;
+            std::cout << std::endl;
+        }
         SingleList<T>& curr = *this;
         for (int index = 1; index < size; ++index) {
             int opt = index;
@@ -456,11 +488,25 @@ public:
                 --opt;
             }
         }
-        std::cout << "Single-direction linked list called insert_sort()" << std::endl;
-        std::cout << "but this is not recommended! Consider use select_sort() instead" << std::endl;
+        std::cout << return_name() << " called insert_sort()" << std::endl;
+        std::cout << "but this is not recommended! Consider use `select_sort()` ";
+        std::cout << "or `perfect_insert_sort()` instead" << std::endl;
         std::cout << std::endl;
     }
+    void perfect_insert_sort() { // ascending order
+        /// @a the_best_insert_sort ==> (recommended)
+        if (head->next == nullptr) {
+            std::cout << return_name() << " is empty, will escape sorting. " << std::endl;
+            std::cout << std::endl;
+        }
+        node* prior_scanner = head->next;
+        node* scanner       = prior_scanner->next;
+    }
     void select_sort() { // ascending order
+        if (head->next == nullptr) {
+            std::cout << return_name() << " is empty, will escape sorting. " << std::endl;
+            std::cout << std::endl;
+        }
         SingleList<T>& curr = *this;
         for (node* outer = head->next; outer != tail; outer = outer->next) {
             T&    outer_elem = outer->element;
@@ -486,7 +532,7 @@ public:
                 // which will cost more time (because there's no `prev` ptr in the node)
             }
         }
-        std::cout << "Single-direction linked list called select_sort()" << std::endl;
+        std::cout << return_name() << " called select_sort()" << std::endl;
         std::cout << std::endl;
     }
     void sort(bool if_std_sort = true) { // ascending order
@@ -510,7 +556,7 @@ public:
             to_opt            = next_to_opt;
         }
         tail = new_tail;
-        std::cout << "Single list called `reverse()`. " << std::endl;
+        std::cout << return_name() << " called `reverse()`. " << std::endl;
         std::cout << std::endl;
     }
     void emplace_unique() {

@@ -13,6 +13,7 @@
  */
 
 #pragma once
+#include <algorithm>
 #include <cassert>
 #include <cstddef>
 #include <initializer_list>
@@ -39,6 +40,11 @@ class DoubleList {
                              // (num of effective nodes)
     bool if_moved = false;   // if temporarily created object will be moved
                              // if so, deleter won't be called
+
+    /// @brief @b return_name
+    virtual const char* return_name() final {
+        return "Double-List";
+    }
 
     /// @brief @b bidirectional_iterator
     class iterator : public std::iterator<std::bidirectional_iterator_tag, T> {
@@ -106,10 +112,33 @@ class DoubleList {
         }
 
         int operator-(const iterator& rhs) {
-            // assume that `rhs` -> ... -> `lhs`
-            int distance = 0;
-            for (node* curr = ptr; ptr != rhs.ptr; ptr = ptr->next) {
+            // assume that `rhs` -> ... -> `this` (will be verified later)
+            int   distance           = 0;
+            node* this_ptr           = this->ptr;
+            node* rhs_ptr            = rhs.ptr;
+            node* original_rhs_ptr   = rhs.ptr;
+            bool  if_rhs_behind_this = false;
+            while (rhs_ptr != nullptr) {
+                if (rhs_ptr == this->ptr) {
+                    break;
+                }
+                rhs_ptr = rhs_ptr->next;
                 ++distance;
+            } // maybe rhs.ptr == nullptr
+            if (rhs_ptr == nullptr) {
+                if_rhs_behind_this = true;
+            }
+            if (if_rhs_behind_this) {
+                rhs_ptr  = original_rhs_ptr;
+                distance = 0;
+                // now `this` -> ... -> `rhs`
+                while (this_ptr != nullptr) {
+                    if (this_ptr == rhs_ptr) {
+                        break;
+                    }
+                    this_ptr = this_ptr->next;
+                    ++distance;
+                }
             }
             return distance;
         }
@@ -144,7 +173,7 @@ class DoubleList {
     /// @b each operation related to iterator will be in @b [begin(),end()) range
 
     /// @brief relative location relation resolver
-    static bool if_A_ahead_B(node* A, node* B) {
+    static bool if_A_ahead_B(node* A, node* B) { // A -> ... -> B
         bool  res = false;
         node* tmp = A;
         while (tmp != nullptr) {
@@ -156,7 +185,7 @@ class DoubleList {
         }
         return res;
     }
-    static bool if_A_behind_B(node* A, node* B) {
+    static bool if_A_behind_B(node* A, node* B) { // B -> ... -> A
         bool  res = false;
         node* tmp = B;
         while (tmp != nullptr) {
@@ -168,10 +197,10 @@ class DoubleList {
         }
         return res;
     }
-    static constexpr bool if_A_is_B(node* A, node* B) {
+    static constexpr bool if_A_is_B(node* A, node* B) { // B == A
         return A == B;
     }
-    static constexpr bool if_A_is_not_B(node* A, node* B) {
+    static constexpr bool if_A_is_not_B(node* A, node* B) { // B != A
         return A != B;
     }
 
@@ -343,7 +372,12 @@ public:
         // std::cout << std::endl;
     }
     void std_sort() {
-        std::cout << "Double-direction linked list cannot use std::sort()!" << std::endl;
+        if (head->next == nullptr) {
+            std::cout << return_name() << " is empty, will escape sorting. " << std::endl;
+            std::cout << std::endl;
+        }
+        std::sort(begin(), end());
+        std::cout << return_name() << " called std::sort()" << std::endl;
         std::cout << std::endl;
     }
 };
