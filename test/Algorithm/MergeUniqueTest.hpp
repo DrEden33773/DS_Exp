@@ -122,7 +122,6 @@ void DoubleList_() {
         DoubleList_A.echo();
         DoubleList_B.echo();
 
-        /// @bug Merge_Unique
         DS::DoubleList<int>::Merge_Unique(DoubleList_A, DoubleList_B);
         DoubleList_A.echo();
         DoubleList_B.echo();
