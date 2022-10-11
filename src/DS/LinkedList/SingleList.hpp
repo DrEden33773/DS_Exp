@@ -284,6 +284,9 @@ public:
         head->next          = deleted->next;
         delete deleted;
         --size;
+        if (size == 0) { // no elem
+            tail = head;
+        }
         return returned_elem;
     }
     void push_back(const T& input) {
@@ -291,7 +294,7 @@ public:
             throw std::out_of_range("The linked list hasn't been initialized!");
         }
         node* to_add = new node(input);
-        if (tail == nullptr) {
+        if (tail == nullptr) { // discarded
             head->next = to_add;
             tail       = to_add;
         } else {
@@ -305,12 +308,15 @@ public:
             throw std::out_of_range("The linked list hasn't been initialized!");
         }
         node* to_add = new node(input);
-        if (tail == nullptr) {
+        if (tail == nullptr) { // discarded
             head->next = to_add;
             tail       = to_add;
         } else {
             to_add->next = head->next;
             head->next   = to_add;
+            if (tail == head) {
+                tail = to_add;
+            }
         }
         ++size;
     }
@@ -486,7 +492,7 @@ public:
                     node* end   = nullptr;
                     ahead       = (begin() + (opt - 1)).ptr;
                     back        = (begin() + (opt)).ptr;
-                    end         = (begin() + (opt + 1)).ptr;
+                    end         = back->next;
                     if (opt - 2 == -1) {
                         front = head; // important operation
                     } else {
@@ -507,7 +513,7 @@ public:
                     node* end   = nullptr;
                     ahead       = (begin() + (opt - 1)).ptr;
                     back        = (begin() + (opt)).ptr;
-                    end         = (begin() + (opt + 1)).ptr;
+                    end         = back->next;
                     if (opt - 2 == -1) {
                         front = head; // important operation
                     } else {
@@ -521,20 +527,22 @@ public:
             }
         }
         std::cout << return_name() << " called insert_sort()" << std::endl;
-        std::cout << "but this is not recommended! Consider use `select_sort()` ";
-        std::cout << "or `perfect_insert_sort()` instead" << std::endl;
+        std::cout << "but this is not recommended! Consider use `select_sort()` "
+                  << std::endl;
+        // std::cout << "\t"
+        //           << "or `perfect_insert_sort()` instead" << std::endl;
         std::cout << std::endl;
     }
-    void perfect_insert_sort(bool if_ascending = true) { // ascending order
-        /// @a the_best_insert_sort ==> (recommended)
-        if (head->next == nullptr) {
-            std::cout << return_name() << " is empty, will escape sorting. " << std::endl;
-            std::cout << std::endl;
-            return;
-        }
-        node* prior_scanner = head->next;
-        node* scanner       = prior_scanner->next;
-    }
+    // void perfect_insert_sort(bool if_ascending = true) { // ascending order
+    //     /// @a the_best_insert_sort ==> (recommended)
+    //     if (head->next == nullptr) {
+    //         std::cout << return_name() << " is empty, will escape sorting. " << std::endl;
+    //         std::cout << std::endl;
+    //         return;
+    //     }
+    //     node* prior_scanner = head->next;
+    //     node* scanner       = prior_scanner->next;
+    // }
     void select_sort(bool if_ascending = true) { // ascending order
         if (head->next == nullptr) {
             std::cout << return_name() << " is empty, will escape sorting. " << std::endl;
@@ -582,7 +590,7 @@ public:
         select_sort(if_ascending);
     }
     void reverse() {
-        if (size == 0) {
+        if (size == 0 || size == 1) {
             return; // don't need to!
         }
         node* new_tail = head->next;
@@ -608,7 +616,11 @@ public:
                 node* next_cmp = cmp->next;
                 if (cmp->element == curr->element) {
                     // remove cmp
-                    prior_cmp->next = cmp->next;
+                    prior_cmp->next = next_cmp;
+
+                    if (cmp == tail) { // must judge
+                        tail = prior_cmp;
+                    }
                     delete cmp;
                     --size; // important!
                     cmp = next_cmp;
@@ -617,7 +629,8 @@ public:
                     prior_cmp = prior_cmp->next;
                 }
             }
-            curr = curr->next;
+            curr       = curr->next;
+            prior_curr = prior_curr->next;
         }
     }
     void hash_unique() {
@@ -632,6 +645,10 @@ public:
                 hash_table[curr_elem] = true;
             } else if (hash_table[curr_elem]) {
                 prior_curr->next = curr->next;
+
+                if (curr == tail) { // must judge before delete curr
+                    tail = prior_curr;
+                }
                 delete curr;
                 --size;
                 hash_table[curr_elem] = false;
@@ -658,6 +675,10 @@ public:
         while (curr != nullptr) {
             if (curr->element == tmp_elem) {
                 prior_curr->next = curr->next;
+
+                if (curr == tail) { // must judge before delete curr
+                    tail = prior_curr;
+                }
                 delete curr;
                 --size;
                 curr = prior_curr->next;
@@ -669,11 +690,13 @@ public:
         }
     }
     static void Merge_Unique(
-        SingleList<int>& A, SingleList<int>& B
+        SingleList<int>& A,
+        SingleList<int>& B,
+        bool             if_ascending = false
     ) {
         /// @brief this is to make sure the descending order, could escape
-        A.select_sort(false); // descending
-        B.select_sort(false); // descending
+        A.select_sort(if_ascending); // default as descending
+        B.select_sort(if_ascending); // default as descending
 
         SingleList<int> C = std::move(A); // A is cleared (without head)
         A.init_head();
@@ -723,6 +746,8 @@ public:
             A.tail->next      = C_ptr;
             A.tail            = C_ptr;
             ++A.size;
+            A.tail->next = nullptr; // we need to move a single node
+
             C_ptr = prior_C_ptr->next;
             --C.size;
         }
@@ -732,6 +757,8 @@ public:
             A.tail->next      = B_ptr;
             A.tail            = B_ptr;
             ++A.size;
+            A.tail->next = nullptr; // we need to move a single node
+
             B_ptr = prior_B_ptr->next;
             --B.size;
         }

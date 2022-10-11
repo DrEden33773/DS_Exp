@@ -11,6 +11,7 @@
 
 #pragma once
 #include "../../src/DS/DynamicArray.hpp"
+#include "../../src/DS/LinkedList/DoubleList.hpp"
 #include "../../src/DS/LinkedList/SingleList.hpp"
 #include "../../tools/TestTool.hpp"
 
@@ -90,11 +91,52 @@ void DynamicArray_() {
     }
 }
 
+void DoubleList_() {
+    std::cout << ">>>>>>>>>> Then Double-list! <<<<<<<<<<" << std::endl;
+    std::cout << std::endl;
+
+    auto DoubleList_A
+        = DS::DoubleList<int>::CreateDoubleList(
+            { 1, 5, 2, 9, 4, 0 }
+        );
+    auto DoubleList_B
+        = DS::DoubleList<int>::CreateDoubleList(
+            { 7, 10, 3, 9, 4, 0, 1, 3 }
+        );
+    DoubleList_A.echo();
+    DoubleList_B.echo();
+
+    /// @bug Merge_Unique
+    DS::DoubleList<int>::Merge_Unique(DoubleList_A, DoubleList_B);
+    DoubleList_A.echo();
+    DoubleList_B.echo();
+
+    { // empty check => success!
+        auto DoubleList_A
+            = DS::DoubleList<int>::CreateDoubleList(
+                {}
+            );
+        auto DoubleList_B
+            = DS::DoubleList<int>::CreateDoubleList(
+                {}
+            );
+        DoubleList_A.echo();
+        DoubleList_B.echo();
+
+        /// @bug Merge_Unique
+        DS::DoubleList<int>::Merge_Unique(DoubleList_A, DoubleList_B);
+        DoubleList_A.echo();
+        DoubleList_B.echo();
+    }
+}
+
 void MergeUniqueTest() {
     Tool::title_info("MergeUnique");
 
     SingleList_();
     DynamicArray_();
+    /// @bug DoubleList_
+    DoubleList_();
 
     Tool::end_info("MergeUnique");
 }
