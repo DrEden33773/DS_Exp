@@ -4,7 +4,7 @@
  * @brief Linked list with two directions
  * @structure:
         head<->[data|ptr]<->[data|ptr]<->...<->[data|ptr]-> nullptr
-                                            ^^^^------> tail
+                                                ^^^^------> tail
  * @version 0.1
  * @date 2022-10-06
  *
@@ -33,7 +33,8 @@ class DoubleList {          // all public, for algorithm
         node* next = nullptr;
         node* prev = nullptr;
         node()     = default;
-        explicit node(const T& element) { this->element = element; }
+        constexpr explicit node(const T& element)
+            : element(element) { }
     };
     node* head    = nullptr; // head node never maintain data
     node* tail    = nullptr; // tail node always maintain data
@@ -53,7 +54,8 @@ class DoubleList {          // all public, for algorithm
     public:
         node* ptr = nullptr;
 
-        explicit iterator(node* ptr) { this->ptr = ptr; }
+        constexpr explicit iterator(node* ptr)
+            : ptr(ptr) { }
 
         iterator operator++() {
             ptr = ptr->next;
@@ -872,5 +874,8 @@ public:
 
 template <typename T>
 const std::string DoubleList<T>::DSname = "DoubleList";
+
+template <typename T>
+using List = DoubleList<T>;
 
 } // namespace DS

@@ -31,7 +31,8 @@ class SingleList {          // all public, for algorithm
         T     element;
         node* next = nullptr;
         node()     = default;
-        explicit node(const T& element) { this->element = element; }
+        constexpr explicit node(const T& element)
+            : element(element) { }
     };
     node* head    = nullptr; // head node never maintain data
     node* tail    = nullptr; // tail node always maintain data
@@ -50,7 +51,9 @@ class SingleList {          // all public, for algorithm
     public:
         node* ptr = nullptr;
 
-        explicit iterator(node* ptr) { this->ptr = ptr; }
+        constexpr explicit iterator(node* ptr)
+            : ptr(ptr) { }
+
         iterator operator++() {
             ptr = ptr->next;
             return *this;

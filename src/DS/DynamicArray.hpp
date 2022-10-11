@@ -37,7 +37,9 @@ class DynamicArray {        // all public, for algorithm
     class iterator : public std::iterator<std::random_access_iterator_tag, T> {
     public:
         T* ptr;
-        explicit iterator(T* ptr) { this->ptr = ptr; }
+
+        constexpr explicit iterator(T* ptr)
+            : ptr(ptr) { }
         // prefix ++X/--X
         iterator operator++() {
             ++ptr;
@@ -520,5 +522,11 @@ public:
 
 template <typename T>
 int DynamicArray<T>::init_capacity = 4;
+
+template <typename T>
+using Vector = DynamicArray<T>;
+
+template <typename T>
+using Vec = DynamicArray<T>;
 
 } // namespace DS
