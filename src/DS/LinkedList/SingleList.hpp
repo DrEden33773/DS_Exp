@@ -533,16 +533,6 @@ public:
         //           << "or `perfect_insert_sort()` instead" << std::endl;
         std::cout << std::endl;
     }
-    // void perfect_insert_sort(bool if_ascending = true) { // ascending order
-    //     /// @a the_best_insert_sort ==> (recommended)
-    //     if (head->next == nullptr) {
-    //         std::cout << return_name() << " is empty, will escape sorting. " << std::endl;
-    //         std::cout << std::endl;
-    //         return;
-    //     }
-    //     node* prior_scanner = head->next;
-    //     node* scanner       = prior_scanner->next;
-    // }
     void select_sort(bool if_ascending = true) { // ascending order
         if (head->next == nullptr) {
             std::cout << return_name() << " is empty, will escape sorting. " << std::endl;
