@@ -273,7 +273,7 @@ public:
         if (if_moved) {
             return;
         }
-        for (size_t remained = size; remained > 0; --remained) {
+        while (tail != head) { // do not rely on size, will be better!
             pop_back();
         }
         delete_head();
@@ -293,16 +293,17 @@ public:
 
     /// @brief data_io operation
     T pop_back() { // remove `tail`
-        if (tail == nullptr) {
+        if (tail == nullptr || tail == head) {
             throw std::out_of_range("There's NO node in this linked list!");
         }
-        node* new_tail = tail->prev;
-        node* old_tail = tail;
-        new_tail->next = nullptr;
+        node* new_tail  = tail->prev;
+        node* old_tail  = tail;
+        T     to_return = old_tail->element;
+        new_tail->next  = nullptr;
         delete tail;
         tail = new_tail;
         --size;
-        return old_tail->element;
+        return to_return;
     }
     T pop_front() { // remove `head->next`
         if (tail == nullptr) {
@@ -770,7 +771,9 @@ public:
                 // move from B
                 node* next_B_ptr  = B_ptr->next;
                 prior_B_ptr->next = next_B_ptr;
-                next_B_ptr->prev  = prior_B_ptr;
+                if (next_B_ptr != nullptr) {
+                    next_B_ptr->prev = prior_B_ptr;
+                }
 
                 A.tail->next = B_ptr;
                 B_ptr->prev  = A.tail;
@@ -784,7 +787,9 @@ public:
                 // move from B
                 node* next_B_ptr  = B_ptr->next;
                 prior_B_ptr->next = next_B_ptr;
-                next_B_ptr->prev  = prior_B_ptr;
+                if (next_B_ptr != nullptr) {
+                    next_B_ptr->prev = prior_B_ptr;
+                }
 
                 A.tail->next = B_ptr;
                 B_ptr->prev  = A.tail;
@@ -798,16 +803,24 @@ public:
                 // remove the C
                 node* next_C_ptr  = C_ptr->next;
                 prior_C_ptr->next = next_C_ptr;
-                next_C_ptr->prev  = prior_C_ptr;
+                if (next_C_ptr != nullptr) {
+                    next_C_ptr->prev = prior_C_ptr;
+                }
                 delete C_ptr;
                 C_ptr = prior_C_ptr->next;
                 --C.size;
             } else {
                 // move from C
-                prior_C_ptr->next = C_ptr->next;
-                A.tail->next      = C_ptr;
-                A.tail            = C_ptr;
-                A.tail->next      = nullptr; // we need to move a single node
+                node* next_C_ptr  = C_ptr->next;
+                prior_C_ptr->next = next_C_ptr;
+                if (next_C_ptr != nullptr) {
+                    next_C_ptr->prev = prior_C_ptr;
+                }
+
+                A.tail->next = C_ptr;
+                C_ptr->prev  = A.tail; // fixed a bug?
+                A.tail       = C_ptr;
+                A.tail->next = nullptr; // we need to move a single node
                 ++A.size;
                 C_ptr = prior_C_ptr->next;
                 --C.size;
@@ -817,7 +830,9 @@ public:
             // move from C
             node* next_C_ptr  = C_ptr->next;
             prior_C_ptr->next = next_C_ptr;
-            next_C_ptr->prev  = prior_C_ptr;
+            if (next_C_ptr != nullptr) {
+                next_C_ptr->prev = prior_C_ptr;
+            }
 
             A.tail->next = C_ptr;
             C_ptr->prev  = A.tail;
@@ -830,9 +845,13 @@ public:
         }
         while (B_ptr != nullptr) {
             // move from B
-            prior_B_ptr->next = B_ptr->next;
-            A.tail->next      = B_ptr;
-            A.tail            = B_ptr;
+            node* next_B_ptr  = B_ptr->next;
+            prior_B_ptr->next = next_B_ptr;
+            if (next_B_ptr != nullptr) {
+                next_B_ptr->prev = prior_B_ptr;
+            }
+            A.tail->next = B_ptr;
+            A.tail       = B_ptr;
             ++A.size;
             A.tail->next = nullptr; // we need to move a single node
 

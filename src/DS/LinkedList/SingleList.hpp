@@ -261,7 +261,7 @@ public:
 
     /// @brief data_io operation
     T pop_back() { // remove `tail`
-        if (tail == nullptr) {
+        if (tail == nullptr || tail == head) {
             throw std::out_of_range("There's NO node in this linked list!");
         }
         // locate tail
