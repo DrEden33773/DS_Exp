@@ -196,13 +196,12 @@ protected:
     }
 
     /// @brief static constructor
-    static BasicCircleList<T>&& CreateDoubleList(
+    static BasicCircleList<T> CreateDoubleList(
         std::initializer_list<T>&& initList
     ) {
         using original_type = std::initializer_list<T>;
         BasicCircleList<T> created(std::forward<original_type>(initList));
-        created.if_moved = true;
-        return std::move(created);
+        return created;
     }
 
     /// @brief constexpr operation

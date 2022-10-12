@@ -180,13 +180,12 @@ class SingleList {          // all public, for algorithm
 
 public:
     /// @brief static constructor
-    static SingleList<T>&& CreateSingleList(
+    static SingleList<T> CreateSingleList(
         std::initializer_list<T>&& initList
     ) {
         using original_type = std::initializer_list<T>;
         SingleList<T> created(std::forward<original_type>(initList));
-        created.if_moved = true;
-        return std::move(created);
+        return created;
     }
 
     /// @brief constexpr operation
