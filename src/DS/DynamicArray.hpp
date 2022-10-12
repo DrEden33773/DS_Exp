@@ -323,6 +323,7 @@ public:
         for (int i = 0; i < size; ++i) {
             tmp[i] = data[i];
         }
+        delete[] data; // old_data is trash
         data     = tmp;
         capacity = new_capacity;
     }
@@ -339,6 +340,7 @@ public:
         for (int i = 0; i < size; ++i) {
             tmp[i] = data[i];
         }
+        delete[] data; // old_data is trash
         data     = tmp;
         capacity = new_capacity;
     }
