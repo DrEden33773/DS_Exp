@@ -354,7 +354,7 @@ public:
         } else {
             node* the_next = head->next;
             to_add->next   = the_next;
-            if (tail != head) { // or, the_next = nullptr
+            if (the_next != nullptr) { // or, the_next == nullptr
                 the_next->prev = to_add;
             }
             to_add->prev = head;

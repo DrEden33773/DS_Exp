@@ -298,14 +298,11 @@ protected:
         } else {
             node* the_next = head->next;
             to_add->next   = the_next;
-            if (tail != head) { // or, the_next = nullptr
+            if (the_next != nullptr) { // or, the_next == nullptr
                 the_next->prev = to_add;
             }
             to_add->prev = head;
             head->next   = to_add;
-            if (tail == head) {
-                tail = to_add;
-            }
         }
         ++size;
     }
@@ -314,6 +311,28 @@ protected:
     }
     void add_front(const T& input) {
         add_front(input);
+    }
+
+    /// @brief function
+    void echo() {
+        std::cout << "range-based loop => ";
+        bool if_empty = true;
+        for (const T& element : *this) { // this will use the iterator
+            std::cout << element << " ";
+            if_empty = false;
+        }
+        if (if_empty) {
+            std::cout << "empty. ";
+        }
+        std::cout << std::endl;
+        std::cout << std::endl;
+        // std::cout << "  old-style loop => ";
+        // node* tmp = head->next;
+        // while (tmp != nullptr) {
+        //     std::cout << tmp->element << " ";
+        //     tmp = tmp->next;
+        // }
+        // std::cout << std::endl;
     }
 };
 
