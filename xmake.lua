@@ -4,6 +4,8 @@ target("DS_Exp")
     set_kind("binary")
     add_files("src/*.cpp")
     set_languages("clatest", "gnu++latest")
+    add_includedirs("/usr/include", "/usr/local/include")
+    add_linkdirs("/usr/local/lib", "/usr/lib")
 
 --
 -- If you want to known more usage about xmake, please see https://xmake.io

@@ -9,6 +9,8 @@
       "-g",
       "-O0",
       "-std=gnu++2b",
+      "-I/usr/include",
+      "-I/usr/local/include",
       "-o",
       "build/.objs/DS_Exp/linux/x86_64/debug/src/main.cpp.o",
       "src/main.cpp"
