@@ -236,6 +236,9 @@ public:
     }
     DoubleList(const DoubleList& copied) { // copy constructor
         init_head();
+        for (const T& element : copied) {
+            push_back(element);
+        }
     }
     DoubleList(DoubleList&& moved) noexcept { // move constructor
 
@@ -308,7 +311,7 @@ public:
         return to_return;
     }
     T pop_front() { // remove `head->next`
-        if (tail == nullptr) {
+        if (tail == nullptr || tail == head) {
             throw std::out_of_range("There's NO node in this linked list!");
         }
         node* deleted       = head->next;

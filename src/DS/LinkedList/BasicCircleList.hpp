@@ -194,6 +194,127 @@ protected:
     static constexpr bool if_A_is_not_B(node* A, node* B) { // B != A
         return A != B;
     }
+
+    /// @brief static constructor
+    static BasicCircleList<T>&& CreateDoubleList(
+        std::initializer_list<T>&& initList
+    ) {
+        using original_type = std::initializer_list<T>;
+        BasicCircleList<T> created(std::forward<original_type>(initList));
+        created.if_moved = true;
+        return std::move(created);
+    }
+
+    /// @brief constexpr operation
+    constexpr bool if_empty() noexcept {
+        return this->size == 0;
+    }
+    constexpr int get_length() noexcept {
+        return this->size;
+    }
+    constexpr int get_size() noexcept {
+        return this->size;
+    }
+
+    /// @brief object management
+    BasicCircleList()                                 = default; // default constructor
+    BasicCircleList(BasicCircleList&& moved) noexcept = default; // move constructor
+    BasicCircleList(const BasicCircleList& copied) {             // copy constructor
+        for (const T& element : copied) {
+            push_back(element);
+        }
+    }
+    BasicCircleList(std::initializer_list<T>&& initList) {
+        for (const T& element : initList) {
+            push_back(element);
+        }
+    }
+    ~BasicCircleList() noexcept { // impossible to throw exception
+        if (if_moved) {
+            return;
+        }
+        while (tail != head) { // do not rely on size, will be better!
+            pop_back();
+        }
+        delete head; // delete tail;
+    }
+
+    /// @brief data_io operation
+    T pop_back() { // remove `tail`
+        if (tail == nullptr) {
+            throw std::out_of_range("There's NO node in this linked list!");
+        }
+        node* new_tail  = tail->prev;
+        node* old_tail  = tail;
+        T     to_return = old_tail->element;
+        new_tail->next  = nullptr;
+        delete tail;
+        tail = new_tail;
+        --size;
+        return to_return;
+    }
+    T pop_front() { // remove `head->next`
+        if (tail == nullptr) {
+            throw std::out_of_range("There's NO node in this linked list!");
+        }
+        T returned_elem;
+        if (size == 1) {
+            returned_elem = head->element;
+            delete head;
+            --size;
+        } else {
+            node* deleted       = head->next;
+            node* new_head_next = deleted->next;
+            returned_elem       = deleted->element;
+            head->next          = new_head_next;
+            new_head_next->prev = head;
+            delete deleted;
+            --size;
+            if (size == 1) {
+                tail = head;
+            }
+        }
+        return returned_elem;
+    }
+    void push_back(const T& input) {
+        node* to_add = new node(input);
+        if (tail == nullptr) {
+            head->next = to_add;
+            tail       = to_add;
+            tail->prev = head;
+        } else {
+            tail->next   = to_add;
+            to_add->prev = tail;
+            tail         = to_add;
+        }
+        ++size;
+    }
+    void push_front(const T& input) {
+        node* to_add = new node(input);
+        if (tail == nullptr) {
+            head->next = to_add;
+            tail       = to_add;
+            tail->prev = head;
+        } else {
+            node* the_next = head->next;
+            to_add->next   = the_next;
+            if (tail != head) { // or, the_next = nullptr
+                the_next->prev = to_add;
+            }
+            to_add->prev = head;
+            head->next   = to_add;
+            if (tail == head) {
+                tail = to_add;
+            }
+        }
+        ++size;
+    }
+    void add_back(const T& input) {
+        push_back(input);
+    }
+    void add_front(const T& input) {
+        add_front(input);
+    }
 };
 
 } // namespace DS

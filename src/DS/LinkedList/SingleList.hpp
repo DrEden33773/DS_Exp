@@ -206,6 +206,9 @@ public:
     }
     SingleList(const SingleList& copied) { // copy constructor
         init_head();
+        for (const T& element : copied) {
+            push_back(element);
+        }
     }
     SingleList(SingleList&& moved) noexcept { // move constructor
 
@@ -272,14 +275,16 @@ public:
         while (tmp->next != tail) {
             tmp = tmp->next;
         } // tmp->next == tail
-        node* deleted_tail = tmp->next;
-        delete tmp->next;
-        tail = tmp;
+        node* deleted_tail  = tmp->next;
+        T     returned_elem = deleted_tail->element;
+        delete deleted_tail;
+        tail       = tmp;
+        tail->next = nullptr; // fixed bug
         --size;
-        return deleted_tail->element;
+        return returned_elem;
     }
     T pop_front() { // remove `head->next`
-        if (tail == nullptr) {
+        if (tail == nullptr || tail == head) {
             throw std::out_of_range("There's NO node in this linked list!");
         }
         node* deleted       = head->next;
