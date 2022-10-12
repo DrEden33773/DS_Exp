@@ -326,13 +326,6 @@ protected:
         }
         std::cout << std::endl;
         std::cout << std::endl;
-        // std::cout << "  old-style loop => ";
-        // node* tmp = head->next;
-        // while (tmp != nullptr) {
-        //     std::cout << tmp->element << " ";
-        //     tmp = tmp->next;
-        // }
-        // std::cout << std::endl;
     }
 };
 
