@@ -70,6 +70,6 @@ public:
 };
 
 template <typename T>
-using Stack = ListStack<T>;
+using Stack = VecStack<T>;
 
 } // namespace DS

@@ -108,6 +108,10 @@ class DynamicArray {        // all public, for algorithm
     }
 
 public:
+    /// @brief return the ptr of @b data
+    constexpr T* return_data() {
+        return data;
+    }
     /// @brief static constructor
 
     static DynamicArray<T> CreateDynamicArray(

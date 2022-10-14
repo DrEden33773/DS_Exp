@@ -2,13 +2,12 @@
   {
     "directory": "/home/eden/CollegeLearningRepo/DS_Exp",
     "arguments": [
-      "/usr/bin/clang",
+      "/usr/bin/gcc",
       "-c",
-      "-Qunused-arguments",
       "-m64",
       "-g",
       "-O0",
-      "-std=gnu++2b",
+      "-std=gnu++23",
       "-o",
       "build/.objs/DS_Exp/linux/x86_64/debug/src/main.cpp.o",
       "src/main.cpp"
