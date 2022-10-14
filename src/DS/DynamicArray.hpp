@@ -23,10 +23,10 @@
 namespace DS {
 
 template <typename T = int> // default type = int
-class DynamicArray {        // all public, for algorithm
+class DynamicArray {
     T*         data     = nullptr;
     int        size     = 0;
-    int        capacity = 0;
+    int        capacity = init_capacity;
     bool       if_moved = false;
     static int init_capacity;
 
@@ -34,6 +34,8 @@ class DynamicArray {        // all public, for algorithm
     virtual const char* return_name() final {
         return "Dynamic-array";
     }
+
+public:
     class iterator : public std::iterator<std::random_access_iterator_tag, T> {
     public:
         T* ptr;
@@ -94,13 +96,13 @@ class DynamicArray {        // all public, for algorithm
         bool operator>=(const iterator& rhs) const { return ptr >= rhs.ptr; }
         bool operator<=(const iterator& rhs) const { return ptr <= rhs.ptr; }
     };
-    iterator begin() {
+    constexpr iterator begin() {
         if (size == 0) {
             return iterator(nullptr);
         }
         return iterator(data);
     }
-    iterator end() {
+    constexpr iterator end() {
         if (size == 0) {
             return iterator(nullptr);
         }
@@ -112,6 +114,7 @@ public:
     constexpr T* return_data() {
         return data;
     }
+
     /// @brief static constructor
 
     static DynamicArray<T> CreateDynamicArray(
@@ -139,7 +142,9 @@ public:
 
     /// @brief object management
 
-    DynamicArray() = default;
+    DynamicArray() {
+        data = new T[capacity];
+    };
     DynamicArray(const DynamicArray& copied) { // copy constructor
         data     = new T[copied.capacity];
         size     = copied.size;

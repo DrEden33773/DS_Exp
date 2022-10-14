@@ -24,7 +24,7 @@
 namespace DS {
 
 template <typename T = int> // default type = int
-class SingleList {          // all public, for algorithm
+class SingleList {
     static const std::string DSname;
 
     struct node {
@@ -47,6 +47,7 @@ class SingleList {          // all public, for algorithm
         return "Single-List";
     }
 
+public:
     class iterator : public std::iterator<std::forward_iterator_tag, T> { // could get and set value
     public:
         node* ptr = nullptr;
@@ -137,15 +138,16 @@ class SingleList {          // all public, for algorithm
         }
     };
     /// @brief return the iterator wrapped with `head->next` (first data)
-    iterator begin() {
+    constexpr iterator begin() {
         return iterator(head->next);
     }
     /// @brief return the iterator wrapped with `tail->next` (nullptr)
-    iterator end() {
+    constexpr iterator end() {
         return iterator(tail->next);
     }
     /// @b each operation related to iterator will be in @b [begin(),end()) range
 
+private:
     /// @brief relative location relation resolver
     static constexpr bool if_A_ahead_B(node* A, node* B) {
         bool  res = false;

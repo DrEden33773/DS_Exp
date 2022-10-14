@@ -56,15 +56,21 @@ public:
 template <typename T>
 class VecStack {
 private:
-    DS::DynamicArray<T>* data = nullptr;
+    DS::DynamicArray<T>* data = new DS::DynamicArray<T>();
+    // base and top
+    T* base = data->begin().ptr;
+    T* top  = data->end().ptr;
 
 public:
     VecStack() {
-        data = new DS::DoubleList<T>();
+    }
+    constexpr void update_base_and_top() {
+        base = data->begin().ptr;
+        top  = data->end().ptr;
     }
     VecStack(std::initializer_list<T>&& initList) {
         for (auto&& elem : initList) {
-            data->push_back(initList);
+            data->push_back(elem);
         }
     }
 };

@@ -25,7 +25,7 @@
 namespace DS {
 
 template <typename T = int> // default type = int
-class DoubleList {          // all public, for algorithm
+class DoubleList {
     static const std::string DSname;
 
     struct node {
@@ -49,6 +49,7 @@ class DoubleList {          // all public, for algorithm
         return "Double-List";
     }
 
+public:
     /// @brief @b bidirectional_iterator
     class iterator : public std::iterator<std::bidirectional_iterator_tag, T> {
     public:
@@ -168,14 +169,15 @@ class DoubleList {          // all public, for algorithm
             return ahead || eq;
         }
     };
-    iterator begin() {
+    constexpr iterator begin() {
         return iterator(head->next);
     }
-    iterator end() {
+    constexpr iterator end() {
         return iterator(tail->next);
     }
     /// @b each operation related to iterator will be in @b [begin(),end()) range
 
+private:
     /// @brief relative location relation resolver
     static bool if_A_ahead_B(node* A, node* B) { // A -> ... -> B
         bool  res = false;
