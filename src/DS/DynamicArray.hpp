@@ -335,10 +335,10 @@ public:
 
     void reserve(int new_capacity) {
         if (new_capacity < capacity) {
-            std::cout << std::endl;
             std::cout << "new_capacity " << new_capacity;
             std::cout << " is smaller than current capacity " << capacity << " . ";
             std::cout << "func reserve() won't be execute. ";
+            std::cout << std::endl;
             std::cout << std::endl;
             return;
         } // new_capacity >= capacity >= size
@@ -352,10 +352,10 @@ public:
     }
     void realloc(int new_capacity) {
         if (new_capacity < size) {
-            std::cout << std::endl;
             std::cout << "new_capacity " << new_capacity;
             std::cout << " is smaller than current size " << size << " . ";
             std::cout << "func realloc() won't be execute. ";
+            std::cout << std::endl;
             std::cout << std::endl;
             return;
         } // new_capacity >= size
