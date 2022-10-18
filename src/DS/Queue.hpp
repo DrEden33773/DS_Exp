@@ -1,5 +1,5 @@
 /**
- * @file Stack.hpp
+ * @file Queue.hpp
  * @author Eden (edwardwang33773@gmail.com)
  * @brief
         An implementation of Stack.
@@ -8,15 +8,15 @@
         and has at least @b stack_base{type->ptr} and @b stack_top{type->ptr}.
  *
  * @attention
-        @b Stack is a @e container_adapter , which is an @b encapsulation_of_container
-            (which satisfy @b tail_push_and_pop operation)
+        @b Queue is a @e container_adapter , which is an @b encapsulation_of_container
+            (which satisfy @b rear_push_and_front_pop operation)
             { @e example=> @b DynamicArray , @b SingleList , @b DoubleList ... }
 
         Take @b S(n) and @b T(n) into consideration, the final implementation is:
-            @e Default_Container @p <equals_to> @b dynamic_array
+            @e Default_Container @p <equals_to> @b double_list
             @e Supported_Container @p <equals_to> @b DoubleList__&__DynamicArray
  * @version 0.1
- * @date 2022-10-11
+ * @date 2022-10-18
  *
  * @copyright Copyright (c) 2022
  *
@@ -35,15 +35,16 @@
 
 namespace DS {
 
-/// @brief @b Sequential_Stack
+/// @brief @b Chained_Queue
 template <typename T>
-class SeqStack {
-    using iterator = typename DynamicArray<T>::iterator;
+class ChainedQueue {
+    using node     = typename DS::DoubleList<T>::node;
+    using iterator = typename DS::DoubleList<T>::iterator;
 
-    /// @brief @b data_base_top
-    DS::DynamicArray<T>* data = new DS::DynamicArray<T>();
-    T*                   base = data->begin().ptr;
-    T*                   top  = data->end().ptr;
+    /// @brief @b data_front_rear
+    DS::DoubleList<T>* data  = new DS::DoubleList<T>();
+    node*              front = data->head;
+    node*              rear  = data->tail;
 
     /// @brief @b iterator_opt
     iterator begin() {
@@ -53,41 +54,41 @@ class SeqStack {
         return data->end();
     }
 
-    /// @brief @b update_base_and_top
-    constexpr void update_base_and_top() {
-        base = data->begin().ptr;
-        top  = data->end().ptr;
+    /// @brief @b update_front_and_rear
+    constexpr void update_front_and_rear() {
+        front = data->head;
+        rear  = data->tail;
     }
 
 public:
-    SeqStack() = default;
-    ~SeqStack() {
+    ChainedQueue() = default;
+    ~ChainedQueue() {
         delete data;
-        top  = nullptr;
-        base = nullptr;
+        front = nullptr;
+        rear  = nullptr;
     }
-    SeqStack(SeqStack<T>&& moved) noexcept {
-        data       = moved.data;
-        base       = moved.base;
-        top        = moved.top;
-        moved.base = nullptr;
-        moved.top  = nullptr;
-        moved.data = nullptr;
+    ChainedQueue(ChainedQueue<T>&& moved) noexcept {
+        data        = moved.data;
+        front       = moved.front;
+        rear        = moved.rear;
+        moved.base  = nullptr;
+        moved.front = nullptr;
+        moved.rear  = nullptr;
     }
-    SeqStack(SeqStack<T>& copied) {
+    ChainedQueue(ChainedQueue<T>& copied) {
         data = new DS::DynamicArray<T>(copied.data);
-        update_base_and_top();
+        update_front_and_rear();
     }
-    SeqStack(std::initializer_list<T>&& initList) {
+    ChainedQueue(std::initializer_list<T>&& initList) {
         for (auto&& elem : initList) {
             data->push_back(elem);
         }
-        update_base_and_top();
+        update_front_and_rear();
     }
 
     void push_back(const T& elem) {
         data->push_back(elem);
-        update_base_and_top();
+        update_front_and_rear();
     }
     void push(const T& elem) {
         push_back(elem);
@@ -106,19 +107,19 @@ public:
             push_back(input...);
         }
     }
-    T pop_back() {
-        T top_elem = data->pop_back();
-        update_base_and_top();
-        return top_elem;
+    T pop_front() {
+        T front_elem = data->pop_front();
+        update_front_and_rear();
+        return front_elem;
     }
     T pop() {
-        return pop_back();
+        return pop_front();
     }
-    T get_back() {
-        return data->get_back();
+    T get_front() {
+        return data->get_elem(1);
     }
     T get() {
-        return get_back();
+        return get_front();
     }
     bool if_empty() {
         return data->if_empty();
@@ -133,6 +134,6 @@ public:
 };
 
 template <typename T>
-using Stack = SeqStack<T>;
+using Queue = ChainedQueue<T>;
 
 } // namespace DS

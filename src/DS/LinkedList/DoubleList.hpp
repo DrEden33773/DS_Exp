@@ -24,8 +24,16 @@
 
 namespace DS {
 
+template <typename T>
+class ChainedQueue;
+template <typename T>
+class ChainedStack;
+
 template <typename T = int> // default type = int
 class DoubleList {
+    friend class ChainedQueue<T>;
+    friend class ChainedStack<T>;
+
     static const std::string DSname;
 
     struct node {
@@ -319,7 +327,10 @@ public:
         node* new_head_next = deleted->next;
         T     returned_elem = deleted->element;
         head->next          = new_head_next;
-        new_head_next->prev = head;
+        if (new_head_next != nullptr) {
+            // new_head_next == nullptr <=> size == 1
+            new_head_next->prev = head;
+        }
         delete deleted;
         --size;
         if (size == 0) {
@@ -631,6 +642,15 @@ public:
         }
         std::cout << return_name() << " called select_sort()" << std::endl;
         std::cout << std::endl;
+    }
+    void best_select_sort(bool if_ascending = true) { // ascending order
+        // TODO(eden):
+        if (head->next == nullptr) {
+            std::cout << return_name() << " is empty, will escape sorting. " << std::endl;
+            std::cout << std::endl;
+            return;
+        }
+        DoubleList<T> new_one; // use this
     }
     void sort(bool if_ascending = true) { // ascending order
         insert_sort(if_ascending);

@@ -194,14 +194,28 @@ public:
     void emplace(const T& element) {
         emplace_back(element);
     }
-    void pop_back() {
+    T pop_back() {
         if (size == 0) {
             throw std::logic_error("The size is zero, cannot pop the tail element!");
         }
+        T top_elem = data[size - 1];
         --size;
+        return top_elem;
     }
-    void pop() {
-        pop_back();
+    T pop() {
+        return pop_back();
+    }
+    T get_back() {
+        if (size == 0) {
+            throw std::logic_error("The size is zero, cannot get the back element!");
+        }
+        return data[size - 1];
+    }
+    T get_front() {
+        if (size == 0) {
+            throw std::logic_error("The size is zero, cannot get the front element!");
+        }
+        return data[0];
     }
 
     /// @brief element operation

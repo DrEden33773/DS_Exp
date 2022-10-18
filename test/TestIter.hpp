@@ -13,6 +13,7 @@
 #include "Algorithm/MergeUniqueTest.hpp"
 #include "DS/DoubleListTest.hpp"
 #include "DS/DynamicArrayTest.hpp"
+#include "DS/QueueTest.hpp"
 #include "DS/SingleListTest.hpp"
 #include "DS/StackTest.hpp"
 #include <functional>
@@ -25,7 +26,8 @@ void run_all_test() {
         SingleListTest,   // success
         DoubleListTest,   // success
         MergeUniqueTest,  // success
-        VecStackTest,
+        SeqStackTest,
+        ChainedQueueTest,
     };
     for (auto&& func : test_list) {
         func();

@@ -585,6 +585,15 @@ public:
         std::cout << return_name() << " called select_sort()" << std::endl;
         std::cout << std::endl;
     }
+    void best_select_sort(bool if_ascending = true) { // ascending order
+        // TODO(eden):
+        if (head->next == nullptr) {
+            std::cout << return_name() << " is empty, will escape sorting. " << std::endl;
+            std::cout << std::endl;
+            return;
+        }
+        SingleList<T> new_one; // use this
+    }
     void sort(bool if_ascending = true) { // ascending order
         select_sort(if_ascending);
     }
