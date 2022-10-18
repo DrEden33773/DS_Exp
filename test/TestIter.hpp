@@ -26,8 +26,8 @@ void run_all_test() {
         SingleListTest,   // success
         DoubleListTest,   // success
         MergeUniqueTest,  // success
-        SeqStackTest,
-        ChainedQueueTest,
+        SeqStackTest,     // success
+        ChainedQueueTest, // success
     };
     for (auto&& func : test_list) {
         func();
