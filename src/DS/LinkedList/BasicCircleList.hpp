@@ -10,18 +10,22 @@
  */
 
 #pragma once
-#include <algorithm>
 #include <initializer_list>
 #include <iostream>
 #include <iterator>
 #include <stdexcept>
+#include <string>
 #include <type_traits>
-#include <unordered_map>
+#include <vector>
+
+class CountOff;
 
 namespace DS {
 
 template <typename T>
 class BasicCircleList {
+    friend class CountOff;
+
 protected:
     struct node {
         T     element;
@@ -195,6 +199,7 @@ protected:
         return A != B;
     }
 
+public:
     /// @brief static constructor
     static BasicCircleList<T> CreateDoubleList(
         std::initializer_list<T>&& initList
@@ -224,6 +229,11 @@ protected:
         }
     }
     BasicCircleList(std::initializer_list<T>&& initList) {
+        for (const T& element : initList) {
+            push_back(element);
+        }
+    }
+    explicit BasicCircleList(std::vector<T>&& initList) {
         for (const T& element : initList) {
             push_back(element);
         }
@@ -326,6 +336,10 @@ protected:
         std::cout << std::endl;
         std::cout << std::endl;
     }
+};
+
+class BasicInfoCircleList : public BasicCircleList<std::string> {
+    using BasicCircleList::BasicCircleList;
 };
 
 } // namespace DS
