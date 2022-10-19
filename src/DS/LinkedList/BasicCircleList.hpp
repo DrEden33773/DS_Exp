@@ -253,73 +253,42 @@ public:
         if (tail == nullptr) {
             throw std::out_of_range("There's NO node in this linked list!");
         }
+        if (tail == head) {
+            T to_return = tail->element;
+            delete tail;
+            --size;
+            return to_return;
+        }
+
         node* new_tail  = tail->prev;
         node* old_tail  = tail;
         T     to_return = old_tail->element;
-        new_tail->next  = nullptr;
+
         delete tail;
-        tail = new_tail;
         --size;
+
+        tail       = new_tail;
+        tail->next = head;
+        head->prev = tail;
+
         return to_return;
-    }
-    T pop_front() { // remove `head->next`
-        if (tail == nullptr) {
-            throw std::out_of_range("There's NO node in this linked list!");
-        }
-        T returned_elem;
-        if (size == 1) {
-            returned_elem = head->element;
-            delete head;
-            --size;
-        } else {
-            node* deleted       = head->next;
-            node* new_head_next = deleted->next;
-            returned_elem       = deleted->element;
-            head->next          = new_head_next;
-            new_head_next->prev = head;
-            delete deleted;
-            --size;
-            if (size == 1) {
-                tail = head;
-            }
-        }
-        return returned_elem;
     }
     void push_back(const T& input) {
         node* to_add = new node(input);
         if (tail == nullptr) {
-            head->next = to_add;
-            tail       = to_add;
-            tail->prev = head;
+            head = to_add;
+            tail = to_add;
         } else {
             tail->next   = to_add;
             to_add->prev = tail;
             tail         = to_add;
         }
-        ++size;
-    }
-    void push_front(const T& input) {
-        node* to_add = new node(input);
-        if (tail == nullptr) {
-            head->next = to_add;
-            tail       = to_add;
-            tail->prev = head;
-        } else {
-            node* the_next = head->next;
-            to_add->next   = the_next;
-            if (the_next != nullptr) { // or, the_next == nullptr
-                the_next->prev = to_add;
-            }
-            to_add->prev = head;
-            head->next   = to_add;
-        }
+        tail->next = head;
+        head->prev = tail;
         ++size;
     }
     void add_back(const T& input) {
         push_back(input);
-    }
-    void add_front(const T& input) {
-        add_front(input);
     }
 
     /// @brief function

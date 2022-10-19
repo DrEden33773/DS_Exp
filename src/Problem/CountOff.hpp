@@ -23,8 +23,28 @@ class CountOff : protected DS::BasicInfoCircleList {
     using BasicInfoCircleList::BasicInfoCircleList;
 
 public:
-    int  out_freq = 1;
-    void delete_the_ptr(node* the_ptr) {
+    int out_freq = 1;
+
+    /**
+     * @brief @b delete_the_ptr @b (WITH_UPDATE)
+     * @note
+            attention! param type must be @b reference_to_ptr
+            or anything changed to @b ptr_var won't come out the filed
+
+            that's something @b unimaginable_at_first but @b reasonable_at_last
+
+            any param transport between functions in CPP is @b value_transport
+            that means @b any_param is @b a_kind_of_variable instead of @b actual_address
+
+            took this for example =>
+                node* the_ptr => address_var, not the address of an var
+                node*& the_ptr => address_var, which address point to another address_var
+
+            node* the_ptr = another => @b var_assign
+                just like `int input_param = 1` in function, it won't come out of the field
+     * @param the_ptr
+     */
+    void delete_the_ptr(node*& the_ptr) {
         if (size == 1) {
             return;
         }
@@ -52,7 +72,8 @@ public:
     void operate() {
         std::cout << std::endl;
 
-        std::string storage;
+        std::string              storage;
+        std::vector<std::string> res;
 
         node* curr     = head;
         int   curr_num = 1;
@@ -60,14 +81,20 @@ public:
         while (size > 1) {
             int curr_modded_num = curr_num % out_freq;
             if (curr_modded_num == 0) {
-                std::cout << curr->element << " ";
+                res.push_back(curr->element);
+                // node* to_update = curr->next;
                 delete_the_ptr(curr);
+                // curr = to_update;
             } else {
                 curr = curr->next;
             }
             ++curr_num;
         }
-        std::cout << curr->element << " "; // the last one
+        res.push_back(curr->element); // the last one
+
+        for (auto&& elem : res) {
+            std::cout << elem << " ";
+        }
 
         std::cout << std::endl;
     }
@@ -85,8 +112,6 @@ public:
         int                      the_freq      = 1;
         std::vector<std::string> initList;
 
-        std::cout << std::endl;
-
         //
         while (true) {
             std::cout << std::endl;
@@ -103,7 +128,7 @@ public:
 
         //
         std::cout << std::endl;
-        std::cout << "Input information => " << std::endl;
+        std::cout << "Input information (Must separate in space) => " << std::endl;
         std::cout << std::endl;
         for (int i = 0; i < num_of_person; ++i) {
             std::string curr;
