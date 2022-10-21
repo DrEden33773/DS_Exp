@@ -23,7 +23,8 @@ class CountOff : protected DS::BasicInfoCircleList {
     using BasicInfoCircleList::BasicInfoCircleList;
 
 public:
-    int out_freq = 1;
+    int out_freq
+        = 1;
 
     /**
      * @brief @b delete_the_ptr @b (WITH_UPDATE)
@@ -105,7 +106,9 @@ class CountOff_Solution_Generator {
     CountOff* data                = nullptr;
 
 public:
-    ~CountOff_Solution_Generator() = default;
+    ~CountOff_Solution_Generator() {
+        delete data;
+    }
 
     void generate_model() {
         int                      num_of_person = 0;
