@@ -13,6 +13,6 @@
 #include "Problem/CountOff.hpp"
 
 int main(int argc, char** argv) {
-    // Test::run_all_test();
-    CountOff_Solution_Generator::Solution();
+    Test::run_all_test();
+    // CountOff_Solution_Generator::Solution();
 }
