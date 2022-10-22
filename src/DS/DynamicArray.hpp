@@ -17,7 +17,6 @@
 #include <iostream>
 #include <iterator>
 #include <stdexcept>
-#include <type_traits>
 #include <unordered_map>
 
 namespace DS {
