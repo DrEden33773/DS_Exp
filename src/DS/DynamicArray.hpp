@@ -115,7 +115,6 @@ public:
     }
 
     /// @brief static constructor
-
     static DynamicArray<T> CreateDynamicArray(
         std::initializer_list<T>&& initList
     ) {
@@ -125,7 +124,6 @@ public:
     }
 
     /// @brief constexpr functions
-
     constexpr bool if_empty() noexcept {
         return this->size == 0;
     }
@@ -140,7 +138,6 @@ public:
     }
 
     /// @brief object management
-
     DynamicArray() {
         data = new T[capacity];
     };
@@ -175,7 +172,6 @@ public:
     }
 
     /// @brief data_input processing
-
     void push_back(const T& element) {
         if (size >= capacity) {
             realloc(capacity * 2);
@@ -219,7 +215,6 @@ public:
 
     /// @brief element operation
     /// => each input/output int is `actual index + 1` (position)!
-
     void insert_elem(const T& element, int pos) {
         int index = pos - 1;
         if (index < 0 || index > size - 1) {
@@ -322,7 +317,6 @@ public:
     }
 
     /// @brief general data management
-
     void clear() noexcept { // ClearDynamicArray
         size = 0;
     }
@@ -331,7 +325,6 @@ public:
     }
 
     /// @brief memory management
-
     void reserve(int new_capacity) {
         if (new_capacity < capacity) {
             std::cout << "new_capacity " << new_capacity;
@@ -371,7 +364,6 @@ public:
     }
 
     /// @brief functional
-
     void echo() {
         std::cout << "range-based loop => ";
         bool if_empty = true;
@@ -531,7 +523,6 @@ public:
     }
 
     /// @brief operator overloads
-
     T& operator[](int index) {
         if (size == 0) {
             throw std::logic_error("The size is zero, cannot get any element!");
