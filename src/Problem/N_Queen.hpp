@@ -90,33 +90,53 @@ public:
         }
     }
 
+    /// @attention @b this_one_is_unfinished
     void fastest_back_trace(const int& row_lim) {
         std::stack<int> stack_of_row;
         std::stack<int> stack_of_col;
 
-        int  row              = 0;
-        bool if_prev_conflict = false;
-        int  prev_col         = 0;
+        int  row                     = 0;
+        bool if_prev_conflict        = false;
+        bool if_just_find_a_solution = false;
+        int  prev_col                = 0;
         do {
-            stack_of_row.push(row);
-            stack_of_col.push(0);
             if (row == row_lim) {
                 auto&& board = gen_a_board(row_lim);
                 solutions.push_back(board);
+
+                prev_col = stack_of_col.top();
                 stack_of_row.pop();
                 stack_of_col.pop();
                 --row;
+
+                if_just_find_a_solution = true;
             } else {
-                bool if_conflict = true;
-                for (int col = stack_of_col.top(); col < row_lim; ++col) {
-                    // 0. pre opt
-                    if (if_prev_conflict) {
+                if (!if_prev_conflict) {
+                    stack_of_row.push(row);
+                    if (!if_just_find_a_solution) {
+                        stack_of_col.push(0);
+                    } else {
+                        stack_of_col.push(prev_col + 1);
+                        // clear prev_info
                         queens[row] = -1;
                         cols.erase(prev_col);
                         main_diags.erase(prev_col - row);
                         sub_diags.erase(prev_col + row);
-                        if_prev_conflict = false;
+                        if_just_find_a_solution = false;
                     }
+                } else {
+                    // clear prev_info
+                    queens[row] = -1;
+                    cols.erase(prev_col);
+                    main_diags.erase(prev_col - row);
+                    sub_diags.erase(prev_col + row);
+                    if_prev_conflict = false;
+                }
+
+                bool if_conflict = true;
+                for (int col = stack_of_col.top(); col < row_lim; ++col) {
+                    // sync => top <-> col
+                    stack_of_col.top() = col;
 
                     // 1. detect if_conflict
                     if (cols.find(col) != cols.end()) {
@@ -138,13 +158,15 @@ public:
                     main_diags.insert(main_diag);
                     sub_diags.insert(sub_diag);
 
-                    // 3. done, update stack_of_col, then go to the next row
-                    stack_of_col.top() = col;
+                    // 3. done, go to the next row
                     break;
                 }
                 if (if_conflict) {
                     stack_of_row.pop();
                     stack_of_col.pop();
+                    if (stack_of_row.empty() || stack_of_col.empty()) {
+                        break;
+                    }
                     prev_col = stack_of_col.top();
                     ++stack_of_col.top();
                     --row; // turn back to prev one
