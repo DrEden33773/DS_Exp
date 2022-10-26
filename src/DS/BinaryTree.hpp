@@ -18,77 +18,77 @@ namespace DS {
 
 template <typename T>
 class BinaryTree {
-    struct node {
+    struct Node {
         T     elem;
-        node* left  = nullptr;
-        node* right = nullptr;
+        Node* left  = nullptr;
+        Node* right = nullptr;
 
-        node() = default;
-        constexpr explicit node(const T& elem)
+        Node() = default;
+        constexpr explicit Node(const T& elem)
             : elem(elem) { }
     };
-    node* Root = nullptr;
+    Node* Root = nullptr;
 
     /// @brief @b Template_Function_Of_Three_Order_Options
-    void PreOrderOpt(node* toOpt, std::function<void(node* toOpt)>& func) {
-        if (!toOpt) {
+    void PreOrderOpt(Node* node, std::function<void(Node*)>& func) {
+        if (!node) {
             return;
         }
-        func(toOpt);
-        PreOrderOpt(toOpt->left, func(toOpt->left));
-        PreOrderOpt(toOpt->right, func(toOpt->right));
+        func(node);
+        PreOrderOpt(node->left, func);
+        PreOrderOpt(node->right, func);
     }
-    void InOrderOpt(node* toOpt, std::function<void(node* toOpt)>& func) {
-        if (!toOpt) {
+    void InOrderOpt(Node* node, std::function<void(Node*)>& func) {
+        if (!node) {
             return;
         }
-        InOrderOpt(toOpt->left, func(toOpt->left));
-        func(toOpt);
-        InOrderOpt(toOpt->right, func(toOpt->right));
+        InOrderOpt(node->left, func);
+        func(node);
+        InOrderOpt(node->right, func);
     }
-    void PostOrderOpt(node* toOpt, std::function<void(node* toOpt)>& func) {
-        if (!toOpt) {
+    void PostOrderOpt(Node* node, std::function<void(Node*)>& func) {
+        if (!node) {
             return;
         }
-        PostOrderOpt(toOpt->left, func(toOpt->left));
-        PostOrderOpt(toOpt->right, func(toOpt->right));
-        func(toOpt);
+        PostOrderOpt(node->left, func);
+        PostOrderOpt(node->right, func);
+        func(node);
     }
+
+    std::function<void(Node*)> DeleteNode = [](Node* toDelete) {
+        delete toDelete;
+    };
+    std::function<void(Node*)> PrintNode = [](Node* node) {
+        std::cout << node->elem << " ";
+    };
+    std::function<void(Node*)> PrintlnNode = [](Node* node) {
+        std::cout << node->elem << std::endl;
+    };
 
 public:
-    void DeleteNode(node* toDelete) {
-        delete toDelete;
-    }
     ~BinaryTree() {
-        PostOrderOpt(Root, DeleteNode(Root));
+        PostOrderOpt(Root, DeleteNode);
     }
-
-    /// @brief @b Print_Single_Node
-    void PrintNode(node* toPrint) {
-        std::cout << toPrint->elem << " ";
-    }
-    void PrintlnNode(node* toPrint) {
-        std::cout << toPrint->elem << std::endl;
-    }
+    BinaryTree() = default;
 
     /// @brief @b Traverse
-    void PreOrderTraverse(node* theRoot) {
-        PreOrderOpt(theRoot, PrintNode(theRoot));
+    void PreOrderTraverse(Node* theRoot) {
+        PreOrderOpt(theRoot, PrintNode);
     }
-    void InOrderTraverse(node* theRoot) {
-        InOrderOpt(theRoot, PrintNode(theRoot));
+    void InOrderTraverse(Node* theRoot) {
+        InOrderOpt(theRoot, PrintNode);
     }
-    void PostOrderTraverse(node* theRoot) {
-        PostOrderOpt(theRoot, PrintNode(theRoot));
+    void PostOrderTraverse(Node* theRoot) {
+        PostOrderOpt(theRoot, PrintNode);
     }
     void PreOrderTraverse() {
-        PreOrderOpt(Root, PrintNode(Root));
+        PreOrderOpt(Root, PrintNode);
     }
     void InOrderTraverse() {
-        InOrderOpt(Root, PrintNode(Root));
+        InOrderOpt(Root, PrintNode);
     }
     void PostOrderTraverse() {
-        PostOrderOpt(Root, PrintNode(Root));
+        PostOrderOpt(Root, PrintNode);
     }
 };
 
