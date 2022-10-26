@@ -63,6 +63,7 @@ public:
         PostOrderOpt(Root, DeleteNode(Root));
     }
 
+    /// @brief @b Print_Single_Node
     void PrintNode(node* toPrint) {
         std::cout << toPrint->elem << " ";
     }
@@ -70,6 +71,7 @@ public:
         std::cout << toPrint->elem << std::endl;
     }
 
+    /// @brief @b Traverse
     void PreOrderTraverse(node* theRoot) {
         PreOrderOpt(theRoot, PrintNode(theRoot));
     }
