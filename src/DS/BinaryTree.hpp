@@ -79,6 +79,15 @@ public:
     void PostOrderTraverse(node* theRoot) {
         PostOrderOpt(theRoot, PrintNode(theRoot));
     }
+    void PreOrderTraverse() {
+        PreOrderOpt(Root, PrintNode(Root));
+    }
+    void InOrderTraverse() {
+        InOrderOpt(Root, PrintNode(Root));
+    }
+    void PostOrderTraverse() {
+        PostOrderOpt(Root, PrintNode(Root));
+    }
 };
 
 } // namespace DS
