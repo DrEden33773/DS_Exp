@@ -22,6 +22,10 @@ class BinaryTree {
         T     elem;
         node* left  = nullptr;
         node* right = nullptr;
+
+        node() = default;
+        constexpr explicit node(const T& elem)
+            : elem(elem) { }
     };
     node* Root = nullptr;
 
@@ -31,23 +35,23 @@ class BinaryTree {
             return;
         }
         func(toOpt);
-        PreOrderOpt(toOpt->left, func);
-        PreOrderOpt(toOpt->right, func);
+        PreOrderOpt(toOpt->left, func(toOpt->left));
+        PreOrderOpt(toOpt->right, func(toOpt->right));
     }
     void InOrderOpt(node* toOpt, std::function<void(node* toOpt)>& func) {
         if (!toOpt) {
             return;
         }
-        InOrderOpt(toOpt->left, func);
+        InOrderOpt(toOpt->left, func(toOpt->left));
         func(toOpt);
-        InOrderOpt(toOpt->right, func);
+        InOrderOpt(toOpt->right, func(toOpt->right));
     }
     void PostOrderOpt(node* toOpt, std::function<void(node* toOpt)>& func) {
         if (!toOpt) {
             return;
         }
-        PostOrderOpt(toOpt->left, func);
-        PostOrderOpt(toOpt->right, func);
+        PostOrderOpt(toOpt->left, func(toOpt->left));
+        PostOrderOpt(toOpt->right, func(toOpt->right));
         func(toOpt);
     }
 
