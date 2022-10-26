@@ -10,6 +10,7 @@
  */
 
 #include "../test/TestIter.hpp"
+#include "DS/BinaryTree.hpp"
 #include "Problem/CountOff.hpp"
 #include "Problem/N_Queen.hpp"
 
