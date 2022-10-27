@@ -12,6 +12,13 @@
  *
  */
 
+/**
+ * @note
+    better structure should be:
+        head <-> [data|ptr]<->...<->[data|ptr] <-> tail
+ *
+ */
+
 #pragma once
 #include <algorithm>
 #include <cassert>
