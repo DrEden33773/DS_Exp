@@ -29,8 +29,8 @@ class BinaryTree {
         constexpr explicit Node(const T& elem)
             : elem(elem) { }
     };
-    Node* Root = nullptr;
-    int   size = 0;
+    Node* TheRoot = nullptr;
+    int   size    = 0;
 
     /// @brief @b Recursive_Order_Template_Functions
     void PreOrderOpt_Rec(Node* node, std::function<void(Node*)>& func) {
@@ -179,22 +179,24 @@ class BinaryTree {
 
 public:
     ~BinaryTree() {
-        PostOrderOpt(Root, DeleteNode);
+        PostOrderOpt(TheRoot, DeleteNode);
     }
-    BinaryTree() = default;
+    BinaryTree() {
+        // give the definations
+    }
 
     /// @brief @b Traverse
     void PreOrderTraverse() {
-        PreOrderOpt(Root, PrintNode);
+        PreOrderOpt(TheRoot, PrintNode);
     }
     void InOrderTraverse() {
-        InOrderOpt(Root, PrintNode);
+        InOrderOpt(TheRoot, PrintNode);
     }
     void PostOrderTraverse() {
-        PostOrderOpt(Root, PrintNode);
+        PostOrderOpt(TheRoot, PrintNode);
     }
     void LevelOrderTraverse() {
-        LevelOrderOpt(Root, PrintNode);
+        LevelOrderOpt(TheRoot, PrintNode);
     }
     void PreOrderTraverse(Node* theRoot) {
         PreOrderOpt(theRoot, PrintNode);
@@ -207,6 +209,17 @@ public:
     }
     void LevelOrderTraverse(Node* theRoot) {
         LevelOrderOpt(theRoot, PrintNode);
+    }
+
+    /// @brief @b size_related
+    constexpr bool BiTreeEmpty() {
+        return size == 0;
+    }
+    constexpr int BiTreeSize() {
+        return size;
+    }
+    constexpr Node* Root() {
+        return TheRoot;
     }
 };
 

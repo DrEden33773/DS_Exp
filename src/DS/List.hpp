@@ -20,7 +20,6 @@
 #include <iostream>
 #include <iterator>
 #include <stdexcept>
-#include <unordered_map>
 
 namespace DS {
 
@@ -143,10 +142,11 @@ public:
             return distance;
         }
 
-        T&   operator*() const { return ptr->element; }
-        T*   operator->() const { return &(ptr->element); }
-        bool operator!=(const iterator& rhs) const { return ptr != rhs.ptr; }
-        bool operator==(const iterator& rhs) const { return ptr == rhs.ptr; }
+        constexpr T&   operator*() const { return ptr->element; }
+        constexpr T*   operator->() const { return &(ptr->element); }
+        constexpr bool operator!=(const iterator& rhs) const { return ptr != rhs.ptr; }
+        constexpr bool operator==(const iterator& rhs) const { return ptr == rhs.ptr; }
+
         bool operator>(const iterator& rhs) const {
             return List::if_A_behind_B(this->ptr, rhs.ptr);
         }
@@ -180,9 +180,8 @@ public:
         return iterator(head);
     }
     constexpr iterator Tail_() {
-        return iterator(head);
+        return iterator(tail);
     }
-    /// @b each operation related to iterator will be in @b [begin(),end()) range
 
 private:
     /// @brief relative location relation resolver

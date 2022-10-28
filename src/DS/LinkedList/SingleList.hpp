@@ -202,6 +202,8 @@ public:
     }
 
     /// @brief object management
+    SingleList& operator=(const SingleList&) = delete;
+    SingleList& operator=(SingleList&&)      = delete;
     SingleList() { // default constructor (not recommended!)
         init_head();
     }
@@ -211,14 +213,14 @@ public:
             push_back(element);
         }
     }
-    SingleList(SingleList&& moved) noexcept { // move constructor
+    SingleList(SingleList&& moved) noexcept
+        : head(moved.head)
+        , tail(moved.tail)
+        , if_init(true)
+        , size(moved.size) { // move constructor
 
         // 1. guarantee `this`
-        if_init = true;
-        size    = moved.size;
         // (1) => locate head and tail
-        head = moved.head;
-        tail = moved.tail;
         // (2) => locate each node of `this` && set null to each node of `moved`
         node* curr      = head;
         node* tmp_moved = moved.head;
@@ -244,7 +246,7 @@ public:
             push_back(element);
         }
     }
-    ~SingleList() noexcept { // impossible to throw exception
+    virtual ~SingleList() noexcept { // impossible to throw exception
         if (if_moved) {
             return;
         }
