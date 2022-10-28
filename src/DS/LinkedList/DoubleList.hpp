@@ -256,14 +256,13 @@ public:
             push_back(element);
         }
     }
-    DoubleList(DoubleList&& moved) noexcept { // move constructor
-
+    DoubleList(DoubleList&& moved) noexcept
+        : tail(moved.tail)
+        , head(moved.head)
+        , if_init(true)
+        , size(moved.size) { // move constructor
         // 1. guarantee `this`
-        if_init = true;
-        size    = moved.size;
-        // (1) => locate head and tail
-        head = moved.head;
-        tail = moved.tail;
+        // (1) => located head and tail
         // (2) => locate each node of `this` && set null to each node of `moved`
         node* curr      = head;
         node* tmp_moved = moved.head;
