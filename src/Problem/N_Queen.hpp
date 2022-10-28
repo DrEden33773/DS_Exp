@@ -193,7 +193,7 @@ public:
     static void solution(bool if_show_graphic_solution = false) {
         N_Queen The_Solution;
 
-        int num_of_queens;
+        int num_of_queens = 0;
         while (true) {
             std::cout << "Please input the num of queens (>0) => ";
             std::cin >> num_of_queens;
