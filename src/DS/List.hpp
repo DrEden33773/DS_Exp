@@ -303,7 +303,7 @@ public:
     }
 
     /// @brief node_delete_opt
-    void organized_delete_a_node(node* toDel) {
+    void delete_a_node(node* toDel) {
         if (toDel == head || toDel == tail) {
             throw std::logic_error("NEVER try to delete `head` or `tail` nodes!");
         }
@@ -314,7 +314,7 @@ public:
         delete toDel;
         --size;
     }
-    node* organized_link_a_node(node* thePrev, node* toLink, node* theNext) {
+    node* link_a_node(node* thePrev, node* toLink, node* theNext) {
         if (theNext == head || thePrev == tail) {
             throw std::logic_error("NEVER try to add node ahead of `head` or after `tail` nodes!");
         }
@@ -325,13 +325,13 @@ public:
 
         return toLink;
     }
-    node* organized_link_a_node_after(node* thePrev, node* toLink) {
-        return organized_link_a_node(thePrev, toLink, thePrev->next);
+    node* link_a_node_after(node* thePrev, node* toLink) {
+        return link_a_node(thePrev, toLink, thePrev->next);
     }
-    node* organized_link_a_node_before(node* theNext, node* toLink) {
-        return organized_link_a_node(theNext->prev, toLink, theNext);
+    node* link_a_node_before(node* theNext, node* toLink) {
+        return link_a_node(theNext->prev, toLink, theNext);
     }
-    node* organized_unlink_a_node(node* toUnlink) {
+    node* unlink_a_node(node* toUnlink) {
         if (toUnlink == head || toUnlink == tail) {
             throw std::logic_error("NEVER try to unlink `head` or `tail` node!");
         }
@@ -345,15 +345,15 @@ public:
 
         return toUnlink;
     }
-    void organized_swap_node(node* a, node* b) {
+    void swap_node(node* a, node* b) {
         node* a_prev = a->prev;
         node* a_next = a->next;
         node* b_prev = b->prev;
         node* b_next = b->next;
-        organized_unlink_a_node(a);
-        organized_unlink_a_node(b);
-        organized_link_a_node(a_prev, b, a_next);
-        organized_link_a_node(b_prev, a, b_next);
+        unlink_a_node(a);
+        unlink_a_node(b);
+        link_a_node(a_prev, b, a_next);
+        link_a_node(b_prev, a, b_next);
     }
 
     /// @brief data_io operation
@@ -362,7 +362,7 @@ public:
             throw std::out_of_range("There's NO node in this linked list!");
         }
         T to_return = tail->prev->element;
-        organized_delete_a_node(tail->prev);
+        delete_a_node(tail->prev);
         return to_return;
     }
     T pop_front() { // remove `head->next`
@@ -370,7 +370,7 @@ public:
             throw std::out_of_range("There's NO node in this linked list!");
         }
         T returned_elem = head->next->element;
-        organized_delete_a_node(head->next);
+        delete_a_node(head->next);
         return returned_elem;
     }
     void push_back(const T& input) {
@@ -380,7 +380,7 @@ public:
         node* to_add  = new node(input);
         node* thePrev = tail->prev;
         node* theNext = tail;
-        organized_link_a_node(thePrev, to_add, theNext);
+        link_a_node(thePrev, to_add, theNext);
         ++size;
     }
     void push_front(const T& input) {
@@ -390,7 +390,7 @@ public:
         node* to_add  = new node(input);
         node* thePrev = head;
         node* theNext = head->next;
-        organized_link_a_node(thePrev, to_add, theNext);
+        link_a_node(thePrev, to_add, theNext);
         ++size;
     }
     void add_back(const T& input) {
@@ -413,7 +413,7 @@ public:
         node* theNext  = insert_place.ptr;
         node* thePrev  = before_insert_place.ptr;
 
-        organized_link_a_node(thePrev, toInsert, theNext);
+        link_a_node(thePrev, toInsert, theNext);
     }
     void insert_to(const T& element, int pos) {
         insert_elem(element, pos);
@@ -462,7 +462,7 @@ public:
             return;
         }
         iterator locator = begin() + index;
-        organized_delete_a_node(locator.ptr);
+        delete_a_node(locator.ptr);
     }
     int locate_elem(const T& elem) {
         if (size == 0) {
@@ -538,8 +538,8 @@ public:
         new_tail->prev = new_head;
 
         while (head->next != tail) {
-            node* unlinked = organized_unlink_a_node(begin().ptr);
-            organized_link_a_node_after(new_head, unlinked);
+            node* unlinked = unlink_a_node(begin().ptr);
+            link_a_node_after(new_head, unlinked);
         }
 
         delete_head_and_tail();
