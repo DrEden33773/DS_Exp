@@ -159,6 +159,9 @@ class BinaryTree {
                 flag = 1;
             } else { // opt
                 func(node);
+                opt_stack.pop();
+                node = nullptr; // escape next `left-sub-tree traverse loop`
+                                // but node will still updated by the top() of stack
             }
         }
     }
