@@ -314,7 +314,7 @@ public:
         delete toDel;
         --size;
     }
-    void organized_link_a_node(node* thePrev, node* toLink, node* theNext) {
+    node* organized_link_a_node(node* thePrev, node* toLink, node* theNext) {
         if (theNext == head || thePrev == tail) {
             throw std::logic_error("NEVER try to add node ahead of `head` or after `tail` nodes!");
         }
@@ -322,8 +322,16 @@ public:
         toLink->prev  = thePrev;
         toLink->next  = theNext;
         theNext->prev = toLink;
+
+        return toLink;
     }
-    void organized_unlink_a_node(node* toUnlink) {
+    node* organized_link_a_node_after(node* thePrev, node* toLink) {
+        return organized_link_a_node(thePrev, toLink, thePrev->next);
+    }
+    node* organized_link_a_node_before(node* theNext, node* toLink) {
+        return organized_link_a_node(theNext->prev, toLink, theNext);
+    }
+    node* organized_unlink_a_node(node* toUnlink) {
         if (toUnlink == head || toUnlink == tail) {
             throw std::logic_error("NEVER try to unlink `head` or `tail` node!");
         }
@@ -334,6 +342,8 @@ public:
         toUnlink->prev = nullptr;
         toUnlink->next = nullptr;
         theNext->prev  = nullptr;
+
+        return toUnlink;
     }
     void organized_swap_node(node* a, node* b) {
         node* a_prev = a->prev;
@@ -520,6 +530,21 @@ public:
         std::sort(begin(), end());
         std::cout << return_name() << " called std::sort()" << std::endl;
         std::cout << std::endl;
+    }
+    void reverse() {
+        node* new_head = new node();
+        node* new_tail = new node();
+        new_head->next = new_tail;
+        new_tail->prev = new_head;
+
+        while (head->next != tail) {
+            node* unlinked = organized_unlink_a_node(begin().ptr);
+            organized_link_a_node_after(new_head, unlinked);
+        }
+
+        delete_head_and_tail();
+        head = new_head;
+        tail = new_tail;
     }
 };
 
