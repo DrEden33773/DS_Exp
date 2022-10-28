@@ -263,6 +263,16 @@ public:
             push_back(element);
         }
     }
+    List& operator=(const List& copied) {
+        if (&copied == this) { // self copy
+            return *this;
+        }
+        init_head_and_tail();
+        for (auto&& element : copied) {
+            push_back(element);
+        }
+        return *this;
+    }
     List(List&& moved) noexcept
         : tail(moved.tail)
         , head(moved.head)
@@ -288,6 +298,33 @@ public:
         moved.tail    = nullptr;
         moved.size    = 0;
         moved.if_init = false;
+    }
+    List& operator=(List&& moved) noexcept {
+        tail    = moved.tail;
+        head    = moved.head;
+        if_init = true;
+        size    = moved.size;
+        // 1. locate each node of `this` && set null to each node of `moved`
+        node* curr      = head;
+        node* tmp_moved = moved.head;
+        while (tmp_moved != nullptr) {
+            // link node in `this` with moved
+            curr       = tmp_moved;
+            curr->next = tmp_moved->next;
+            curr->prev = tmp_moved->prev;
+            curr       = curr->next;
+            // free moved
+            node* tmp_moved_next = tmp_moved->next;
+            tmp_moved            = nullptr;
+            tmp_moved            = tmp_moved_next;
+        }
+        // 2. clear the property of `moved` one
+        moved.head    = nullptr;
+        moved.tail    = nullptr;
+        moved.size    = 0;
+        moved.if_init = false;
+
+        return *this;
     }
     List(std::initializer_list<T>&& initList) {
         List();
