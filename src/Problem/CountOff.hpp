@@ -23,8 +23,7 @@ class CountOff : protected DS::BasicInfoCircleList {
     using BasicInfoCircleList::BasicInfoCircleList;
 
 public:
-    int out_freq
-        = 1;
+    int out_freq = 1;
 
     /**
      * @brief @b delete_the_ptr @b (WITH_UPDATE)
@@ -101,21 +100,73 @@ public:
     }
 };
 
+class VecCountOff {
+    friend class CountOff_Solution_Generator;
+    std::vector<std::pair<bool, std::string>> data;
+
+    int out_freq      = 1;
+    int num_of_remain = 0;
+
+    explicit VecCountOff(std::vector<std::string>&& initList)
+        : num_of_remain(static_cast<int>(initList.size())) {
+        data.reserve(num_of_remain);
+        for (int i = 0; i < num_of_remain; ++i) {
+            auto&& input = std::make_pair(false, initList[i]);
+            data.emplace_back(input);
+        }
+    }
+
+public:
+    std::pair<bool, std::string>& operator[](const int& index) {
+        return data[index % out_freq];
+    }
+    void operate() {
+        std::vector<std::string> res;
+
+        int size_of_res = num_of_remain;
+
+        int curr_num   = 1;
+        int curr_index = 0;
+        while (num_of_remain > 0) {
+            int curr_modded_num = curr_num % out_freq;
+            int curr_true_index = (curr_index) % size_of_res;
+
+            auto&& curr    = data[curr_true_index];
+            bool   if_used = curr.first;
+
+            if (!curr_modded_num && !if_used) {
+                res.push_back(curr.second);
+                curr.first = true;
+                --num_of_remain;
+            }
+            ++curr_index;
+            if (!if_used) {
+                ++curr_num;
+            }
+        }
+
+        for (auto&& elem : res) {
+            std::cout << elem << " ";
+        }
+        std::cout << std::endl;
+    }
+};
+
 class CountOff_Solution_Generator {
     CountOff_Solution_Generator() = default;
-    CountOff* data                = nullptr;
+    CountOff*    data             = nullptr;
+    VecCountOff* vec_data         = nullptr;
 
 public:
     ~CountOff_Solution_Generator() {
         delete data;
+        delete vec_data;
     }
-
     void generate_model() {
         int                      num_of_person = 0;
         int                      the_freq      = 1;
         std::vector<std::string> initList;
 
-        //
         while (true) {
             std::cout << std::endl;
             std::cout << "Input num of person(>0) => ";
@@ -129,7 +180,6 @@ public:
         }
         initList.reserve(num_of_person);
 
-        //
         std::cout << std::endl;
         std::cout << "Input information (Must separate in space) => " << std::endl;
         std::cout << std::endl;
@@ -139,7 +189,6 @@ public:
             initList.emplace_back(curr);
         }
 
-        //
         while (true) {
             std::cout << std::endl;
             std::cout << "Input frequency(>0) => ";
@@ -152,13 +201,15 @@ public:
             }
         }
 
-        data           = new CountOff(std::move(initList));
-        data->out_freq = the_freq;
+        data               = new CountOff(std::move(initList));
+        vec_data           = new VecCountOff(std::move(initList));
+        data->out_freq     = the_freq;
+        vec_data->out_freq = the_freq;
     }
     void give_result() {
         data->operate();
+        vec_data->operate();
     }
-
     static void Solution() {
         CountOff_Solution_Generator TheSolution;
         TheSolution.generate_model();

@@ -416,8 +416,26 @@ public:
         std::cout << "Dynamic array called insert_sort()" << std::endl;
         std::cout << std::endl;
     }
+    void bubble_sort(bool if_ascending = true) { // ascending order
+        if (size == 0) {
+            std::cout << return_name() << " is empty, will escape sorting. " << std::endl;
+            std::cout << std::endl;
+        }
+        for (int i = 0; i < size; ++i) {
+            for (int j = 0; j + 1 < size - i; ++j) {
+                bool if_to_swap = (if_ascending)
+                    ? data[j] > data[j + 1]
+                    : data[j] < data[j + 1];
+                if (if_to_swap) {
+                    std::swap(data[j], data[j + 1]);
+                }
+            }
+        }
+        std::cout << "Dynamic array called bubble_sort()" << std::endl;
+        std::cout << std::endl;
+    }
     void sort(bool if_ascending = true) { // ascending order
-        insert_sort(if_ascending);
+        bubble_sort(if_ascending);
     }
     void reverse() {
         for (int front = 0; front <= (size - 1) / 2; ++front) {
@@ -519,7 +537,7 @@ public:
             ++index_B;
         }
 
-        A.emplace_unique();
+        A.ordered_unique();
     }
 
     /// @brief operator overloads

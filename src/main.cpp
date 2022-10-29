@@ -20,5 +20,4 @@ int main(int argc, char** argv) {
     // N_Queen::solution(true);
 
     DS::BinaryTree<int> test;
-    test.Value(test.Root());
 }

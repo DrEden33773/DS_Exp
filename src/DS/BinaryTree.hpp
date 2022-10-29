@@ -325,6 +325,11 @@ public:
         }
         node->elem = value;
     }
+    void InsertChild(Node* node, Node* toInsert, int LR = 0) {
+        if (LR != 0 && LR != 1) {
+            throw std::runtime_error("Unknown insert position type. ");
+        }
+    }
 };
 
 } // namespace DS

@@ -63,7 +63,7 @@ void DynamicArrayTest() {
     static_generated.echo();        /* shows the outcome of emplace_unique */
 
     /// @brief @b insert_sort()
-    static_generated.insert_sort();
+    static_generated.sort();
     static_generated.echo();
 
     Tool::end_info("Dynamic_Array");
