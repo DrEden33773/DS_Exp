@@ -10,10 +10,12 @@
  */
 
 #pragma once
+#include <algorithm>
 #include <functional>
 #include <iostream>
 #include <queue>
 #include <stack>
+#include <stdexcept>
 #include <utility>
 
 namespace DS {
@@ -218,8 +220,110 @@ public:
     constexpr int BiTreeSize() {
         return size;
     }
+
+    ///@brief @b depth_related
+    int BiTreeDepth(Node* node) {
+        if (node == nullptr) {
+            return 0;
+        }
+        int left  = BiTreeDepth(node->left);
+        int right = BiTreeDepth(node->right);
+        int res   = std::max(left, right) + 1;
+        return res;
+    }
+    int BiTreeDepth() {
+        if (!size) {
+            return 0;
+        }
+        return BiTreeDepth(TheRoot);
+    }
+
+    ///@brief @b Node_Relation_Opt
     constexpr Node* Root() {
         return TheRoot;
+    }
+    constexpr T& Value(Node* node) {
+        if (!node) {
+            throw std::runtime_error("Input node is NULL. ");
+        }
+        return std::ref(node->elem);
+    }
+    Node* Parent(Node* input) {
+        if (!input) {
+            throw std::runtime_error("Input node is NULL. ");
+        }
+        if (input == TheRoot) {
+            return nullptr;
+        }
+        std::stack<Node*> opt_stack;
+        Node*             node         = input;
+        Node*             res          = nullptr;
+        bool              if_stop_iter = false;
+
+        while (node || !opt_stack.empty()) {
+            while (node) {
+                // Opt
+                if (node->right == input || node->left == input) {
+                    res          = node;
+                    if_stop_iter = true;
+                    break;
+                }
+                // All left-sub-tree
+                opt_stack.push(node);
+                node = node->left;
+            }
+            if (if_stop_iter) {
+                break;
+            }
+            node = opt_stack.top(); // trace back
+            opt_stack.pop();
+            // To a right-sub-tree
+            node = node->right;
+        }
+
+        return res;
+    }
+    Node* LeftChild(Node* input) {
+        Node* node = input;
+        Node* res  = nullptr;
+        while (node) {
+            res  = node->left;
+            node = node->left;
+        }
+        return node;
+    }
+    Node* RightChild(Node* input) {
+        Node* node = input;
+        Node* res  = nullptr;
+        while (node) {
+            res  = node->right;
+            node = node->right;
+        }
+        return node;
+    }
+    Node* LeftBrother(Node* input) {
+        Node* res    = nullptr;
+        Node* father = Parent(input);
+        if (father) {
+            res = (father->left == input) ? nullptr : father->left;
+        }
+        return res;
+    }
+    Node* RightBrother(Node* input) {
+        Node* res    = nullptr;
+        Node* father = Parent(input);
+        if (father) {
+            res = (father->right == input) ? nullptr : father->right;
+        }
+        return res;
+    }
+
+    /// @brief @b Processing
+    void Assign(Node* node, const T& value) {
+        if (!node) {
+            throw std::runtime_error("Input node is NULL. ");
+        }
+        node->elem = value;
     }
 };
 
