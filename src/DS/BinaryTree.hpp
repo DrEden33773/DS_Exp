@@ -16,6 +16,7 @@
 #include <queue>
 #include <stack>
 #include <stdexcept>
+#include <type_traits>
 #include <utility>
 
 namespace DS {
@@ -179,12 +180,47 @@ class BinaryTree {
         std::cout << node->elem << std::endl;
     };
 
+    /// @brief @b default_constructor
+    BinaryTree() = default;
+
 public:
+    enum class Order : unsigned short {
+        LevelOrder = 0,
+        PreOrder   = 1,
+        InOrder    = 2,
+        PostOrder  = 3,
+    };
+
+    /// @brief @b destructor
     ~BinaryTree() {
         PostOrderOpt(TheRoot, DeleteNode);
     }
-    BinaryTree() {
-        // give the definations
+
+    /// @brief @b move_constructor_and_assigner
+    BinaryTree(BinaryTree&& moved) noexcept
+        : size(moved.size)
+        , TheRoot(moved.TheRoot) {
+        moved.size    = 0;
+        moved.TheRoot = nullptr;
+    }
+    BinaryTree& operator=(BinaryTree&& moved) noexcept {
+        size          = moved.size;
+        TheRoot       = moved.TheRoot;
+        moved.size    = 0;
+        moved.TheRoot = nullptr;
+        return *this;
+    }
+
+    /// @brief @b copy_constructor_and_assigner
+    BinaryTree(const BinaryTree& copied) {
+        // TODO(eden): Deserialize and then Serialize
+    }
+    BinaryTree& operator=(const BinaryTree& copied) {
+        if (&copied == this) {
+            return *this;
+        }
+        // TODO(eden): Deserialize and then Serialize
+        return *this;
     }
 
     /// @brief @b Traverse
@@ -366,22 +402,29 @@ public:
         }
         node->elem = value;
     }
-    void InsertChild(Node* curr_pos, Node* toInsert, int LR = 0) {
+    void InsertChild(Node* curr_pos, BinaryTree<T>& toInsert, int LR = 0) {
         if (LR != 0 && LR != 1) {
             throw std::runtime_error("Unknown insert position type. ");
         }
-        if (toInsert->right != nullptr) {
+        if (toInsert.TheRoot == nullptr) {
+            throw std::runtime_error("toInsert is an empty tree!");
+        }
+        if (toInsert.TheRoot->right != nullptr) {
             throw std::runtime_error("toInsert has a right sub tree!");
         }
+
+        size += toInsert.size;
         Node* original_sub_tree = nullptr;
+
         if (LR == 0) {
             original_sub_tree = curr_pos->left;
-            curr_pos->left    = toInsert;
+            curr_pos->left    = toInsert.TheRoot;
         } else {
             original_sub_tree = curr_pos->right;
-            curr_pos->right   = toInsert;
+            curr_pos->right   = toInsert.TheRoot;
         }
-        toInsert->right = original_sub_tree;
+
+        toInsert.TheRoot->right = original_sub_tree;
     }
     void DeleteChild(Node* node, int LR = 0) {
         if (LR != 0 && LR != 1) {
@@ -392,6 +435,69 @@ public:
         } else {
             PostOrderOpt(node->right, DeleteNode);
         }
+    }
+
+    static BinaryTree<T>
+    CreateBiTree_LevelOrder(const std::vector<std::string>& data)
+    requires std::is_same_v<T, int> // only support int
+    {
+        Node* root = nullptr;
+
+        if (data.empty()) {
+            return nullptr;
+        }
+
+        std::queue<Node*> queue;
+        bool              if_insert_to_left         = true;
+        Node*             the_parent                = nullptr;
+        int               num_of_inserted_to_parent = -1;
+        int               num_of_node               = 0;
+
+        for (const std::string& node_info : data) {
+            Node* curr_node = (node_info == "#")
+                ? nullptr
+                : new Node(stoi(node_info));
+
+            num_of_node += (node_info == "#") ? 0 : 1;
+
+            queue.push(curr_node);
+
+            // need to update parent
+            if (num_of_inserted_to_parent == 2) {
+                do {
+                    queue.pop();
+                    the_parent = queue.front();
+                } while (!the_parent);
+
+                num_of_inserted_to_parent = 0;
+            }
+
+            if (!the_parent) {
+                root       = curr_node;
+                the_parent = curr_node;
+            } else {
+                if (if_insert_to_left) {
+                    the_parent->left = curr_node;
+                } else {
+                    the_parent->right = curr_node;
+                }
+                if_insert_to_left = !if_insert_to_left;
+            }
+
+            ++num_of_inserted_to_parent;
+        }
+
+        BinaryTree<T> res;
+        res.TheRoot = root;
+        res.size    = num_of_node;
+        return res;
+    }
+    static BinaryTree<T>
+    CreateBiTree(const std::vector<std::string>& data, Order order = Order::LevelOrder)
+    requires std::is_same_v<T, int>      // only support int
+        and (order == Order::LevelOrder) // only support LevelOrder
+    {
+        return CreateBiTree_LevelOrder(data);
     }
 };
 
