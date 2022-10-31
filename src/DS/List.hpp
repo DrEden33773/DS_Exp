@@ -582,6 +582,25 @@ public:
         head = new_head;
         tail = new_tail;
     }
+
+    /// @brief @b unique
+    void hash_unique() {
+        // TODO(eden):
+    }
+    void emplace_unique() {
+        // TODO(eden):
+    }
+    void ordered_unique() {
+        // TODO(eden):
+    }
+    void unique() {
+        // TODO(eden):
+    }
+
+    /// @brief @b merge_then_unique
+    static void Merge_Unique() {
+        // TODO(eden):
+    }
 };
 
 } // namespace DS
