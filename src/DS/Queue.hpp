@@ -5,15 +5,15 @@
         An implementation of Stack.
 
         The Container should satisfy the `LIFO` standard interface,
-        and has at least @b stack_base{type->ptr} and @b stack_top{type->ptr}.
+        and has at least @b queue_base{type->ptr} and @b queue_top{type->ptr}.
  *
  * @attention
         @b Queue is a @e container_adapter , which is an @b encapsulation_of_container
             (which satisfy @b rear_push_and_front_pop operation)
-            { @e example=> @b DynamicArray , @b SingleList , @b DoubleList ... }
+            { @e example=> @b DynamicArray , @b SingleList , @b DoubleList(List) ... }
 
         Take @b S(n) and @b T(n) into consideration, the final implementation is:
-            @e Default_Container @p <equals_to> @b double_list
+            @e Default_Container @p <equals_to> @b double_list(list)
             @e Supported_Container @p <equals_to> @b DoubleList__&__DynamicArray
  * @version 0.1
  * @date 2022-10-18
@@ -23,8 +23,8 @@
  */
 
 #pragma once
-#include "DynamicArray.hpp"
 #include "LinkedList/DoubleList.hpp"
+#include "List.hpp"
 #include <cassert>
 #include <cstddef>
 #include <initializer_list>
@@ -38,13 +38,13 @@ namespace DS {
 /// @brief @b Chained_Queue
 template <typename T>
 class ChainedQueue {
-    using node     = typename DS::DoubleList<T>::node;
-    using iterator = typename DS::DoubleList<T>::iterator;
+    using node     = typename DS::List<T>::node;
+    using iterator = typename DS::List<T>::iterator;
 
     /// @brief @b data_front_rear
-    DS::DoubleList<T>* data  = new DS::DoubleList<T>();
-    node*              front = data->head;
-    node*              rear  = data->tail;
+    DS::List<T>* data  = new DS::List<T>();
+    node*        front = data->head;
+    node*        rear  = data->tail;
 
     /// @brief @b iterator_opt
     iterator begin() {
@@ -67,16 +67,16 @@ public:
         front = nullptr;
         rear  = nullptr;
     }
-    ChainedQueue(ChainedQueue<T>&& moved) noexcept {
-        data        = moved.data;
-        front       = moved.front;
-        rear        = moved.rear;
+    ChainedQueue(ChainedQueue<T>&& moved) noexcept
+        : data(moved.data)
+        , front(moved.front)
+        , rear(moved.rear) {
         moved.base  = nullptr;
         moved.front = nullptr;
         moved.rear  = nullptr;
     }
-    ChainedQueue(ChainedQueue<T>& copied) {
-        data = new DS::DynamicArray<T>(copied.data);
+    ChainedQueue(ChainedQueue<T>& copied)
+        : data(new DS::List<T>(copied.data)) {
         update_front_and_rear();
     }
     ChainedQueue(std::initializer_list<T>&& initList) {

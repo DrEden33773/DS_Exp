@@ -15,8 +15,8 @@
 #include "Problem/N_Queen.hpp"
 
 int main(int argc, char** argv) {
-    // Test::run_all_test();
-    CountOff_Solution_Generator::Solution();
+    Test::run_all_test();
+    // CountOff_Solution_Generator::Solution();
     // N_Queen::solution(true);
 
     DS::BinaryTree<int> test;

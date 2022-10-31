@@ -290,7 +290,7 @@ public:
             res  = node->left;
             node = node->left;
         }
-        return node;
+        return res;
     }
     Node* RightChild(Node* input) {
         Node* node = input;
@@ -299,7 +299,7 @@ public:
             res  = node->right;
             node = node->right;
         }
-        return node;
+        return res;
     }
     Node* LeftBrother(Node* input) {
         Node* res    = nullptr;
@@ -325,9 +325,31 @@ public:
         }
         node->elem = value;
     }
-    void InsertChild(Node* node, Node* toInsert, int LR = 0) {
+    void InsertChild(Node* curr_pos, Node* toInsert, int LR = 0) {
         if (LR != 0 && LR != 1) {
             throw std::runtime_error("Unknown insert position type. ");
+        }
+        if (toInsert->right != nullptr) {
+            throw std::runtime_error("toInsert has a right sub tree!");
+        }
+        Node* original_sub_tree = nullptr;
+        if (LR == 0) {
+            original_sub_tree = curr_pos->left;
+            curr_pos->left    = toInsert;
+        } else {
+            original_sub_tree = curr_pos->right;
+            curr_pos->right   = toInsert;
+        }
+        toInsert->right = original_sub_tree;
+    }
+    void DeleteChild(Node* node, int LR = 0) {
+        if (LR != 0 && LR != 1) {
+            throw std::runtime_error("Unknown delete position type. ");
+        }
+        if (LR == 0) {
+            PostOrderOpt(node->left, DeleteNode);
+        } else {
+            PostOrderOpt(node->right, DeleteNode);
         }
     }
 };

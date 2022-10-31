@@ -898,7 +898,4 @@ public:
 template <typename T>
 const std::string DoubleList<T>::DSname = "DoubleList";
 
-template <typename T>
-using List = DoubleList<T>;
-
 } // namespace DS

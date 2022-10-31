@@ -13,6 +13,7 @@
 #include "Algorithm/MergeUniqueTest.hpp"
 #include "DS/DoubleListTest.hpp"
 #include "DS/DynamicArrayTest.hpp"
+#include "DS/ListTest.hpp"
 #include "DS/QueueTest.hpp"
 #include "DS/SingleListTest.hpp"
 #include "DS/StackTest.hpp"
@@ -25,6 +26,7 @@ void run_all_test() {
         DynamicArrayTest, // success
         SingleListTest,   // success
         DoubleListTest,   // success
+        ListTest,         // success
         MergeUniqueTest,  // success
         SeqStackTest,     // success
         ChainedQueueTest, // success

@@ -24,7 +24,12 @@
 namespace DS {
 
 template <typename T>
+class ChainedQueue;
+
+template <typename T>
 class List {
+    friend class ChainedQueue<T>;
+
     struct node {
         T     element;
         node* next = nullptr;
@@ -170,12 +175,6 @@ public:
     constexpr iterator end() {
         return iterator(tail);
     }
-    constexpr iterator rbegin() {
-        return iterator(tail->prev);
-    }
-    constexpr iterator rend() {
-        return iterator(head);
-    }
     constexpr iterator Head_() {
         return iterator(head);
     }
@@ -218,7 +217,7 @@ private:
 
 public:
     /// @brief static constructor
-    static List<T> CreateDoubleList(
+    static List<T> CreateList(
         std::initializer_list<T>&& initList
     ) {
         using original_type = std::initializer_list<T>;
@@ -326,7 +325,7 @@ public:
         return *this;
     }
     List(std::initializer_list<T>&& initList) {
-        List();
+        init_head_and_tail();
         for (const T& element : initList) {
             push_back(element);
         }
@@ -374,10 +373,11 @@ public:
         node* thePrev = toUnlink->prev;
         node* theNext = toUnlink->next;
 
-        thePrev->next  = nullptr;
         toUnlink->prev = nullptr;
         toUnlink->next = nullptr;
-        theNext->prev  = nullptr;
+
+        thePrev->next = theNext;
+        theNext->prev = thePrev;
 
         return toUnlink;
     }
@@ -574,7 +574,7 @@ public:
         new_tail->prev = new_head;
 
         while (head->next != tail) {
-            node* unlinked = unlink_a_node(begin().ptr);
+            node* unlinked = unlink_a_node(head->next);
             link_a_node_after(new_head, unlinked);
         }
 
