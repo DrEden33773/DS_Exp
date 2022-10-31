@@ -215,14 +215,14 @@ public:
 
     /// @brief @b size_related
     constexpr bool BiTreeEmpty() {
-        return size == 0;
+        return TheRoot == nullptr;
     }
     constexpr int BiTreeSize() {
         return size;
     }
 
     ///@brief @b depth_related
-    int BiTreeDepth(Node* node) {
+    int BiTreeDepth_Rec(Node* node) {
         if (node == nullptr) {
             return 0;
         }
@@ -231,11 +231,52 @@ public:
         int res   = std::max(left, right) + 1;
         return res;
     }
-    int BiTreeDepth() {
-        if (!size) {
+    int BiTreeDepth_Rec() {
+        if (!TheRoot) {
             return 0;
         }
-        return BiTreeDepth(TheRoot);
+        return BiTreeDepth_Rec(TheRoot);
+    }
+    int BiTreeDepth_LevelOrder(Node* node) {
+        int res = 0;
+
+        if (node == nullptr) {
+            return 0;
+        }
+
+        std::queue<Node*> queue;
+        queue.push(node);
+
+        while (!queue.empty()) {
+            int currentLevelSize = static_cast<int>(queue.size());
+            // iterate `currentLevel`
+            for (int i = 1; i <= currentLevelSize; ++i) {
+                auto node = queue.front();
+                queue.pop();
+                if (node->left) {
+                    queue.push(node->left);
+                }
+                if (node->right) {
+                    queue.push(node->right);
+                }
+            }
+            // finished iterating `currentLevel`, ++res
+            ++res;
+        }
+
+        return res;
+    }
+    int BiTreeDepth_LevelOrder() {
+        if (!TheRoot) {
+            return 0;
+        }
+        return BiTreeDepth_LevelOrder(TheRoot);
+    }
+    int BiTreeDepth(Node* node) {
+        return BiTreeDepth_LevelOrder(node);
+    }
+    int BiTreeDepth() {
+        return BiTreeDepth_LevelOrder();
     }
 
     ///@brief @b Node_Relation_Opt

@@ -23,7 +23,6 @@
  */
 
 #pragma once
-#include "LinkedList/DoubleList.hpp"
 #include "List.hpp"
 #include <cassert>
 #include <cstddef>
@@ -38,13 +37,15 @@ namespace DS {
 /// @brief @b Chained_Queue
 template <typename T>
 class ChainedQueue {
+
     using node     = typename DS::List<T>::node;
     using iterator = typename DS::List<T>::iterator;
 
     /// @brief @b data_front_rear
-    DS::List<T>* data  = new DS::List<T>();
-    node*        front = data->head;
-    node*        rear  = data->tail;
+    DS::List<T>* data = new DS::List<T>();
+
+    node* front = data->Head_().ptr;
+    node* rear  = data->tail;
 
     /// @brief @b iterator_opt
     iterator begin() {
@@ -62,6 +63,23 @@ class ChainedQueue {
 
 public:
     ChainedQueue() = default;
+    ChainedQueue& operator=(const ChainedQueue& copied) {
+        if (&copied == this) {
+            return *this;
+        }
+        data = new DS::List<T>(copied.data);
+        update_front_and_rear();
+        return *this;
+    }
+    ChainedQueue& operator=(ChainedQueue&& moved) noexcept {
+        data        = moved.data;
+        front       = moved.front;
+        rear        = moved.rear;
+        moved.base  = nullptr;
+        moved.front = nullptr;
+        moved.rear  = nullptr;
+        return *this;
+    }
     ~ChainedQueue() {
         delete data;
         front = nullptr;
