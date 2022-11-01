@@ -215,8 +215,8 @@ public:
                 }
                 // remove the node from queue
                 queue.pop();
-                // insert node->val to latest layer_vec
-                res.push_back(to_string(node->val));
+                // insert node->elem to latest layer_vec
+                res.push_back(std::to_string(node->elem));
                 // join node->left and node->right (include nullptr)
                 queue.push(node->left);
                 queue.push(node->right);
@@ -227,10 +227,11 @@ public:
     }
     std::pair<Node*, int>
     DeserializeFromVec(const std::vector<std::string>& data) {
-        Node* root = nullptr;
+        Node* root        = nullptr;
+        int   num_of_node = 0;
 
         if (data.empty()) {
-            return nullptr;
+            return std::make_pair(nullptr, num_of_node);
         }
 
         std::queue<Node*> queue;
@@ -241,7 +242,7 @@ public:
         for (const std::string& node_info : data) {
             Node* curr_node = (node_info == "#")
                 ? nullptr
-                : new Node(stoi(node_info));
+                : new Node(std::stoi(node_info));
 
             queue.push(curr_node);
 
@@ -267,9 +268,10 @@ public:
             }
 
             ++num_of_inserted_to_parent;
+            ++num_of_node;
         }
 
-        return std::make_pair(root, num_of_inserted_to_parent);
+        return std::make_pair(root, num_of_node);
     }
 
     /// @brief @b destructor
@@ -532,7 +534,7 @@ public:
     }
 
     /// @brief @b create_binary_tree
-    static BinaryTree<T>
+    static BinaryTree<int>
     CreateBiTree_LevelOrder(const std::vector<std::string>& data)
     requires std::is_same_v<T, int> // only support int
     {
@@ -543,11 +545,11 @@ public:
         res.size    = root_num_pair.second;
         return res;
     }
-    static BinaryTree<T>
-    CreateBiTree(const std::vector<std::string>& data, Order order = Order::LevelOrder)
-    requires std::is_same_v<T, int>      // only support int
-        and (order == Order::LevelOrder) // only support LevelOrder
-    {
+    static BinaryTree<int>
+    CreateBiTree(
+        const std::vector<std::string>& data,
+        Order                           order = Order::LevelOrder
+    ) {
         return CreateBiTree_LevelOrder(data);
     }
 
