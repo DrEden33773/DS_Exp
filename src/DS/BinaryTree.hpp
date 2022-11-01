@@ -179,6 +179,12 @@ class BinaryTree {
     std::function<void(Node*)> PrintlnNode = [](Node* node) {
         std::cout << node->elem << std::endl;
     };
+    std::function<void(Node*)> InvertChildSubTree = [](Node* node) {
+        Node* _left_  = node->left;
+        Node* _right_ = node->right;
+        node->left    = _right_;
+        node->right   = _left_;
+    };
 
     /// @brief @b default_constructor
     BinaryTree() = default;
@@ -348,10 +354,10 @@ public:
     }
 
     /// @brief @b size_related
-    constexpr bool BiTreeEmpty() {
+    bool BiTreeEmpty() {
         return TheRoot == nullptr;
     }
-    constexpr int BiTreeSize() {
+    int BiTreeSize() {
         return size;
     }
 
@@ -414,10 +420,10 @@ public:
     }
 
     ///@brief @b Node_Relation_Opt
-    constexpr Node* Root() {
+    Node* Root() {
         return TheRoot;
     }
-    constexpr T& Value(Node* node) {
+    T& Value(Node* node) {
         if (!node) {
             throw std::runtime_error("Input node is NULL. ");
         }
@@ -491,6 +497,9 @@ public:
             res = (father->right == input) ? nullptr : father->right;
         }
         return res;
+    }
+    void InvertTree() {
+        LevelOrderOpt(TheRoot, InvertChildSubTree);
     }
 
     /// @brief @b Processing
