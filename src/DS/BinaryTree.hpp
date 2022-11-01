@@ -191,6 +191,87 @@ public:
         PostOrder  = 3,
     };
 
+    /// @brief @b serialization_with_all_nullptr
+    std::vector<std::string> SerializeToVec() {
+        Node*                    node = TheRoot;
+        std::vector<std::string> res;
+        // special case
+        if (!node) {
+            return res;
+        }
+        std::queue<Node*> queue;
+        queue.push(node);
+
+        while (!queue.empty()) {
+            int currentLevelSize = static_cast<int>(queue.size());
+            for (int i = 1; i <= currentLevelSize; ++i) {
+                // get node
+                auto node = queue.front();
+                // if get nullptr node
+                if (!node) {
+                    queue.pop();
+                    res.push_back("#");
+                    continue;
+                }
+                // remove the node from queue
+                queue.pop();
+                // insert node->val to latest layer_vec
+                res.push_back(to_string(node->val));
+                // join node->left and node->right (include nullptr)
+                queue.push(node->left);
+                queue.push(node->right);
+            }
+        }
+
+        return res;
+    }
+    std::pair<Node*, int>
+    DeserializeFromVec(const std::vector<std::string>& data) {
+        Node* root = nullptr;
+
+        if (data.empty()) {
+            return nullptr;
+        }
+
+        std::queue<Node*> queue;
+        bool              if_insert_to_left         = true;
+        Node*             the_parent                = nullptr;
+        int               num_of_inserted_to_parent = -1;
+
+        for (const std::string& node_info : data) {
+            Node* curr_node = (node_info == "#")
+                ? nullptr
+                : new Node(stoi(node_info));
+
+            queue.push(curr_node);
+
+            if (num_of_inserted_to_parent == 2) {
+                // need to update parent
+                do {
+                    queue.pop();
+                    the_parent = queue.front();
+                } while (!the_parent);
+                num_of_inserted_to_parent = 0;
+            }
+
+            if (!the_parent) {
+                root       = curr_node;
+                the_parent = curr_node;
+            } else {
+                if (if_insert_to_left) {
+                    the_parent->left = curr_node;
+                } else {
+                    the_parent->right = curr_node;
+                }
+                if_insert_to_left = !if_insert_to_left;
+            }
+
+            ++num_of_inserted_to_parent;
+        }
+
+        return std::make_pair(root, num_of_inserted_to_parent);
+    }
+
     /// @brief @b destructor
     ~BinaryTree() {
         PostOrderOpt(TheRoot, DeleteNode);
@@ -212,14 +293,27 @@ public:
     }
 
     /// @brief @b copy_constructor_and_assigner
-    BinaryTree(const BinaryTree& copied) {
-        // TODO(eden): Deserialize and then Serialize
+    BinaryTree(BinaryTree& copied) {
+        // Deserialize and then Serialize
+        std::vector<std::string> DeserializedData
+            = copied.SerializeToVec();
+        std::pair<Node*, int> root_num_pair
+            = copied.DeserializeFromVec(DeserializedData);
+        TheRoot = root_num_pair.first;
+        size    = root_num_pair.second;
     }
-    BinaryTree& operator=(const BinaryTree& copied) {
+    BinaryTree& operator=(BinaryTree& copied) {
         if (&copied == this) {
             return *this;
         }
-        // TODO(eden): Deserialize and then Serialize
+        // Deserialize and then Serialize
+        std::vector<std::string> DeserializedData
+            = copied.SerializeToVec();
+        std::pair<Node*, int> root_num_pair
+            = copied.DeserializeFromVec(DeserializedData);
+        TheRoot = root_num_pair.first;
+        size    = root_num_pair.second;
+
         return *this;
     }
 
@@ -437,59 +531,16 @@ public:
         }
     }
 
+    /// @brief @b create_binary_tree
     static BinaryTree<T>
     CreateBiTree_LevelOrder(const std::vector<std::string>& data)
     requires std::is_same_v<T, int> // only support int
     {
-        Node* root = nullptr;
+        BinaryTree<T>         res;
+        std::pair<Node*, int> root_num_pair = res.DeserializeFromVec(data);
 
-        if (data.empty()) {
-            return nullptr;
-        }
-
-        std::queue<Node*> queue;
-        bool              if_insert_to_left         = true;
-        Node*             the_parent                = nullptr;
-        int               num_of_inserted_to_parent = -1;
-        int               num_of_node               = 0;
-
-        for (const std::string& node_info : data) {
-            Node* curr_node = (node_info == "#")
-                ? nullptr
-                : new Node(stoi(node_info));
-
-            num_of_node += (node_info == "#") ? 0 : 1;
-
-            queue.push(curr_node);
-
-            // need to update parent
-            if (num_of_inserted_to_parent == 2) {
-                do {
-                    queue.pop();
-                    the_parent = queue.front();
-                } while (!the_parent);
-
-                num_of_inserted_to_parent = 0;
-            }
-
-            if (!the_parent) {
-                root       = curr_node;
-                the_parent = curr_node;
-            } else {
-                if (if_insert_to_left) {
-                    the_parent->left = curr_node;
-                } else {
-                    the_parent->right = curr_node;
-                }
-                if_insert_to_left = !if_insert_to_left;
-            }
-
-            ++num_of_inserted_to_parent;
-        }
-
-        BinaryTree<T> res;
-        res.TheRoot = root;
-        res.size    = num_of_node;
+        res.TheRoot = root_num_pair.first;
+        res.size    = root_num_pair.second;
         return res;
     }
     static BinaryTree<T>
@@ -498,6 +549,28 @@ public:
         and (order == Order::LevelOrder) // only support LevelOrder
     {
         return CreateBiTree_LevelOrder(data);
+    }
+
+    /// @brief @b compare_if_same
+    static bool IfSame(BinaryTree<T>& lhs, BinaryTree<T>& rhs)
+    requires std::is_same_v<T, int>
+    {
+        return lhs.SerializeToVec() == rhs.SerializeToVec();
+    }
+    friend bool operator==(BinaryTree<T>& lhs, BinaryTree<T>& rhs)
+    requires std::is_same_v<T, int>
+    {
+        return lhs.SerializeToVec() == rhs.SerializeToVec();
+    }
+    static bool IfNotSame(BinaryTree<T>& lhs, BinaryTree<T>& rhs)
+    requires std::is_same_v<T, int>
+    {
+        return !(lhs.SerializeToVec() == rhs.SerializeToVec());
+    }
+    friend bool operator!=(BinaryTree<T>& lhs, BinaryTree<T>& rhs)
+    requires std::is_same_v<T, int>
+    {
+        return !(lhs.SerializeToVec() == rhs.SerializeToVec());
     }
 };
 
