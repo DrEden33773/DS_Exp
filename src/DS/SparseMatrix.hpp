@@ -28,26 +28,32 @@ struct ElementInfo {
         : Row(Row)
         , Col(Col)
         , Value(Value) { }
-    ElementInfo(const ElementInfo& copied) {
-        Row   = copied.Row;
-        Col   = copied.Col;
-        Value = copied.Value;
+    ElementInfo(ElementInfo& copied)
+        : Row(copied.Row)
+        , Col(copied.Col)
+        , Value(copied.Value) { }
+    ElementInfo(ElementInfo&& moved) noexcept
+        : Row(std::move(moved.Row))
+        , Col(std::move(moved.Col))
+        , Value(std::move(moved.Value)) {
+        moved.Row = 0;
+        moved.Col = 0;
     }
-    ElementInfo(ElementInfo&& copied) noexcept {
-        Row   = copied.Row;
-        Col   = copied.Col;
-        Value = std::move(copied.Value);
-    }
-    ElementInfo& operator=(const ElementInfo& copied) {
+    ElementInfo& operator=(ElementInfo const& copied) {
+        if (&copied == this) {
+            return *this;
+        }
         Row   = copied.Row;
         Col   = copied.Col;
         Value = copied.Value;
         return *this;
     }
-    ElementInfo& operator=(ElementInfo&& copied) noexcept {
-        Row   = copied.Row;
-        Col   = copied.Col;
-        Value = std::move(copied.Value);
+    ElementInfo& operator=(ElementInfo&& moved) noexcept {
+        Row       = moved.Row;
+        Col       = moved.Col;
+        Value     = std::move(moved.Value);
+        moved.Row = 0;
+        moved.Col = 0;
         return *this;
     }
 };
@@ -106,15 +112,18 @@ public:
             }
         }
     }
-    SparseMatrix(const SparseMatrix& input) {
-        Sizeof_Row = input.Sizeof_Row;
-        Sizeof_Col = input.Sizeof_Col;
-        Data       = input.Data;
+    SparseMatrix(SparseMatrix& copied)
+        : Sizeof_Row(copied.Sizeof_Row)
+        , Sizeof_Col(copied.Sizeof_Col)
+        , Data(copied.Data) {
     }
-    SparseMatrix(SparseMatrix&& input) noexcept {
-        Sizeof_Row = input.Sizeof_Row;
-        Sizeof_Col = input.Sizeof_Col;
-        Data       = std::move(input.Data);
+    SparseMatrix(SparseMatrix&& moved) noexcept
+        : Sizeof_Row(moved.Sizeof_Row)
+        , Sizeof_Col(moved.Sizeof_Col)
+        , Data(std::move(moved.Data)) {
+        moved.Sizeof_Row = 0;
+        moved.Sizeof_Col = 0;
+        moved.Data       = std::vector<ElementInfo<T>>();
     }
 
     /// @brief fast_transpose
