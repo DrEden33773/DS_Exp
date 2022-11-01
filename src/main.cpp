@@ -25,8 +25,4 @@ int main(int argc, char** argv) {
         = DS::BinaryTree<int>::CreateBiTree(
             std::vector<std::string>()
         );
-    EmptyBiTree = EmptyBiTree;
-    if (EmptyBiTree != EmptyBiTree) {
-        throw std::runtime_error("EmptyBiTree should be equal to EmptyBiTree, but not!");
-    }
 }
