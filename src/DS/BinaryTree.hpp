@@ -613,14 +613,14 @@ public:
                 // (like a filter)
                 // if_inverse == true => delete everything satisfied the func
                 // (like a inverse_filter)
-                bool if_satisfied = (if_inverse)
+                bool if_delete = (if_inverse)
                     ? satisfied_func(node->elem)
                     : !satisfied_func(node->elem);
 
                 bool if_deleted_node = false;
 
                 // if_satisfied, then delete the sub tree
-                if (if_satisfied) {
+                if (if_delete) {
                     if (node == TheRoot) {
                         // just delete everything
                         PostOrderOpt(TheRoot, DeleteNode);
