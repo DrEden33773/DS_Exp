@@ -69,19 +69,19 @@ class BinaryTree {
         if (!node) { // uninitialized
             return;
         }
-        std::queue<Node*> opt_stack;
-        opt_stack.push(node);
+        std::queue<Node*> opt_queue;
+        opt_queue.push(node);
 
-        while (!opt_stack.empty()) {
-            Node* curr_node = opt_stack.front();
+        while (!opt_queue.empty()) {
+            Node* curr_node = opt_queue.front();
             func(curr_node);
             if (curr_node->left) {
-                opt_stack.push(curr_node->left);
+                opt_queue.push(curr_node->left);
             }
             if (curr_node->right) {
-                opt_stack.push(curr_node->right);
+                opt_queue.push(curr_node->right);
             }
-            opt_stack.pop();
+            opt_queue.pop();
         }
     }
     void PreOrderOpt(Node* input, std::function<void(Node*)>& func) {
@@ -244,6 +244,8 @@ public:
                 ? nullptr
                 : new Node(std::stoi(node_info));
 
+            num_of_node += (node_info == "#") ? 0 : 1;
+
             queue.push(curr_node);
 
             if (num_of_inserted_to_parent == 2) {
@@ -268,7 +270,6 @@ public:
             }
 
             ++num_of_inserted_to_parent;
-            ++num_of_node;
         }
 
         return std::make_pair(root, num_of_node);
@@ -277,6 +278,7 @@ public:
     /// @brief @b destructor
     ~BinaryTree() {
         PostOrderOpt(TheRoot, DeleteNode);
+        TheRoot = nullptr;
     }
 
     /// @brief @b move_constructor_and_assigner
@@ -553,7 +555,7 @@ public:
         return CreateBiTree_LevelOrder(data);
     }
 
-    /// @brief @b compare_if_same
+    /// @brief @b compare_if_same(int_BiTree_supported_only)
     static bool IfSame(BinaryTree<T>& lhs, BinaryTree<T>& rhs)
     requires std::is_same_v<T, int>
     {
@@ -573,6 +575,93 @@ public:
     requires std::is_same_v<T, int>
     {
         return !(lhs.SerializeToVec() == rhs.SerializeToVec());
+    }
+
+    /// @brief @b filter(int_BiTree_supported_only)
+    using filter_type = std::function<bool(const int&)>;
+    void emplace_filter(
+        const filter_type& satisfied_func,
+        const bool&        if_inverse = false
+    )
+    requires std::is_same_v<T, int>
+    {
+        Node* root        = TheRoot;
+        Node* temp_parent = nullptr;
+
+        // [ (node, parent_of_node) ]
+        std::queue<std::pair<Node*, Node*>> queue_with_parent;
+
+        queue_with_parent.push(std::make_pair(root, nullptr));
+
+        while (!queue_with_parent.empty()) {
+            int curr_level_size = static_cast<int>(queue_with_parent.size());
+            for (int i = 1; i <= curr_level_size; ++i) {
+                // reference of pointer!
+                Node* node   = queue_with_parent.front().first;
+                Node* parent = queue_with_parent.front().second;
+
+                // if_inverse == false => delete everything unsatisfied the func
+                // (like a filter)
+                // if_inverse == true => delete everything satisfied the func
+                // (like a inverse_filter)
+                bool if_satisfied = (if_inverse)
+                    ? satisfied_func(node->elem)
+                    : !satisfied_func(node->elem);
+
+                bool if_deleted_node = false;
+
+                // if_satisfied, then delete the sub tree
+                if (if_satisfied) {
+                    if (node == TheRoot) {
+                        // just delete everything
+                        PostOrderOpt(TheRoot, DeleteNode);
+                        TheRoot = nullptr;
+                        return;
+                    }
+                    bool if_on_left  = parent->left == node;
+                    bool if_on_right = parent->right == node;
+
+                    PostOrderOpt(node, DeleteNode);
+                    node = nullptr;
+
+                    if_deleted_node = true;
+
+                    if (if_on_left) {
+                        parent->left = nullptr;
+                    }
+                    if (if_on_right) {
+                        parent->right = nullptr;
+                    }
+                }
+
+                // remove curr node
+                queue_with_parent.pop();
+
+                // update parent
+                if (!if_deleted_node) {
+                    if (node->left) {
+                        queue_with_parent.push(
+                            std::make_pair(node->left, node)
+                        );
+                    }
+                    if (node->right) {
+                        queue_with_parent.push(
+                            std::make_pair(node->right, node)
+                        );
+                    }
+                }
+            }
+        }
+    }
+    void emplace_select(const filter_type& filter_func)
+    requires std::is_same_v<T, int>
+    {
+        emplace_filter(filter_func, false);
+    }
+    void emplace_unselect(const filter_type& filter_func)
+    requires std::is_same_v<T, int>
+    {
+        emplace_filter(filter_func, true);
     }
 };
 
