@@ -11,6 +11,7 @@
 
 #pragma once
 #include "Algorithm/MergeUniqueTest.hpp"
+#include "DS/BinaryTreeTest.hpp"
 #include "DS/DoubleListTest.hpp"
 #include "DS/DynamicArrayTest.hpp"
 #include "DS/ListTest.hpp"
@@ -31,7 +32,8 @@ void run_all_test() {
         MergeUniqueTest,  // success
         SeqStackTest,     // success
         ChainedQueueTest, // success
-        SparseMatrixTest,
+        SparseMatrixTest, // success
+        BinaryTreeTest,
     };
     for (auto&& func : test_list) {
         func();
