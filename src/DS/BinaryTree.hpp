@@ -23,6 +23,10 @@ namespace DS {
 
 template <typename T>
 class BinaryTree {
+public:
+    using ElemType = T;
+
+private:
     struct Node {
         T     elem;
         Node* left  = nullptr;
@@ -587,7 +591,7 @@ public:
     }
 
     /// @brief @b filter(int_BiTree_supported_only)
-    using filter_type = std::function<bool(const int&)>;
+    using filter_type = std::function<bool(const T&)>;
     void emplace_filter(
         const filter_type& satisfied_func,
         const bool&        if_inverse = false
