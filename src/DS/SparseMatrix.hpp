@@ -10,6 +10,8 @@
  */
 
 #pragma once
+#include <array>
+#include <concepts>
 #include <initializer_list>
 #include <tuple>
 #include <unordered_map>
@@ -28,7 +30,7 @@ struct ElementInfo {
         : Row(Row)
         , Col(Col)
         , Value(Value) { }
-    ElementInfo(ElementInfo& copied)
+    ElementInfo(const ElementInfo& copied)
         : Row(copied.Row)
         , Col(copied.Col)
         , Value(copied.Value) { }
@@ -39,7 +41,7 @@ struct ElementInfo {
         moved.Row = 0;
         moved.Col = 0;
     }
-    ElementInfo& operator=(ElementInfo const& copied) {
+    ElementInfo& operator=(const ElementInfo& copied) {
         if (&copied == this) {
             return *this;
         }
@@ -56,6 +58,21 @@ struct ElementInfo {
         moved.Col = 0;
         return *this;
     }
+
+    /// @brief @b operator==
+    friend bool operator==(const ElementInfo<T>& lhs, const ElementInfo<T>& rhs)
+    requires std::equality_comparable<T>
+    {
+        bool if_row_same   = lhs.Row == rhs.Row;
+        bool if_col_same   = lhs.Col == rhs.Col;
+        bool if_value_same = lhs.Value == rhs.Value;
+        return if_col_same && if_row_same && if_value_same;
+    }
+
+    /// @brief @b swap_row_and_col
+    void swap() {
+        std::swap(Row, Col);
+    }
 };
 
 template <typename T>
@@ -69,7 +86,7 @@ public:
     /// @brief constructor & destructor
     constexpr ~SparseMatrix() = default;
     constexpr SparseMatrix()  = default;
-    explicit SparseMatrix(std::vector<std::vector<T>>&& init) {
+    explicit SparseMatrix(const std::vector<std::vector<T>>& init) {
         if (!init.size()) {
             return;
         }
@@ -90,28 +107,7 @@ public:
             }
         }
     }
-    SparseMatrix(std::initializer_list<
-                 std::initializer_list<T>>&& init) {
-        if (!init.size()) {
-            return;
-        }
-        int init_row = init.size();
-        int init_col = init[0].size();
-        Sizeof_Row   = init_row;
-        Sizeof_Col   = init_col;
-        for (int row_index = 0; row_index < init_row; ++row_index) {
-            for (int col_index = 0; col_index < init_col; ++col_index) {
-                if (init[row_index][col_index]) {
-                    ElementInfo<T> input = {
-                        row_index + 1,
-                        col_index + 1,
-                        init[row_index][col_index]
-                    };
-                    Data.push_back(input);
-                }
-            }
-        }
-    }
+
     SparseMatrix(SparseMatrix& copied)
         : Sizeof_Row(copied.Sizeof_Row)
         , Sizeof_Col(copied.Sizeof_Col)
@@ -131,31 +127,30 @@ public:
         SparseMatrix<T> res;
         res.Sizeof_Col = Sizeof_Row;
         res.Sizeof_Row = Sizeof_Col;
-        res.Data.reserve(Data.size());
+        res.Data       = std::vector<ElementInfo<T>>(Data.size());
 
-        // nums of col
-        int* nums_hashtable = new int[Sizeof_Col + 1]; // index starts from 1
-        // start location
-        int* location_hashtable = new int[Sizeof_Col + 1]; // index starts from 1
+        // nums of col (index = new_row, starts from 1)
+        std::vector<int> nums_table(Sizeof_Col + 1, 0);
+        // start location (index = new_row, starts from 1)
+        std::vector<int> location_table(Sizeof_Col + 1, 0);
 
-        for (int index = 0; index < Sizeof_Col + 1; ++index) {
-            nums_hashtable[index]     = 0;
-            location_hashtable[index] = 0;
-        }
         for (int index = 0; index < Data.size(); ++index) {
-            ++nums_hashtable[Data[index].col];
+            ++nums_table[Data[index].Col];
         }
-        location_hashtable[1] = 0; // location index starts from zero
+        location_table[1] = 0; // location index starts from zero
         for (int col_index = 2; col_index < Sizeof_Col + 1; ++col_index) {
-            location_hashtable[col_index]
-                = location_hashtable[col_index - 1] + nums_hashtable[col_index - 1];
+            location_table[col_index]
+                = location_table[col_index - 1] + nums_table[col_index - 1];
         }
 
         for (int data_index = 0; data_index < Data.size(); ++data_index) {
             int curr_col_index = Data[data_index].Col;
-            int tr_data_index  = location_hashtable[curr_col_index];
-            ++location_hashtable[curr_col_index]; // need to update start location
-            res[tr_data_index] = Data[curr_col_index];
+            int tr_data_index  = location_table[curr_col_index];
+
+            res.Data[tr_data_index] = Data[data_index];
+            res.Data[tr_data_index].swap();
+
+            ++location_table[curr_col_index]; // need to update start location
         }
 
         return res;
@@ -164,34 +159,44 @@ public:
         SparseMatrix<T> res;
         res.Sizeof_Col = Sizeof_Row;
         res.Sizeof_Row = Sizeof_Col;
-        res.Data.reserve(Data.size());
+        res.Data       = std::vector<ElementInfo<T>>(Data.size());
 
         // { col_index: <nums, start_location> }
-        std::unordered_map<int, int> nums_hashtable;
-        std::unordered_map<int, int> location_hashtable;
-        for (auto&& curr_info : Data) {
-            int curr_col                 = curr_info.Col;
-            nums_hashtable[curr_col]     = 0;
-            location_hashtable[curr_col] = 0;
-        }
+        std::unordered_map<int, int> nums_table;
+        std::unordered_map<int, int> location_table;
+
         for (auto&& curr_info : Data) {
             int curr_col = curr_info.Col;
-            ++nums_hashtable[curr_col];
+            ++nums_table[curr_col];
         }
-        location_hashtable[1] = 0; // location index starts from zero
+
+        location_table[1] = 0; // location index starts from zero
         for (int col_index = 2; col_index < Sizeof_Col + 1; ++col_index) {
-            location_hashtable[col_index]
-                = location_hashtable[col_index - 1] + nums_hashtable[col_index - 1];
+            location_table[col_index]
+                = location_table[col_index - 1] + nums_table[col_index - 1];
         }
 
         for (auto&& curr_info : Data) {
             int curr_col_index = curr_info.Col;
-            int tr_data_index  = location_hashtable[curr_col_index];
-            ++location_hashtable[curr_col_index]; // need to update start location
-            res[tr_data_index] = Data[curr_col_index];
+            int tr_data_index  = location_table[curr_col_index];
+
+            res.Data[tr_data_index] = curr_info;
+            res.Data[tr_data_index].swap();
+
+            ++location_table[curr_col_index]; // need to update start location
         }
 
         return res;
+    }
+
+    /// @brief @b operator==
+    friend bool operator==(const SparseMatrix<T>& lhs, const SparseMatrix<T>& rhs)
+    requires std::equality_comparable<T>
+    {
+        bool if_row_same  = lhs.Sizeof_Row == rhs.Sizeof_Row;
+        bool if_col_same  = lhs.Sizeof_Col == rhs.Sizeof_Col;
+        bool if_data_same = lhs.Data == rhs.Data;
+        return if_row_same && if_col_same && if_data_same;
     }
 };
 

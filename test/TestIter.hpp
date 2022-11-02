@@ -16,6 +16,7 @@
 #include "DS/ListTest.hpp"
 #include "DS/QueueTest.hpp"
 #include "DS/SingleListTest.hpp"
+#include "DS/SparseMatrixTest.hpp"
 #include "DS/StackTest.hpp"
 #include <functional>
 
@@ -30,6 +31,7 @@ void run_all_test() {
         MergeUniqueTest,  // success
         SeqStackTest,     // success
         ChainedQueueTest, // success
+        SparseMatrixTest,
     };
     for (auto&& func : test_list) {
         func();
