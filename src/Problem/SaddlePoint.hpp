@@ -9,6 +9,9 @@
  *
  */
 
+// T(n) = O(n)
+// S(n) = O(n)
+
 #pragma once
 
 #include <iostream>
