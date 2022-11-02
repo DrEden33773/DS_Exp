@@ -144,13 +144,13 @@ public:
         }
 
         for (int data_index = 0; data_index < Data.size(); ++data_index) {
-            int curr_col_index = Data[data_index].Col;
-            int tr_data_index  = location_table[curr_col_index];
+            int origin_col_index = Data[data_index].Col;
+            int curr_index       = location_table[origin_col_index];
 
-            res.Data[tr_data_index] = Data[data_index];
-            res.Data[tr_data_index].swap();
+            res.Data[curr_index] = Data[data_index];
+            res.Data[curr_index].swap();
 
-            ++location_table[curr_col_index]; // need to update start location
+            ++location_table[origin_col_index]; // need to update start location
         }
 
         return res;
@@ -176,14 +176,14 @@ public:
                 = location_table[col_index - 1] + nums_table[col_index - 1];
         }
 
-        for (auto&& curr_info : Data) {
-            int curr_col_index = curr_info.Col;
-            int tr_data_index  = location_table[curr_col_index];
+        for (auto&& origin_info : Data) {
+            int origin_col_index = origin_info.Col;
+            int curr_index       = location_table[origin_col_index];
 
-            res.Data[tr_data_index] = curr_info;
-            res.Data[tr_data_index].swap();
+            res.Data[curr_index] = origin_info;
+            res.Data[curr_index].swap();
 
-            ++location_table[curr_col_index]; // need to update start location
+            ++location_table[origin_col_index]; // need to update start location
         }
 
         return res;
