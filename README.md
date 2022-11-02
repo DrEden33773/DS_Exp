@@ -26,10 +26,10 @@ The standard is __C++20__.
 2. Run commands below
 
 ```bash
-$ mkdir DiscreteMathExperiments
-$ cd DiscreteMathExperiments
-$ git clone https://github.com/DrEden33773/DiscreteMath_Exp.git
-$ cd DiscreteMath_Exp
+mkdir DiscreteMathExperiments
+cd DiscreteMathExperiments
+git clone https://github.com/DrEden33773/DiscreteMath_Exp.git
+cd DiscreteMath_Exp
 xmake
 ```
 
