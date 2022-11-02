@@ -81,10 +81,14 @@ public:
         }
     }
     void output() {
-        std::cout << "SaddlePoints are => " << std::endl;
-        for (auto&& pair : location) {
-            std::cout << "(" << pair.first << ", " << pair.second << ")";
-            std::cout << std::endl;
+        if (location.empty()) {
+            std::cout << "There's NO SaddlePoint! " << std::endl;
+        } else {
+            std::cout << "SaddlePoints are => " << std::endl;
+            for (auto&& pair : location) {
+                std::cout << "(" << pair.first << ", " << pair.second << ")";
+                std::cout << std::endl;
+            }
         }
         std::cout << std::endl;
     }
@@ -93,5 +97,20 @@ public:
         SaddlePoint TheSolution(init);
         TheSolution.process();
         TheSolution.output();
+    }
+    static void TestInterface() {
+        std::vector<std::vector<int>> test_with_saddle_point = {
+            { 10, 9, 2 },
+            { 8, 7, 1 },
+            { 5, 4, 3 },
+        };
+        std::vector<std::vector<int>> test_without_saddle_point = {
+            { 10, 9, 2 },
+            { 8, 7, 1 },
+            { 5, 4, 100 },
+        };
+
+        solution(test_with_saddle_point);
+        solution(test_without_saddle_point);
     }
 };
