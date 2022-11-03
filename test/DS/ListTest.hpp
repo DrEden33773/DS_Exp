@@ -63,6 +63,12 @@ void ListTest() {
     static_generated.unique(false); // hash_unique => O(n)
     static_generated.echo();        /* shows the outcome of emplace_unique */
 
+    /// @brief @b std_sort()
+    static_generated.std_sort();
+    static_generated.echo();
+    static_generated.std_sort(false);
+    static_generated.echo();
+
     Tool::end_info("List");
 }
 

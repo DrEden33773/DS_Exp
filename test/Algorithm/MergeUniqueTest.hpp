@@ -13,12 +13,13 @@
 #include "../../src/DS/DynamicArray.hpp"
 #include "../../src/DS/LinkedList/DoubleList.hpp"
 #include "../../src/DS/LinkedList/SingleList.hpp"
+#include "../../src/DS/List.hpp"
 #include "../../tools/TestTool.hpp"
 
 namespace Test {
 
 void SingleList_() {
-    std::cout << ">>>>>>>>>> Single-list First! <<<<<<<<<<" << std::endl;
+    std::cout << ">>>>>>>>>> SingleList <<<<<<<<<<" << std::endl;
     std::cout << std::endl;
 
     auto SingleList_A
@@ -55,7 +56,7 @@ void SingleList_() {
 }
 
 void DynamicArray_() {
-    std::cout << ">>>>>>>>>> Then Dynamic-array! <<<<<<<<<<" << std::endl;
+    std::cout << ">>>>>>>>>> DynamicArray <<<<<<<<<<" << std::endl;
     std::cout << std::endl;
 
     auto DynamicArray_A
@@ -92,7 +93,7 @@ void DynamicArray_() {
 }
 
 void DoubleList_() {
-    std::cout << ">>>>>>>>>> Then Double-list! <<<<<<<<<<" << std::endl;
+    std::cout << ">>>>>>>>>> DoubleList <<<<<<<<<<" << std::endl;
     std::cout << std::endl;
 
     auto DoubleList_A
@@ -128,12 +129,40 @@ void DoubleList_() {
     }
 }
 
+void List_() {
+    std::cout << ">>>>>>>>>> List <<<<<<<<<<" << std::endl;
+    std::cout << std::endl;
+
+    DS::List<int> List_A = { 1, 5, 2, 9, 4, 0 };
+    DS::List<int> List_B = { 7, 10, 3, 9, 4, 0, 1, 3 };
+
+    List_A.echo();
+    List_B.echo();
+
+    DS::List<int>::Merge_Unique(List_A, List_B, false);
+    List_A.echo();
+    List_B.echo();
+
+    { // empty check
+        DS::List<int> List_A = {};
+        DS::List<int> List_B = {};
+
+        List_A.echo();
+        List_B.echo();
+
+        DS::List<int>::Merge_Unique(List_A, List_B);
+        List_A.echo();
+        List_B.echo();
+    }
+}
+
 void MergeUniqueTest() {
     Tool::title_info("MergeUnique");
 
     SingleList_();
     DynamicArray_();
     DoubleList_();
+    List_();
 
     Tool::end_info("MergeUnique");
 }

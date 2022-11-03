@@ -15,7 +15,9 @@
 #pragma once
 #include <algorithm>
 #include <cassert>
+#include <concepts>
 #include <cstddef>
+#include <functional>
 #include <initializer_list>
 #include <iostream>
 #include <iterator>
@@ -391,6 +393,19 @@ public:
 
         return toUnlink;
     }
+    node* take_down_a_node(node* toTakeDown) {
+        node* toReturn = unlink_a_node(toTakeDown);
+        --size;
+        return toReturn;
+    }
+    void add_a_node_after_head(node* toAdd) {
+        link_a_node_after(head, toAdd);
+        ++size;
+    }
+    void add_a_node_before_tail(node* toAdd) {
+        link_a_node_before(tail, toAdd);
+        ++size;
+    }
     void swap_node(node* a, node* b) {
         node* a_prev = a->prev;
         node* a_next = a->next;
@@ -568,16 +583,26 @@ public:
         std::cout << std::endl;
         std::cout << std::endl;
     }
-    void std_sort() {
+    void std_sort(bool if_ascending = true) {
         if (head->next == nullptr) {
             std::cout << return_name() << " is empty, will escape sorting. " << std::endl;
             std::cout << std::endl;
         }
-        std::sort(begin(), end());
+        if (if_ascending) {
+            std::sort(begin(), end());
+        } else {
+            std::sort(begin(), end(), [](const T& a, const T& b) {
+                return a > b;
+            });
+        }
         std::cout << return_name() << " called std::sort()" << std::endl;
         std::cout << std::endl;
     }
     void reverse() {
+        if (head->next == tail) {
+            return;
+        }
+
         node* new_head = new node();
         node* new_tail = new node();
         new_head->next = new_tail;
@@ -595,7 +620,10 @@ public:
 
     /// @brief @b unique
     void hash_unique() {
-        // TODO(eden): Test
+        if (head->next == tail) {
+            return;
+        }
+
         std::unordered_map<T, bool> hashmap;
 
         node* curr = head->next;
@@ -610,7 +638,10 @@ public:
         }
     }
     void emplace_unique() {
-        // TODO(eden): Test
+        if (head->next == tail) {
+            return;
+        }
+
         node* outer = head->next;
         while (outer->next != tail) {
             node* inner = outer->next;
@@ -625,7 +656,10 @@ public:
         }
     }
     void ordered_unique() {
-        // TODO(eden):
+        if (head->next == tail) {
+            return;
+        }
+
         T     previous_elem = head->next->element;
         node* cmp           = head->next->next;
         while (cmp != tail) {
@@ -638,7 +672,6 @@ public:
         }
     }
     void unique(bool if_emplace = false) {
-        // TODO(eden):
         if (!if_emplace) {
             hash_unique();
         } else {
@@ -647,8 +680,80 @@ public:
     }
 
     /// @brief @b merge_then_unique
-    static void Merge_Unique() {
-        // TODO(eden):
+    static void Merge_Unique(
+        List<T>& A,
+        List<T>& B,
+        bool     if_ascending = true
+    )
+    requires std::equality_comparable<T>
+    {
+        A.std_sort(if_ascending);
+        B.std_sort(if_ascending);
+
+        List<T> C = std::move(A); // A is cleared (without head and tail)
+        A.init_head_and_tail();
+
+        // now, compare on `B` and `C`
+        node* b = B.head->next;
+        node* c = C.head->next;
+        while (b != B.tail && c != C.tail) {
+            bool  B_greater_than_C = b->element > c->element;
+            bool  B_eq_C           = b->element == c->element;
+            bool  B_less_than_C    = b->element < c->element;
+            node* b_next           = b->next;
+            node* c_next           = c->next;
+            if (B_eq_C) {
+                // B == C
+
+                // delete node in C, move node in B
+                node* fetched = B.take_down_a_node(b);
+                C.delete_a_node(c);
+                A.add_a_node_before_tail(fetched);
+                // update all nodes
+                b = b_next;
+                c = c_next;
+            } else if (B_greater_than_C) {
+                // B > C
+                node* fetched = nullptr;
+                if (if_ascending) {
+                    // Fetch/Update smaller one
+                    fetched = C.take_down_a_node(c);
+                    c       = c_next;
+                } else {
+                    // Fetch/Update bigger one
+                    fetched = B.take_down_a_node(b);
+                    b       = b_next;
+                }
+                A.add_a_node_before_tail(fetched);
+            } else {
+                // B < C
+                node* fetched = nullptr;
+                if (if_ascending) {
+                    // Fetch/Update smaller one
+                    fetched = B.take_down_a_node(b);
+                    b       = b_next;
+                } else {
+                    // Fetch/Update bigger one
+                    fetched = C.take_down_a_node(c);
+                    c       = c_next;
+                }
+                A.add_a_node_before_tail(fetched);
+            }
+        }
+        while (b != B.tail) {
+            node* b_next  = b->next;
+            node* fetched = B.take_down_a_node(b);
+            A.add_a_node_before_tail(fetched);
+            b = b_next;
+        }
+        while (c != C.tail) {
+            node* c_next  = c->next;
+            node* fetched = C.take_down_a_node(c);
+            A.add_a_node_before_tail(fetched);
+            c = c_next;
+        }
+
+        A.ordered_unique();
     }
 };
 
