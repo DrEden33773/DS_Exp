@@ -15,9 +15,9 @@
 #include "Problem/SaddlePoint.hpp"
 
 int main(int argc, char** argv) {
-    Test::run_all_test();
+    // Test::run_all_test();
     // CountOff_Solution_Generator::Solution();
     // N_Queen::solution(true);
 
-    // SaddlePoint::TestInterface();
+    SaddlePoint::TestInterface();
 }
