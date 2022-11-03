@@ -20,6 +20,7 @@
 #include <iostream>
 #include <iterator>
 #include <stdexcept>
+#include <unordered_map>
 
 namespace DS {
 
@@ -337,8 +338,15 @@ public:
         delete_head_and_tail();
     }
 
-    /// @brief node_delete_opt
-    void delete_a_node(node* toDel) {
+    /// @brief node_opt
+
+    /**
+     * @brief delete_a_node and return next_of `deleted`
+     *
+     * @param toDel
+     * @return node*
+     */
+    node* delete_a_node(node* toDel) {
         if (toDel == head || toDel == tail) {
             throw std::logic_error("NEVER try to delete `head` or `tail` nodes!");
         }
@@ -348,6 +356,8 @@ public:
         theNext->prev = thePrev;
         delete toDel;
         --size;
+
+        return theNext;
     }
     node* link_a_node(node* thePrev, node* toLink, node* theNext) {
         if (theNext == head || thePrev == tail) {
@@ -585,16 +595,55 @@ public:
 
     /// @brief @b unique
     void hash_unique() {
-        // TODO(eden):
+        // TODO(eden): Test
+        std::unordered_map<T, bool> hashmap;
+
+        node* curr = head->next;
+        while (curr != tail) {
+            if (!hashmap.contains(curr->element)) {
+                hashmap[curr->element] = true;
+                curr                   = curr->next;
+            } else {
+                // to delete
+                curr = delete_a_node(curr);
+            }
+        }
     }
     void emplace_unique() {
-        // TODO(eden):
+        // TODO(eden): Test
+        node* outer = head->next;
+        while (outer->next != tail) {
+            node* inner = outer->next;
+            while (inner != tail) {
+                if (inner->element == outer->element) {
+                    inner = delete_a_node(inner);
+                } else {
+                    inner = inner->next;
+                }
+            }
+            outer = outer->next;
+        }
     }
     void ordered_unique() {
         // TODO(eden):
+        T     previous_elem = head->next->element;
+        node* cmp           = head->next->next;
+        while (cmp != tail) {
+            if (cmp->element == previous_elem) {
+                cmp = delete_a_node(cmp);
+            } else {
+                previous_elem = cmp->element;
+                cmp           = cmp->next;
+            }
+        }
     }
-    void unique() {
+    void unique(bool if_emplace = false) {
         // TODO(eden):
+        if (!if_emplace) {
+            hash_unique();
+        } else {
+            emplace_unique();
+        }
     }
 
     /// @brief @b merge_then_unique
