@@ -680,11 +680,7 @@ public:
     }
 
     /// @brief @b merge_then_unique
-    static void Merge_Unique(
-        List<T>& A,
-        List<T>& B,
-        bool     if_ascending = true
-    )
+    static void Merge_Unique(List<T>& A, List<T>& B, bool if_ascending = true)
     requires std::equality_comparable<T>
     {
         A.std_sort(if_ascending);
