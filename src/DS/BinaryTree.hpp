@@ -591,7 +591,7 @@ public:
     }
 
     /// @brief @b check_if_is_full_BiTree
-    bool IfFullBiTree() {
+    bool IfCompleteBiTree() {
         if (!TheRoot) {
             return true;
         }

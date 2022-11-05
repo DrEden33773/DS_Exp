@@ -12,10 +12,13 @@
 #pragma once
 #include "../../src/DS/BinaryTree.hpp"
 #include "../../tools/TestTool.hpp"
+#include <ios>
 
 namespace Test {
 
 void first_test() {
+    std::cout << std::boolalpha;
+
     DS::BinaryTree<int> BiTree_1_2_3
         = DS::BinaryTree<int>::CreateBiTree(
             std::vector<std::string> { "1", "2", "3" }
@@ -29,6 +32,8 @@ void first_test() {
     std::cout << std::endl;
     BiTree_1_2_3_with_null_layer.LevelOrderTraverse();
     std::cout << std::endl;
+
+    std::cout << "If BiTree_1_2_3 Complete => " << BiTree_1_2_3.IfCompleteBiTree() << std::endl;
 
     BiTree_1_2_3.emplace_unselect(
         [](int a) -> bool {
@@ -44,6 +49,8 @@ void first_test() {
     std::cout << std::endl;
     BiTree_1_2_3_with_null_layer.LevelOrderTraverse();
     std::cout << std::endl;
+
+    std::cout << "If BiTree_1_2_3 Complete => " << BiTree_1_2_3.IfCompleteBiTree() << std::endl;
 
     std::cout << std::endl;
 }
