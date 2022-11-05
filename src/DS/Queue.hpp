@@ -62,7 +62,16 @@ class ChainedQueue {
     }
 
 public:
-    ChainedQueue() = default;
+    ChainedQueue()
+        : data(new DS::List<T>) {
+        update_front_and_rear();
+    }
+    ~ChainedQueue() {
+        delete data;
+        front = nullptr;
+        rear  = nullptr;
+    }
+
     ChainedQueue& operator=(const ChainedQueue& copied) {
         if (&copied == this) {
             return *this;
@@ -80,10 +89,10 @@ public:
         moved.rear  = nullptr;
         return *this;
     }
-    ~ChainedQueue() {
-        delete data;
-        front = nullptr;
-        rear  = nullptr;
+
+    ChainedQueue(const ChainedQueue<T>& copied)
+        : data(new DS::List<T>(copied.data)) {
+        update_front_and_rear();
     }
     ChainedQueue(ChainedQueue<T>&& moved) noexcept
         : data(moved.data)
@@ -93,10 +102,7 @@ public:
         moved.front = nullptr;
         moved.rear  = nullptr;
     }
-    ChainedQueue(ChainedQueue<T>& copied)
-        : data(new DS::List<T>(copied.data)) {
-        update_front_and_rear();
-    }
+
     ChainedQueue(std::initializer_list<T>&& initList) {
         for (auto&& elem : initList) {
             data->push_back(elem);

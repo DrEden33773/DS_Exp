@@ -34,7 +34,7 @@ public:
     /// @brief solution
     std::vector<std::vector<std::string>> solutions;
 
-    std::vector<std::vector<std::string>> solve_N_Queen(int n) {
+    std::vector<std::vector<std::string>> solveNQueen(int n) {
         queens     = std::vector<int>(n, -1); // default col = -1
         cols       = std::unordered_set<int>(n);
         main_diags = std::unordered_set<int>(n);
@@ -47,6 +47,7 @@ public:
         return solutions;
     }
 
+    /// @brief @b Recursive_Implementation
     void back_trace(const int& row_lim, const int& row = 0) {
         if (row == row_lim) {
             auto&& board = gen_a_board(row_lim);
@@ -90,7 +91,7 @@ public:
         }
     }
 
-    /// @attention @b this_one_is_unfinished
+    /// @brief @b Iterative_Implementation
     void fastest_back_trace(const int& row_lim) {
         std::stack<int> stack_of_row;
         std::stack<int> stack_of_col;
@@ -206,7 +207,7 @@ public:
             }
         }
 
-        The_Solution.solve_N_Queen(num_of_queens);
+        The_Solution.solveNQueen(num_of_queens);
 
         std::cout << "There're " << The_Solution.solutions.size() << " solutions. ";
         std::cout << std::endl;

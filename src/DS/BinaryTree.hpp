@@ -590,6 +590,39 @@ public:
         return !(lhs.SerializeToVec() == rhs.SerializeToVec());
     }
 
+    /// @brief @b check_if_is_full_BiTree
+    bool IfFullBiTree() {
+        if (!TheRoot) {
+            return true;
+        }
+        Node* node = TheRoot;
+
+        std::queue<Node*> queue;
+        queue.push(node);
+
+        while (!queue.empty()) {
+            int currentLevelSize = static_cast<int>(queue.size());
+
+            bool if_current_level_have_null_node = false;
+
+            for (int i = 1; i <= currentLevelSize; ++i) {
+                auto curr_node = queue.front();
+                queue.pop();
+                if (curr_node) {
+                    if (if_current_level_have_null_node) {
+                        return false;
+                    }
+                    queue.push(curr_node->left);
+                    queue.push(curr_node->right);
+                } else {
+                    if_current_level_have_null_node = true;
+                }
+            }
+        }
+
+        return true;
+    }
+
     /// @brief @b filter(int_BiTree_supported_only)
     using filter_type = std::function<bool(const T&)>;
     void emplace_filter(
@@ -672,6 +705,11 @@ public:
         emplace_filter(filter_func, false);
     }
     void emplace_unselect(const filter_type& filter_func)
+    requires std::is_same_v<T, int>
+    {
+        emplace_filter(filter_func, true);
+    }
+    void emplace_delete_when(const filter_type& filter_func)
     requires std::is_same_v<T, int>
     {
         emplace_filter(filter_func, true);

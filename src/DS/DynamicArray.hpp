@@ -140,19 +140,48 @@ public:
     /// @brief object management
     DynamicArray() {
         data = new T[capacity];
-    };
-    DynamicArray(const DynamicArray& copied) { // copy constructor
+    }
+    virtual ~DynamicArray() {
+        if (!if_moved) {
+            delete[] data;
+        } else {
+            return;
+        }
+    }
+
+    DynamicArray& operator=(const DynamicArray& copied) {
+        if (&copied == this) {
+            return *this;
+        }
         data     = new T[copied.capacity];
         size     = copied.size;
         capacity = copied.capacity;
         for (int i = 0; i < size; ++i) {
             data[i] = copied.data[i];
         }
+        return *this;
     }
-    DynamicArray(DynamicArray&& moved) noexcept { // move constructor
+    DynamicArray& operator=(DynamicArray&& moved) noexcept {
         data           = moved.data;
         size           = moved.size;
         capacity       = moved.capacity;
+        moved.data     = nullptr;
+        moved.size     = 0;
+        moved.capacity = 0;
+        return *this;
+    }
+    DynamicArray(const DynamicArray& copied)
+        : data(new T[copied.capacity])
+        , size(copied.size)
+        , capacity(copied.capacity) { // copy constructor
+        for (int i = 0; i < size; ++i) {
+            data[i] = copied.data[i];
+        }
+    }
+    DynamicArray(DynamicArray&& moved) noexcept
+        : data(moved.data)
+        , size(moved.size)
+        , capacity(moved.capacity) { // move constructor
         moved.data     = nullptr;
         moved.size     = 0;
         moved.capacity = 0;
@@ -161,13 +190,6 @@ public:
         reserve(initList.size() * 2);
         for (const T& element : initList) {
             emplace_back(element);
-        }
-    }
-    ~DynamicArray() {
-        if (!if_moved) {
-            delete[] data;
-        } else {
-            return;
         }
     }
 

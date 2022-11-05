@@ -32,6 +32,7 @@
 #include <iterator>
 #include <stdexcept>
 #include <type_traits>
+#include <vector>
 
 namespace DS {
 
@@ -60,25 +61,51 @@ class SeqStack {
     }
 
 public:
-    SeqStack() = default;
+    SeqStack()
+        : data(new DS::DynamicArray<T>) {
+        update_base_and_top();
+    }
     ~SeqStack() {
         delete data;
         top  = nullptr;
         base = nullptr;
     }
-    SeqStack(SeqStack<T>&& moved) noexcept {
+    SeqStack& operator=(const SeqStack& copied) {
+        if (&copied == this) {
+            return *this;
+        }
+        data = new DS::DynamicArray<T>(copied.data);
+        update_base_and_top();
+        return *this;
+    }
+    SeqStack& operator=(SeqStack&& moved) noexcept {
         data       = moved.data;
         base       = moved.base;
         top        = moved.top;
         moved.base = nullptr;
         moved.top  = nullptr;
         moved.data = nullptr;
+        return *this;
     }
-    SeqStack(SeqStack<T>& copied) {
-        data = new DS::DynamicArray<T>(copied.data);
+    SeqStack(const SeqStack<T>& copied)
+        : data(new DS::DynamicArray<T>(copied.data)) {
         update_base_and_top();
     }
-    SeqStack(std::initializer_list<T>&& initList) {
+    SeqStack(SeqStack<T>&& moved) noexcept
+        : data(moved.data)
+        , base(moved.base)
+        , top(moved.top) {
+        moved.base = nullptr;
+        moved.top  = nullptr;
+        moved.data = nullptr;
+    }
+    SeqStack(const std::initializer_list<T>& initList) {
+        for (auto&& elem : initList) {
+            data->push_back(elem);
+        }
+        update_base_and_top();
+    }
+    explicit SeqStack(const std::vector<T>& initList) {
         for (auto&& elem : initList) {
             data->push_back(elem);
         }
