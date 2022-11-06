@@ -12,40 +12,99 @@
 #pragma once
 
 #include <unordered_map>
+#include <unordered_set>
 #include <utility>
 #include <vector>
 namespace DS {
 
 template <typename T>
 class UndirectedGraph {
-    using UG = UndirectedGraph<T>;
+    using UG         = UndirectedGraph<T>;
+    using MatType    = std::vector<std::vector<int>>;
+    using MatRowType = std::vector<int>;
 
 private:
     std::vector<std::vector<int>> Mat;
-    std::unordered_map<T, int>    V_Map;
+    std::unordered_map<T, int>    V_Index_Map;
+    std::unordered_map<int, T>    Index_V_Map;
+    int                           size = 0;
+
+    void copy_from(const UG& copied) {
+        Mat         = copied.Mat;
+        V_Index_Map = copied.V_Index_Map;
+        Index_V_Map = copied.Index_V_Map;
+        size        = copied.size;
+    }
+    void move_from(UG& moved) {
+        Mat         = std::move(moved.Mat);
+        V_Index_Map = std::move(moved.V_Index_Map);
+        Index_V_Map = std::move(moved.Index_V_Map);
+        size        = std::move(moved.size);
+    }
+
+    void init_mat(const int& the_size) {
+        Mat = MatType(the_size, MatRowType(the_size, 0));
+    }
 
 public:
+    /// @b destruction
     ~UndirectedGraph() = default;
 
-    UndirectedGraph(const UG& copied)
-        : Mat(copied.Mat)
-        , V_Map(copied.V_Map) { }
+    /// @b copy_construction
+    UndirectedGraph(const UG& copied) {
+        copy_from(copied);
+    }
     UndirectedGraph& operator=(const UG& copied) {
         if (&copied == this) {
             return *this;
         }
-        Mat   = copied.Mat;
-        V_Map = copied.V_Map;
+        copy_from(copied);
         return *this;
     }
 
-    UndirectedGraph(UG&& moved) noexcept
-        : Mat(std::move(moved.Mat))
-        , V_Map(std::move(moved.V_Map)) { }
+    /// @b move_construction
+    UndirectedGraph(UG&& moved) noexcept {
+        move_from(moved);
+    }
     UndirectedGraph& operator=(UG&& moved) noexcept {
-        Mat   = std::move(moved.Mat);
-        V_Map = std::move(moved.V_Map);
+        move_from(moved);
         return *this;
+    }
+
+public:
+    /// @b constructor
+    using ConstructList = std::vector<std::pair<T, T>>;
+    explicit UndirectedGraph(const ConstructList& init) {
+        std::unordered_set<T> V_Set;
+        int                   num_of_V = 0;
+        // 1. build map, get num_of_V
+        for (const std::pair<T, T>& V_pair : init) {
+            const T& from = V_pair.first;
+            const T& to   = V_pair.second;
+            if (!V_Set.contains(from)) {
+                V_Set.insert(from);
+                V_Index_Map[from]     = num_of_V;
+                Index_V_Map[num_of_V] = from;
+                ++num_of_V;
+            }
+            if (!V_Set.contains(to)) {
+                V_Set.insert(to);
+                V_Index_Map[to]       = num_of_V;
+                Index_V_Map[num_of_V] = to;
+                ++num_of_V;
+            }
+        }
+        size = num_of_V;
+        // 2. init Mat
+        init_mat(size);
+        // 3. build the Mat
+        for (const std::pair<T, T>& V_pair : init) {
+            int first_idx  = V_Index_Map[V_pair.first];
+            int second_idx = V_Index_Map[V_pair.second];
+
+            Mat[first_idx][second_idx] = 1;
+            Mat[second_idx][first_idx] = 1;
+        }
     }
 };
 
