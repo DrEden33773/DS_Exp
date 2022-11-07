@@ -11,11 +11,15 @@
 
 #pragma once
 
+#include <iostream>
+#include <queue>
+#include <stack>
 #include <stdexcept>
 #include <unordered_map>
 #include <unordered_set>
 #include <utility>
 #include <vector>
+
 namespace DS {
 
 template <typename T>
@@ -156,6 +160,151 @@ public:
         }
         int idx_of_input = GetIndex(v_name);
         return FindAdjIndex(idx_of_input);
+    }
+    std::vector<int> FindAllAdjIndex(const int& index) {
+        std::vector<int> res;
+        if (!if_has_index(index)) {
+            return res;
+        }
+        for (int col_idx = 0; col_idx < size; ++col_idx) {
+            if (Mat[index][col_idx]) {
+                res.push_back(col_idx);
+            }
+        }
+        return res;
+    }
+    std::vector<int> FindAllAdjIndex(const T& v_name) {
+        std::vector<int> res;
+        if (!if_has_vex(v_name)) {
+            return res;
+        }
+        int idx_of_input = GetIndex(v_name);
+        return FindAllAdjIndex(idx_of_input);
+    }
+
+    /// @b traverse
+public:
+    using HashSet = std::unordered_set<int>;
+    void DFSTraverse_Rec_Func(HashSet& visited_idx, const int& idx) {
+        // 1. output
+        std::cout << Index_V_Map[idx] << " ";
+        // 2. add flag
+        visited_idx.insert(idx);
+        // 3. get all adj_idx
+        std::vector<int>&& adj_idx_list = FindAllAdjIndex(idx);
+        // 4. step into those unvisited
+        for (const int& adj_idx : adj_idx_list) {
+            if (!visited_idx.contains(adj_idx)) {
+                DFSTraverse_Rec_Func(visited_idx, adj_idx);
+            }
+        }
+    }
+    void DFSTraverse_Rec() {
+        if (!size) {
+            std::cout << "Empty Undirected Graph... " << std::endl;
+            return;
+        }
+        std::unordered_set<int> visited_idx;
+        DFSTraverse_Rec_Func(visited_idx, 0);
+    }
+    void DFSTraverse_Iter() {
+        /// @warning @b Unfinished_Function!
+        if (!size) {
+            std::cout << "Empty Undirected Graph... " << std::endl;
+            return;
+        }
+        std::unordered_set<int> visited_idx;
+        std::stack<int>         stack;
+        stack.push(0);
+        // TODO(eden):
+    }
+    void DFSTraverse() {
+        DFSTraverse_Rec();
+    }
+    void BFSTraverse() {
+        if (!size) {
+            std::cout << "Empty Undirected Graph... " << std::endl;
+            return;
+        }
+        std::unordered_set<int> visited_idx;
+        std::queue<int>         queue;
+        queue.push(0);
+
+        while (!queue.empty()) {
+            int curr_level_size = static_cast<int>(queue.size());
+            for (int i = 0; i < curr_level_size; ++i) {
+                // 1. get current_index
+                const int& curr_idx = queue.front();
+                // 2. output current_vertex
+                std::cout << Index_V_Map[curr_idx] << " ";
+                // 3. add `visited flag` for curr_idx
+                visited_idx.insert(curr_idx);
+                // 4. put `all unvisited adj_idx` into the queue
+                std::vector<int>&& adj_idx_list = FindAllAdjIndex(curr_idx);
+                for (const int& adj_idx : adj_idx_list) {
+                    if (!visited_idx.contains(adj_idx)) {
+                        queue.push(adj_idx);
+                    }
+                }
+                // 5. remove curr_idx from queue
+                queue.pop();
+            }
+        }
+    }
+
+    /// @b another_operations
+public:
+    void InsertVex(const T& NewVex) {
+        if (if_has_vex(NewVex)) {
+            std::cout << "Already have the input vertex, escape insertion... " << std::endl;
+            return;
+        }
+        // 1. update map
+        const int& curr_inserted_idx   = size;
+        V_Index_Map[NewVex]            = curr_inserted_idx;
+        Index_V_Map[curr_inserted_idx] = NewVex;
+        // 2. update size
+        ++size;
+        // 3. update Mat
+        Mat.resize(size);
+        for (std::vector<int>& row_vec : Mat) {
+            row_vec.push_back(0);
+        }
+        auto&& new_row = std::vector<int>(size, 0);
+        Mat.emplace_back(new_row);
+    }
+    void DeleteVex(const T& DelVex) {
+        // TODO(eden):
+    }
+    void ArcOpt(const T& a_vex, const T& b_vex, bool if_delete = false) {
+        if (!if_has_vex(a_vex) || !if_has_vex(b_vex)) {
+            throw std::logic_error("Undirected graph doesn't contain all of input vertexes!");
+        }
+        int a_idx         = V_Index_Map[a_vex];
+        int b_idx         = V_Index_Map[b_vex];
+        Mat[a_idx][b_idx] = (if_delete) ? 0 : 1;
+        Mat[b_idx][a_idx] = (if_delete) ? 0 : 1;
+    }
+    void ArcOpt(const int& a_idx, const int& b_idx, bool if_delete = false) {
+        bool if_a_out_of_range = a_idx < 0 || a_idx >= size;
+        bool if_b_out_of_range = b_idx < 0 || b_idx >= size;
+        if (if_a_out_of_range || if_b_out_of_range) {
+            throw std::out_of_range("Input indexes have at least one which is out of range!");
+        }
+        Mat[a_idx][b_idx] = (if_delete) ? 0 : 1;
+        Mat[b_idx][a_idx] = (if_delete) ? 0 : 1;
+    }
+    void InsertArc(const T& a_vex, const T& b_vex) {
+        ArcOpt(a_vex, b_vex);
+    }
+    void InsertArc(const int& a_idx, const int& b_idx) {
+        ArcOpt(a_idx, b_idx);
+    }
+    void DeleteArc(const T& a_vex, const T& b_vex) {
+        ArcOpt(a_vex, b_vex, true);
+    }
+    void DeleteArc(const int& a_idx, const int& b_idx) {
+        ArcOpt(a_idx, b_idx, true);
     }
 };
 
