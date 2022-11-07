@@ -199,16 +199,22 @@ public:
             }
         }
     }
-    void DFSTraverse_Rec() {
+    void DFSTraverse_Rec(const T& vex) {
+        if (!if_has_vex(vex)) {
+            throw std::logic_error("Input vertex is NOT exist!");
+        }
         if (!size) {
             std::cout << "Empty Undirected Graph... " << std::endl;
             return;
         }
         std::unordered_set<int> visited_idx;
-        DFSTraverse_Rec_Func(visited_idx, 0);
+        DFSTraverse_Rec_Func(visited_idx, V_Index_Map[vex]);
     }
-    void DFSTraverse_Iter() {
+    void DFSTraverse_Iter(const T& vex) {
         /// @warning @b Unfinished_Function!
+        if (!if_has_vex(vex)) {
+            throw std::logic_error("Input vertex is NOT exist!");
+        }
         if (!size) {
             std::cout << "Empty Undirected Graph... " << std::endl;
             return;
@@ -218,17 +224,20 @@ public:
         stack.push(0);
         // TODO(eden):
     }
-    void DFSTraverse() {
-        DFSTraverse_Rec();
+    void DFSTraverse(const T& vex) {
+        DFSTraverse_Rec(vex);
     }
-    void BFSTraverse() {
+    void BFSTraverse(const T& vex) {
+        if (!if_has_vex(vex)) {
+            throw std::logic_error("Input vertex is NOT exist!");
+        }
         if (!size) {
             std::cout << "Empty Undirected Graph... " << std::endl;
             return;
         }
         std::unordered_set<int> visited_idx;
         std::queue<int>         queue;
-        queue.push(0);
+        queue.push(V_Index_Map[vex]);
 
         while (!queue.empty()) {
             int curr_level_size = static_cast<int>(queue.size());
