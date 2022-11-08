@@ -383,14 +383,11 @@ public:
     }
     int BiTreeDepth_LevelOrder(Node* node) {
         int res = 0;
-
         if (node == nullptr) {
             return 0;
         }
-
         std::queue<Node*> queue;
         queue.push(node);
-
         while (!queue.empty()) {
             int currentLevelSize = static_cast<int>(queue.size());
             // iterate `currentLevel`
@@ -407,7 +404,6 @@ public:
             // finished iterating `currentLevel`, ++res
             ++res;
         }
-
         return res;
     }
     int BiTreeDepth_LevelOrder() {
@@ -421,6 +417,34 @@ public:
     }
     int BiTreeDepth() {
         return BiTreeDepth_LevelOrder();
+    }
+    int BiTreeBreadth(Node* node) {
+        int res = 0;
+        if (node == nullptr) {
+            return 0;
+        }
+        std::queue<Node*> queue;
+        queue.push(node);
+        while (!queue.empty()) {
+            int currentLevelSize = static_cast<int>(queue.size());
+            // now you could update the breadth
+            res = std::max(res, currentLevelSize);
+            // iterate `currentLevel`
+            for (int i = 1; i <= currentLevelSize; ++i) {
+                auto node = queue.front();
+                queue.pop();
+                if (node->left) {
+                    queue.push(node->left);
+                }
+                if (node->right) {
+                    queue.push(node->right);
+                }
+            }
+        }
+        return res;
+    }
+    int BiTreeBreadth() {
+        return BiTreeBreadth(TheRoot);
     }
 
     ///@brief @b Node_Relation_Opt
