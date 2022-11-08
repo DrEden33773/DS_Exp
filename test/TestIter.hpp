@@ -19,6 +19,7 @@
 #include "DS/SingleListTest.hpp"
 #include "DS/SparseMatrixTest.hpp"
 #include "DS/StackTest.hpp"
+#include "DS/UndirectedGraphTest.hpp"
 #include <functional>
 
 namespace Test {
@@ -33,7 +34,8 @@ void run_all_test() {
         SeqStackTest,     // success
         ChainedQueueTest, // success
         SparseMatrixTest, // success
-        BinaryTreeTest,
+        BinaryTreeTest,   // success
+        UndirectedGraphTest,
     };
     for (auto&& func : test_list) {
         func();

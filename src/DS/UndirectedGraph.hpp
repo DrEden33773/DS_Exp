@@ -299,17 +299,19 @@ public:
         std::unordered_set<int> visited_idx {};
         for (int idx = 0; idx < size; ++idx) {
             if (!visited_idx.contains(idx)) {
-                DFS(V_Index_Map[idx], visited_idx);
+                DFS(Index_V_Map[idx], visited_idx);
             }
         }
+        std::cout << std::endl;
     }
     void BFSTraverse() {
         std::unordered_set<int> visited_idx {};
         for (int idx = 0; idx < size; ++idx) {
             if (!visited_idx.contains(idx)) {
-                BFS(V_Index_Map[idx], visited_idx);
+                BFS(Index_V_Map[idx], visited_idx);
             }
         }
+        std::cout << std::endl;
     }
     void EchoVIndexTable() {
         /// @warning @b Only_Working_While_T_Overloaded_<<
@@ -319,7 +321,7 @@ public:
         }
         int curr_idx = 0;
         for (int idx = 0; idx < size; ++idx) {
-            std::cout << idx << " <=> " << V_Index_Map[idx];
+            std::cout << idx << " <=> " << Index_V_Map[idx];
             std::cout << std::endl;
         }
     }
