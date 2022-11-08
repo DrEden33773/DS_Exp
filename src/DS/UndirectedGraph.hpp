@@ -347,8 +347,8 @@ public:
     }
     void DeleteVex(const T& DelVex) {
         if (!if_has_vex(DelVex)) {
-            // throw std::logic_error("Input Vertex is NOT exist!");
-            return;
+            throw std::logic_error("Input Vertex is NOT exist!");
+            // return;
         }
         int DelIdx = V_Index_Map[DelVex];
 
