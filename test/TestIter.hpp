@@ -10,6 +10,7 @@
  */
 
 #pragma once
+
 #include "Algorithm/MergeUniqueTest.hpp"
 #include "DS/BinaryTreeTest.hpp"
 #include "DS/DoubleListTest.hpp"
@@ -26,16 +27,16 @@ namespace Test {
 
 void run_all_test() {
     std::vector<std::function<void()>> test_list = {
-        DynamicArrayTest, // success
-        SingleListTest,   // success
-        DoubleListTest,   // success
-        ListTest,         // success
-        MergeUniqueTest,  // success
-        SeqStackTest,     // success
-        ChainedQueueTest, // success
-        SparseMatrixTest, // success
-        BinaryTreeTest,   // success
-        UndirectedGraphTest,
+        DynamicArrayTest,    // success
+        SingleListTest,      // success
+        DoubleListTest,      // success
+        ListTest,            // success
+        MergeUniqueTest,     // success
+        SeqStackTest,        // success
+        ChainedQueueTest,    // success
+        SparseMatrixTest,    // success
+        BinaryTreeTest,      // success, but not complete
+        UndirectedGraphTest, // success, but not complete
     };
     for (auto&& func : test_list) {
         func();
