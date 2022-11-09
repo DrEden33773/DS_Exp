@@ -55,11 +55,18 @@ public:
                 return a.second < b.second;
             }
         );
-        // 3. alloc space for Table
+        // 3. alloc space for Table (with initialize)
         size_t sizeof_init = init.size();
         size_t size        = 2 * sizeof_init - 1;
         Table              = std::vector<NodeInfo>(size);
-        // 4. input
+        // 4. push into the table
+        int idx = 0;
+        for (InitPair& pair : init) {
+            NodeInfo& currNode = Table[idx];
+            currNode.index     = idx;
+            currNode.value     = pair.first;
+            currNode.weight    = pair.second;
+        }
     }
     explicit HuffmanTree(InitPairList& init) {
         Generate(init);

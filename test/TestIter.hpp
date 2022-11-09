@@ -21,7 +21,9 @@
 #include "DS/SparseMatrixTest.hpp"
 #include "DS/StackTest.hpp"
 #include "DS/UndirectedGraphTest.hpp"
+
 #include <functional>
+#include <vector>
 
 namespace Test {
 
