@@ -128,15 +128,15 @@ public:
         if (&copied == this) {
             return *this;
         }
-        Sizeof_Row(copied.Sizeof_Row);
-        Sizeof_Col(copied.Sizeof_Col);
-        Data(copied.Data);
+        Sizeof_Row = (copied.Sizeof_Row);
+        Sizeof_Col = (copied.Sizeof_Col);
+        Data       = (copied.Data);
         return *this;
     }
     SparseMatrix& operator=(SparseMatrix&& moved) noexcept {
-        Sizeof_Row(moved.Sizeof_Row);
-        Sizeof_Col(moved.Sizeof_Col);
-        Data(std::move(moved.Data));
+        Sizeof_Row       = (moved.Sizeof_Row);
+        Sizeof_Col       = (moved.Sizeof_Col);
+        Data             = (std::move(moved.Data));
         moved.Sizeof_Row = 0;
         moved.Sizeof_Col = 0;
         moved.Data       = std::vector<ElementInfo<T>>();
@@ -205,6 +205,25 @@ public:
             res.Data[curr_index].swap();
 
             ++location_table[origin_col_index]; // need to update start location
+        }
+
+        return res;
+    }
+    SparseMatrix<T> col_traverse_transpose() {
+        SparseMatrix<T> res;
+        res.Sizeof_Col = Sizeof_Row;
+        res.Sizeof_Row = Sizeof_Col;
+        res.Data.reserve(Data.size()); // do not initialize! will use emplace_back!
+
+        // outer => traverse the `col` in `old_matrix`
+        for (int col = 1; col <= Sizeof_Col; ++col) {
+            // inner => traverse `old_data`
+            for (ElementInfo<T>& curr : Data) {
+                if (curr.Col == col) {
+                    res.Data.emplace_back(curr);
+                    res.Data.back().swap(); // swap the `old_row` and `old_col`
+                }
+            }
         }
 
         return res;

@@ -1,7 +1,7 @@
 /**
  * @file SaddlePoint.hpp
  * @author Eden (edwardwang33773@gmail.com)
- * @brief MaAn Point (TextBook T69 P7)
+ * @brief SaddlePoint (TextBook T69 P7)
  * @version 0.1
  * @date 2022-10-25
  *
@@ -10,7 +10,7 @@
  */
 
 // T(n) = O(n)
-// S(n) = O(n)
+// S(n) = O(col + row)
 
 #pragma once
 
@@ -41,19 +41,9 @@ class SaddlePoint {
 
 public:
     explicit SaddlePoint(const std::vector<std::vector<int>>& init)
-        : Sizeof_Row(static_cast<int>(init.size()))
-        , Sizeof_Col(static_cast<int>(init.begin()->size())) {
-        std::vector<int> input_sub;
-        Data.reserve(Sizeof_Row);
-        input_sub.reserve(Sizeof_Col);
-        for (auto&& sub : init) {
-            for (auto&& elem : sub) {
-                input_sub.emplace_back(elem);
-            }
-            Data.emplace_back(input_sub);
-            input_sub.clear();
-        }
-    }
+        : Data(init)
+        , Sizeof_Row(static_cast<int>(init.size()))
+        , Sizeof_Col(static_cast<int>(init.begin()->size())) { }
     void process() {
         // 1. Init two tables
         // min_in_row => Data[all in 0..Sizeof_Row][0]
