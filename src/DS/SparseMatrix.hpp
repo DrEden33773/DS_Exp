@@ -25,7 +25,9 @@ struct ElementInfo {
     int Col = 1; // start from 1
     T   Value;
 
-    ElementInfo() = default;
+    ElementInfo()  = default;
+    ~ElementInfo() = default;
+
     constexpr ElementInfo(int Row, int Col, const T& Value)
         : Row(Row)
         , Col(Col)
@@ -86,6 +88,7 @@ public:
     /// @brief constructor & destructor
     constexpr ~SparseMatrix() = default;
     constexpr SparseMatrix()  = default;
+
     explicit SparseMatrix(const std::vector<std::vector<T>>& init) {
         if (!init.size()) {
             return;
@@ -120,6 +123,24 @@ public:
         moved.Sizeof_Row = 0;
         moved.Sizeof_Col = 0;
         moved.Data       = std::vector<ElementInfo<T>>();
+    }
+    SparseMatrix& operator=(const SparseMatrix& copied) {
+        if (&copied == this) {
+            return *this;
+        }
+        Sizeof_Row(copied.Sizeof_Row);
+        Sizeof_Col(copied.Sizeof_Col);
+        Data(copied.Data);
+        return *this;
+    }
+    SparseMatrix& operator=(SparseMatrix&& moved) noexcept {
+        Sizeof_Row(moved.Sizeof_Row);
+        Sizeof_Col(moved.Sizeof_Col);
+        Data(std::move(moved.Data));
+        moved.Sizeof_Row = 0;
+        moved.Sizeof_Col = 0;
+        moved.Data       = std::vector<ElementInfo<T>>();
+        return *this;
     }
 
     /// @brief fast_transpose
