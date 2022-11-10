@@ -38,7 +38,7 @@ public:
     using InitList     = std::vector<int>;
     using InitPair     = std::pair<T, int>;
     void Generate(InitPairList& init) {
-        // 1. unique by name first
+        // 1. unique by name
         auto discarded_range_beg = std::unique(
             init.begin(),
             init.end(),
