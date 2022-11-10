@@ -3,7 +3,7 @@ add_rules("mode.debug", "mode.release")
 target("DS_Exp")
     set_kind("binary")
     add_files("src/*.cpp")
-    set_languages("clatest", "gnu++latest")
+    set_languages("c17", "c++20")
 
 --
 -- If you want to known more usage about xmake, please see https://xmake.io

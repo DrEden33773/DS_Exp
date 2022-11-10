@@ -7,7 +7,7 @@
       "-m64",
       "-g",
       "-O0",
-      "-std=gnu++23",
+      "-std=c++20",
       "-o",
       "build/.objs/DS_Exp/linux/x86_64/debug/src/main.cpp.o",
       "src/main.cpp"
