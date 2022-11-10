@@ -21,7 +21,6 @@ void empty_test() {
     std::vector<std::vector<int>> empty_init = {
         {}
     };
-
     // fast_transpose:
     {
         DS::SparseMatrix<int> origin(empty_init);
@@ -29,7 +28,6 @@ void empty_test() {
         DS::SparseMatrix<int> tr2 = tr1.fast_transpose();
         assert(origin == tr2);
     }
-
     // col_traverse_transpose:
     {
         DS::SparseMatrix<int> origin(empty_init);
@@ -38,14 +36,12 @@ void empty_test() {
         assert(origin == tr2);
     }
 }
-
 void non_empty_test() {
     std::vector<std::vector<int>> init = {
         { 0, 1, 0, 0 },
         { 1, 3, 0, 0 },
         { 0, 0, 0, 4 },
     };
-
     // fast_transpose:
     {
         DS::SparseMatrix<int> origin(init);
@@ -53,7 +49,6 @@ void non_empty_test() {
         DS::SparseMatrix<int> tr2 = tr1.fast_transpose();
         assert(origin == tr2);
     }
-
     // col_traverse_transpose:
     {
         DS::SparseMatrix<int> origin(init);
@@ -62,9 +57,11 @@ void non_empty_test() {
         assert(origin == tr2);
     }
 }
-
 void SparseMatrixTest() {
     Tool::title_info("Sparse_Matrix");
+
+    non_empty_test();
+    empty_test();
 
     std::cout << "Original -> FirstTransposed -> SecondTransposed" << std::endl;
     std::cout << std::endl;
