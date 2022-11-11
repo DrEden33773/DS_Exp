@@ -79,7 +79,9 @@ public:
     /// @b constructor
 public:
     using ConstructList = std::vector<std::pair<T, T>>;
-    explicit UndirectedGraph(const ConstructList& init) {
+    using EdgeList      = std::vector<std::pair<T, T>>;
+    using VertexList    = std::vector<T>;
+    explicit UndirectedGraph(const EdgeList& init) {
         std::unordered_set<T> V_Set;
         int                   num_of_V = 0;
         // 1. build map, get num_of_V
@@ -111,10 +113,31 @@ public:
             Mat[second_idx][first_idx] = 1;
         }
     }
+    explicit UndirectedGraph(
+        const VertexList& VexInit,
+        const EdgeList&   EdgeInit
+    ) {
+        // 1. import vertex
+        const int& num_of_v = VexInit.size();
+        size                = num_of_v;
+        int curr_idx        = 0;
+        for (auto&& curr_vex : VexInit) {
+            V_Index_Map[curr_vex] = curr_idx;
+            Index_V_Map[curr_idx] = curr_vex;
+            ++curr_idx;
+        }
+        // 2. init Mat
+        init_mat(size);
+        // 3. add edges
+        for (auto&& [a_vex, b_vex] : EdgeInit) {
+            InsertArc(a_vex, b_vex);
+        }
+    }
 
     /// @b vertex_operations
 public:
-    bool if_has_vex(const T& v_name) {
+    bool
+    if_has_vex(const T& v_name) {
         if (!V_Index_Map.contains(v_name)) {
             return false;
         }

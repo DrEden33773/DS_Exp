@@ -20,10 +20,20 @@
 namespace Test {
 
 void UndirectedGraphTest() {
-    using StrConstructor = DS::UndirectedGraph<std::string>::ConstructList;
-    using StrGraph       = DS::UndirectedGraph<std::string>;
+    using String_EdgeList = DS::UndirectedGraph<std::string>::EdgeList;
+    using String_VexList  = DS::UndirectedGraph<std::string>::VertexList;
+    using StrGraph        = DS::UndirectedGraph<std::string>;
 
-    StrConstructor init {
+    String_VexList VexList {
+        "a",
+        "b",
+        "c",
+        "d",
+        "e",
+        "f",
+    };
+
+    String_EdgeList EdgeList {
         std::make_pair("a", "b"),
         std::make_pair("c", "d"),
         std::make_pair("a", "c"),
@@ -33,7 +43,7 @@ void UndirectedGraphTest() {
         std::make_pair("c", "f"),
     };
 
-    StrGraph test1(init);
+    StrGraph test1(VexList, EdgeList);
 
     test1.EchoVIndexTable();
     std::cout << std::endl;

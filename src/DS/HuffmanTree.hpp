@@ -95,7 +95,19 @@ public:
     void build() {
         int insert_idx = num_of_initted_node;
         while (insert_idx < num_of_node) {
-            // TODO(eden):
+            int min_idx        = get_two_min_idx().first;
+            int second_min_idx = get_two_min_idx().second;
+
+            NodeInfo& node_min        = Table[min_idx];
+            NodeInfo& node_second_min = Table[second_min_idx];
+            NodeInfo& node_parent     = Table[insert_idx];
+
+            node_min.parent_idx        = insert_idx;
+            node_second_min.parent_idx = insert_idx;
+
+            node_parent.left_idx  = min_idx;
+            node_parent.right_idx = second_min_idx;
+
             ++num_of_initted_node;
             ++insert_idx;
         }
