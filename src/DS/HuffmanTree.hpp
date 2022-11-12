@@ -213,6 +213,7 @@ public:
         std::cout << std::setw(DebugTableWidth) << "left_idx";
         std::cout << std::setw(DebugTableWidth) << "right_idx";
         std::cout << std::endl;
+        std::cout << std::endl;
         for (NodeInfo& curr_node : Table) {
             std::cout << curr_node;
             std::cout << std::endl;
