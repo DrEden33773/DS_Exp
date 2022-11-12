@@ -15,6 +15,7 @@
 #include "DS/BinaryTreeTest.hpp"
 #include "DS/DoubleListTest.hpp"
 #include "DS/DynamicArrayTest.hpp"
+#include "DS/HuffmanTreeTest.hpp"
 #include "DS/ListTest.hpp"
 #include "DS/QueueTest.hpp"
 #include "DS/SingleListTest.hpp"
@@ -39,6 +40,7 @@ void run_all_test() {
         SparseMatrixTest,    // success
         BinaryTreeTest,      // success, but not complete
         UndirectedGraphTest, // success, but not complete
+        HuffmanTreeTest,
     };
     for (auto&& func : test_list) {
         func();

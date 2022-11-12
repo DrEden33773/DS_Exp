@@ -13,7 +13,6 @@
 
 #include <iostream>
 #include <queue>
-#include <stack>
 #include <stdexcept>
 #include <unordered_map>
 #include <unordered_set>
@@ -24,6 +23,7 @@ namespace DS {
 
 template <typename T>
 class UndirectedGraph {
+public:
     using UG         = UndirectedGraph<T>;
     using MatType    = std::vector<std::vector<int>>;
     using MatRowType = std::vector<int>;
