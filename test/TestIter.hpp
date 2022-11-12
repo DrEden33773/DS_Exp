@@ -40,7 +40,7 @@ void run_all_test() {
         SparseMatrixTest,    // success
         BinaryTreeTest,      // success, but not complete
         UndirectedGraphTest, // success, but not complete
-        HuffmanTreeTest,
+        HuffmanTreeTest,     // success, but not complete
     };
     for (auto&& func : test_list) {
         func();

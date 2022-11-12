@@ -32,6 +32,7 @@ void HuffmanTreeTest() {
     };
 
     DS::HuffmanTree<std::string> TestHuffmanTree(InitList);
+    TestHuffmanTree.EchoInTable();
 
     Tool::end_info("Huffman_Tree");
 }
