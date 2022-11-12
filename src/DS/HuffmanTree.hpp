@@ -13,9 +13,11 @@
 
 #include <algorithm>
 #include <concepts>
+#include <functional>
 #include <iomanip>
 #include <iostream>
 #include <ostream>
+#include <queue>
 #include <type_traits>
 #include <utility>
 #include <vector>
@@ -33,6 +35,8 @@ class HuffmanTree {
         int parent_idx = -1;
         int left_idx   = -1;
         int right_idx  = -1;
+
+        std::vector<bool> bitset_code {};
 
         friend std::ostream& operator<<(std::ostream& out, const NodeInfo& self) {
             out << self.index;
@@ -61,6 +65,7 @@ class HuffmanTree {
 
     size_t num_of_initted_node = 0;
     size_t size_of_table       = 0;
+    size_t num_of_input_node   = 0;
 
 public:
     /// @brief @b alias
@@ -68,6 +73,7 @@ public:
     using InitList     = std::vector<int>;
     using InitPair     = std::pair<T, int>;
 
+    /// @brief @b tools
     void unique(InitPairList& init) {
         auto discarded_range_beg = std::unique(
             init.begin(),
@@ -94,7 +100,7 @@ public:
         size_of_table      = size;
     }
     void preBuild(InitPairList& init) {
-        int idx = 0;
+        size_t idx = 0;
         for (InitPair& pair : init) {
             NodeInfo& currNode = Table[idx];
             currNode.index     = idx;
@@ -109,18 +115,18 @@ public:
         }
     }
     std::pair<int, int> get_two_min_idx() {
-        int min_idx        = 0;
-        int second_min_idx = 0;
+        size_t min_idx        = 0;
+        size_t second_min_idx = 0;
         // 1. init min_idx && second_min_idx correctly
         // need to ignore { node | node.parent_idx != -1 }
-        for (int i = 0; i < num_of_initted_node; ++i) {
+        for (size_t i = 0; i < num_of_initted_node; ++i) {
             if (Table[i].parent_idx != -1) {
                 continue;
             }
             min_idx = i;
             break;
         }
-        for (int i = 0; i < num_of_initted_node; ++i) {
+        for (size_t i = 0; i < num_of_initted_node; ++i) {
             if (Table[i].parent_idx != -1) {
                 continue;
             }
@@ -132,7 +138,7 @@ public:
             }
         }
         // 2. start to find
-        for (int i = 0; i < num_of_initted_node; ++i) {
+        for (size_t i = 0; i < num_of_initted_node; ++i) {
             if (Table[i].parent_idx != -1) {
                 continue;
             }
@@ -142,7 +148,7 @@ public:
                 min_idx = i;
             }
         }
-        for (int i = 0; i < num_of_initted_node; ++i) {
+        for (size_t i = 0; i < num_of_initted_node; ++i) {
             if (Table[i].parent_idx != -1) {
                 continue;
             }
@@ -159,9 +165,9 @@ public:
     void build() {
         int insert_idx = num_of_initted_node;
         while (insert_idx < size_of_table) {
-            int min_idx        = get_two_min_idx().first;
-            int second_min_idx = get_two_min_idx().second;
-            int parent_idx     = insert_idx;
+            size_t min_idx        = get_two_min_idx().first;
+            size_t second_min_idx = get_two_min_idx().second;
+            size_t parent_idx     = insert_idx;
 
             NodeInfo& node_min        = Table[min_idx];
             NodeInfo& node_second_min = Table[second_min_idx];
@@ -179,13 +185,16 @@ public:
         }
     }
 
+    /// @brief @b TreeGenerator
     void Generate(InitPairList& init) {
+        num_of_input_node   = init.size();
         num_of_initted_node = init.size();
         unique(init);
         sort(init);
         alloc(init);
         preBuild(init);
         build();
+        generate_bitset_code();
     }
 
     /// @brief @b constructors
@@ -214,11 +223,64 @@ public:
         std::cout << std::setw(DebugTableWidth) << "right_idx";
         std::cout << std::endl;
         std::cout << std::endl;
-        for (NodeInfo& curr_node : Table) {
+        for (const NodeInfo& curr_node : Table) {
             std::cout << curr_node;
             std::cout << std::endl;
         }
         std::cout << std::endl;
+    }
+
+    /// @brief @b View_the_CodeBitSet
+    void EchoCodeBitSet() {
+        for (size_t idx = 0; idx < num_of_input_node; ++idx) {
+            const NodeInfo& curr_node = Table[idx];
+            std::cout << curr_node.value;
+            std::cout << " => ";
+            for (auto code : curr_node.bitset_code) {
+                std::cout << static_cast<int>(code);
+            }
+            std::cout << std::endl;
+        }
+        std::cout << std::endl;
+    }
+
+    /// @brief @b bitset_code_generator
+    int get_root_idx() {
+        return Table.back().index;
+    }
+    int get_left_idx(const size_t& in) {
+        return Table[in].left_idx;
+    }
+    int get_right_idx(const size_t& in) {
+        return Table[in].right_idx;
+    }
+    void generate_bitset_code() {
+        if (!size_of_table) {
+            return;
+        }
+        // BFS
+        std::queue<int> queue;
+        queue.push(get_root_idx());
+        while (!queue.empty()) {
+            size_t curr_layer_size = queue.size();
+            while (curr_layer_size) {
+                int curr  = queue.front();
+                int left  = get_left_idx(curr);
+                int right = get_right_idx(curr);
+                if (left != -1) {
+                    Table[left].bitset_code = Table[curr].bitset_code;
+                    Table[left].bitset_code.push_back(0);
+                    queue.push(left);
+                }
+                if (right != -1) {
+                    Table[right].bitset_code = Table[curr].bitset_code;
+                    Table[right].bitset_code.push_back(1);
+                    queue.push(right);
+                }
+                queue.pop();
+                --curr_layer_size;
+            }
+        }
     }
 };
 

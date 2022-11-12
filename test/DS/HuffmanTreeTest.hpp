@@ -25,14 +25,16 @@ void HuffmanTreeTest() {
 
     InitListType InitList {
         std::make_pair("a", 10),
-        std::make_pair("e", 15),
-        std::make_pair("i", 12),
+        std::make_pair("e", 12),
+        std::make_pair("i", 15),
         std::make_pair("s", 3),
         std::make_pair("t", 4),
     };
 
     DS::HuffmanTree<std::string> TestHuffmanTree(InitList);
+
     TestHuffmanTree.EchoInTable();
+    TestHuffmanTree.EchoCodeBitSet();
 
     Tool::end_info("Huffman_Tree");
 }
