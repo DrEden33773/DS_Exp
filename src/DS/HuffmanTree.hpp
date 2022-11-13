@@ -19,6 +19,7 @@
 #include <ostream>
 #include <queue>
 #include <type_traits>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 
@@ -27,6 +28,14 @@ namespace DS {
 template <typename T>
 requires std::equality_comparable<T>
 class HuffmanTree {
+public:
+    /// @brief @b alias
+    using InitPairList = std::vector<std::pair<T, int>>;
+    using InitList     = std::vector<int>;
+    using InitPair     = std::pair<T, int>;
+    using BitCodeType  = std::vector<bool>;
+
+private:
     static constexpr int DebugTableWidth = 12;
     struct NodeInfo {
         T   value {};
@@ -36,7 +45,7 @@ class HuffmanTree {
         int left_idx   = -1;
         int right_idx  = -1;
 
-        std::vector<bool> bitset_code {};
+        BitCodeType bit_code {};
 
         friend std::ostream& operator<<(std::ostream& out, const NodeInfo& self) {
             out << self.index;
@@ -61,18 +70,14 @@ class HuffmanTree {
         }
     };
 
-    std::vector<NodeInfo> Table;
+    std::vector<NodeInfo>              Table;
+    std::unordered_map<T, BitCodeType> BitCodeSet;
 
     size_t num_of_initted_node = 0;
     size_t size_of_table       = 0;
     size_t num_of_input_node   = 0;
 
 public:
-    /// @brief @b alias
-    using InitPairList = std::vector<std::pair<T, int>>;
-    using InitList     = std::vector<int>;
-    using InitPair     = std::pair<T, int>;
-
     /// @brief @b tools
     void unique(InitPairList& init) {
         auto discarded_range_beg = std::unique(
@@ -194,7 +199,8 @@ public:
         alloc(init);
         preBuild(init);
         build();
-        generate_bitset_code();
+        generate_bit_code();
+        build_bit_code_set();
     }
 
     /// @brief @b constructors
@@ -202,7 +208,9 @@ public:
         Generate(init);
     }
     explicit HuffmanTree(InitList& init)
-    requires std::is_same_v<T, std::string> or std::is_same_v<T, int>
+    requires std::is_same_v<T, std::string>
+        or std::is_same_v<T, int>
+        or std::is_same_v<T, char>
     {
         InitPairList true_init;
         true_init.reserve(init.size());
@@ -231,12 +239,12 @@ public:
     }
 
     /// @brief @b View_the_CodeBitSet
-    void EchoCodeBitSet() {
+    void EchoBitCode() {
         for (size_t idx = 0; idx < num_of_input_node; ++idx) {
             const NodeInfo& curr_node = Table[idx];
             std::cout << curr_node.value;
             std::cout << " => ";
-            for (auto code : curr_node.bitset_code) {
+            for (auto code : curr_node.bit_code) {
                 std::cout << static_cast<int>(code);
             }
             std::cout << std::endl;
@@ -244,7 +252,7 @@ public:
         std::cout << std::endl;
     }
 
-    /// @brief @b bitset_code_generator
+    /// @brief @b bit_code_generator
     int get_root_idx() {
         return Table.back().index;
     }
@@ -254,7 +262,7 @@ public:
     int get_right_idx(const size_t& in) {
         return Table[in].right_idx;
     }
-    void generate_bitset_code() {
+    void generate_bit_code() {
         if (!size_of_table) {
             return;
         }
@@ -268,18 +276,26 @@ public:
                 int left  = get_left_idx(curr);
                 int right = get_right_idx(curr);
                 if (left != -1) {
-                    Table[left].bitset_code = Table[curr].bitset_code;
-                    Table[left].bitset_code.push_back(0);
+                    Table[left].bit_code = Table[curr].bit_code;
+                    Table[left].bit_code.push_back(0);
                     queue.push(left);
                 }
                 if (right != -1) {
-                    Table[right].bitset_code = Table[curr].bitset_code;
-                    Table[right].bitset_code.push_back(1);
+                    Table[right].bit_code = Table[curr].bit_code;
+                    Table[right].bit_code.push_back(1);
                     queue.push(right);
                 }
                 queue.pop();
                 --curr_layer_size;
             }
+        }
+    }
+    void build_bit_code_set() {
+        for (size_t idx = 0; idx < num_of_input_node; ++idx) {
+            const NodeInfo&    curr          = Table[idx];
+            const T&           curr_value    = curr.value;
+            const BitCodeType& curr_bit_code = curr.bit_code;
+            BitCodeSet.insert(std::make_pair(curr_value, curr_bit_code));
         }
     }
 };
