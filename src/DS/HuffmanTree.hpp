@@ -18,6 +18,7 @@
 #include <iostream>
 #include <ostream>
 #include <queue>
+#include <sys/types.h>
 #include <type_traits>
 #include <unordered_map>
 #include <utility>
@@ -33,7 +34,7 @@ public:
     using InitPairList = std::vector<std::pair<T, int>>;
     using InitList     = std::vector<int>;
     using InitPair     = std::pair<T, int>;
-    using BitCodeType  = std::vector<bool>;
+    using BitCodeType  = std::vector<char>;
 
 private:
     static constexpr int DebugTableWidth = 12;
