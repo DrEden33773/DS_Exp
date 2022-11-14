@@ -21,17 +21,17 @@ namespace Test {
 void HuffmanTreeTest() {
     Tool::title_info("Huffman_Tree");
 
-    using InitListType = DS::HuffmanTree<std::string>::InitPairList;
+    using InitListType = DS::HuffmanTree<char>::InitPairList;
 
     InitListType InitList {
-        std::make_pair("a", 10),
-        std::make_pair("e", 12),
-        std::make_pair("i", 15),
-        std::make_pair("s", 3),
-        std::make_pair("t", 4),
+        std::make_pair('a', 10),
+        std::make_pair('e', 12),
+        std::make_pair('i', 15),
+        std::make_pair('s', 3),
+        std::make_pair('t', 4),
     };
 
-    DS::HuffmanTree<std::string> TestHuffmanTree(InitList);
+    DS::HuffmanTree<char> TestHuffmanTree(InitList);
 
     TestHuffmanTree.EchoInTable();
     TestHuffmanTree.EchoBitCode();
