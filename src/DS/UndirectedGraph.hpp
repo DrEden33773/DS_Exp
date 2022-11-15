@@ -14,6 +14,7 @@
 #include <iostream>
 #include <queue>
 #include <stdexcept>
+#include <tuple>
 #include <unordered_map>
 #include <unordered_set>
 #include <utility>
@@ -78,9 +79,11 @@ public:
 
     /// @b constructor
 public:
-    using ConstructList = std::vector<std::pair<T, T>>;
-    using EdgeList      = std::vector<std::pair<T, T>>;
-    using VertexList    = std::vector<T>;
+    using ConstructList    = std::vector<std::pair<T, T>>;
+    using EdgeList         = std::vector<std::pair<T, T>>;
+    using VertexList       = std::vector<T>;
+    using WeightedEdgeList = std::vector<std::tuple<T, T, int>>;
+
     explicit UndirectedGraph(const EdgeList& init) {
         std::unordered_set<T> V_Set;
         int                   num_of_V = 0;
