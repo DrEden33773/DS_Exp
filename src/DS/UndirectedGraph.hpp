@@ -29,11 +29,16 @@ public:
     using MatType    = std::vector<std::vector<int>>;
     using MatRowType = std::vector<int>;
 
+    using ConstructList = std::vector<std::pair<T, T>>;
+    using EdgeList      = std::vector<std::pair<T, T>>;
+    using VertexList    = std::vector<T>;
+
 private:
     std::vector<std::vector<int>> Mat;
     std::unordered_map<T, int>    V_Index_Map;
     std::unordered_map<int, T>    Index_V_Map;
-    int                           size = 0;
+
+    int size = 0;
 
     UndirectedGraph() = default;
     void copy_from(const UG& copied) {
@@ -79,11 +84,6 @@ public:
 
     /// @b constructor
 public:
-    using ConstructList    = std::vector<std::pair<T, T>>;
-    using EdgeList         = std::vector<std::pair<T, T>>;
-    using VertexList       = std::vector<T>;
-    using WeightedEdgeList = std::vector<std::tuple<T, T, int>>;
-
     explicit UndirectedGraph(const EdgeList& init) {
         std::unordered_set<T> V_Set;
         int                   num_of_V = 0;
@@ -139,8 +139,7 @@ public:
 
     /// @b vertex_operations
 public:
-    bool
-    if_has_vex(const T& v_name) {
+    bool if_has_vex(const T& v_name) {
         if (!V_Index_Map.contains(v_name)) {
             return false;
         }
