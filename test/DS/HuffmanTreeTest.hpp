@@ -24,9 +24,9 @@ void HuffmanTreeTest() {
     using InitListType = DS::HuffmanTree<char>::InitPairList;
 
     InitListType InitList {
-        std::make_pair('a', 10),
-        std::make_pair('e', 12),
-        std::make_pair('i', 15),
+        std::make_pair('a', 1),
+        std::make_pair('e', 2),
+        std::make_pair('i', 5),
         std::make_pair('s', 3),
         std::make_pair('t', 4),
     };

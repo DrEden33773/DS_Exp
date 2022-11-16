@@ -80,9 +80,9 @@ private:
     std::vector<NodeInfo>              NodeTable;
     std::unordered_map<T, BitCodeType> BitCodeMap;
 
-    size_t num_of_initted_node = 0;
-    size_t size_of_table       = 0;
-    size_t num_of_input_node   = 0;
+    int num_of_initted_node = 0;
+    int size_of_table       = 0;
+    int num_of_input_node   = 0;
 
 public:
     /// @brief @b tools
@@ -100,13 +100,13 @@ public:
         });
     }
     void alloc(InitPairList& init) {
-        size_t sizeof_init = init.size();
-        size_t size        = 2 * sizeof_init - 1;
-        NodeTable          = std::vector<NodeInfo>(size);
-        size_of_table      = size;
+        int sizeof_init = init.size();
+        int size        = 2 * sizeof_init - 1;
+        NodeTable       = std::vector<NodeInfo>(size);
+        size_of_table   = size;
     }
     void preBuild(InitPairList& init) {
-        size_t idx = 0;
+        int idx = 0;
         for (InitPair& pair : init) {
             NodeInfo& currNode = NodeTable[idx];
             currNode.index     = idx;
@@ -120,32 +120,17 @@ public:
             ++idx;
         }
     }
-    std::pair<int, int> get_two_min_idx() {
-        size_t min_idx        = 0;
-        size_t second_min_idx = 0;
-        // 1. init min_idx && second_min_idx correctly
-        // need to ignore { node | node.parent_idx != -1 }
-        for (size_t i = 0; i < num_of_initted_node; ++i) {
-            if (NodeTable[i].parent_idx != -1) {
+    int get_min_without_ignored_idx(const int& ignored = -1) {
+        int min_idx = 0;
+        for (int i = 0; i < num_of_initted_node; ++i) {
+            if (NodeTable[i].parent_idx != -1 || i == ignored) {
                 continue;
             }
             min_idx = i;
             break;
         }
-        for (size_t i = 0; i < num_of_initted_node; ++i) {
-            if (NodeTable[i].parent_idx != -1) {
-                continue;
-            }
-            int curr_weight = NodeTable[i].weight;
-            int min_weight  = NodeTable[min_idx].weight;
-            if (curr_weight != min_weight) {
-                second_min_idx = i;
-                break;
-            }
-        }
-        // 2. start to find
-        for (size_t i = 0; i < num_of_initted_node; ++i) {
-            if (NodeTable[i].parent_idx != -1) {
+        for (int i = 0; i < num_of_initted_node; ++i) {
+            if (NodeTable[i].parent_idx != -1 || i == ignored) {
                 continue;
             }
             NodeInfo& curr_node = NodeTable[i];
@@ -154,26 +139,14 @@ public:
                 min_idx = i;
             }
         }
-        for (size_t i = 0; i < num_of_initted_node; ++i) {
-            if (NodeTable[i].parent_idx != -1) {
-                continue;
-            }
-            NodeInfo& curr_node       = NodeTable[i];
-            NodeInfo& min_node        = NodeTable[min_idx];
-            NodeInfo& second_min_node = NodeTable[second_min_idx];
-            if (curr_node.weight < second_min_node.weight
-                && curr_node.weight > min_node.weight) {
-                second_min_idx = i;
-            }
-        }
-        return std::make_pair(min_idx, second_min_idx);
+        return min_idx;
     }
     void build() {
         int insert_idx = num_of_initted_node;
         while (insert_idx < size_of_table) {
-            size_t min_idx        = get_two_min_idx().first;
-            size_t second_min_idx = get_two_min_idx().second;
-            size_t parent_idx     = insert_idx;
+            int min_idx        = get_min_without_ignored_idx();
+            int second_min_idx = get_min_without_ignored_idx(min_idx);
+            int parent_idx     = insert_idx;
 
             NodeInfo& node_min        = NodeTable[min_idx];
             NodeInfo& node_second_min = NodeTable[second_min_idx];
@@ -239,7 +212,7 @@ public:
 
     /// @brief @b View_the_CodeBitSet
     void EchoBitCode() {
-        for (size_t idx = 0; idx < num_of_input_node; ++idx) {
+        for (int idx = 0; idx < num_of_input_node; ++idx) {
             const NodeInfo& curr_node = NodeTable[idx];
             std::cout << curr_node.value;
             std::cout << " => ";
@@ -253,8 +226,8 @@ public:
 
     /// @brief @b bit_code_generator
     int  get_root_idx() { return NodeTable.back().index; }
-    int  get_left_idx(const size_t& in) { return NodeTable[in].left_idx; }
-    int  get_right_idx(const size_t& in) { return NodeTable[in].right_idx; }
+    int  get_left_idx(const int& in) { return NodeTable[in].left_idx; }
+    int  get_right_idx(const int& in) { return NodeTable[in].right_idx; }
     void generate_bit_code() {
         if (!size_of_table) {
             return;
@@ -263,7 +236,7 @@ public:
         std::queue<int> queue;
         queue.push(get_root_idx());
         while (!queue.empty()) {
-            size_t curr_layer_size = queue.size();
+            int curr_layer_size = queue.size();
             while (curr_layer_size) {
                 int curr_idx  = queue.front();
                 int left_idx  = get_left_idx(curr_idx);
@@ -289,7 +262,7 @@ public:
         }
     }
     void build_bit_code_map() {
-        for (size_t idx = 0; idx < num_of_input_node; ++idx) {
+        for (int idx = 0; idx < num_of_input_node; ++idx) {
             const NodeInfo&    curr          = NodeTable[idx];
             const T&           curr_value    = curr.value;
             const BitCodeType& curr_bit_code = curr.bit_code;
