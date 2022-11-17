@@ -1,7 +1,7 @@
 /**
- * @file GraphAlgo.hpp
+ * @file Dijkstra.hpp
  * @author Eden (edwardwang33773@gmail.com)
- * @brief Algorithms about Graph
+ * @brief Dijkstra Algo
  * @version 0.1
  * @date 2022-11-16
  *
