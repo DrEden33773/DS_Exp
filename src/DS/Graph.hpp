@@ -26,10 +26,28 @@
 #include <utility>
 #include <vector>
 
+namespace Algo {
+
+template <typename T>
+class Dijkstra;
+template <typename T>
+class Floyd;
+template <typename T>
+class Kruskal;
+template <typename T>
+class Prim;
+
+} // namespace Algo
+
 namespace DS {
 
 template <typename T>
 class Graph {
+    friend class Algo::Dijkstra<T>;
+    friend class Algo::Floyd<T>;
+    friend class Algo::Kruskal<T>;
+    friend class Algo::Prim<T>;
+
 public:
     using MatType    = std::vector<std::vector<int>>;
     using MatRowType = std::vector<int>;
@@ -38,6 +56,9 @@ public:
     using WeightedEdgeList = std::vector<std::tuple<T, T, int>>;
     using WEdgeList        = std::vector<std::tuple<T, T, int>>;
     using VertexList       = std::vector<T>;
+
+    // static constexpr int LIM = std::numeric_limits<int>::max();
+    static constexpr int LIM = -1; // This won't cause overflow!
 
 private:
     std::vector<std::vector<int>> Mat;
@@ -66,8 +87,13 @@ private:
         if_weighted = std::move(moved.if_weighted);
     }
     void init_mat(const int& the_size) {
-        int value = (if_weighted) ? 0 : -1;
+        int value = (if_weighted) ? 0 : LIM;
         Mat       = MatType(the_size, MatRowType(the_size, value));
+        if (if_weighted) {
+            for (int idx = 0; idx < size; ++idx) {
+                Mat[idx][idx] = 0;
+            }
+        }
     }
 
 public:
@@ -93,16 +119,278 @@ public:
 public:
     template <class Edge>
     requires std::is_same_v<Edge, EdgeList> or std::is_same_v<Edge, WEdgeList>
-    static Graph<T> CreateGraph(
+    constexpr Graph(
         const VertexList& VexInit,
         const Edge&       EdgeInit,
         const bool&       if_directed = false
     ) {
-        Graph<T> ret;
-        ret.if_directed = if_directed;
+        this->if_directed = if_directed;
         if constexpr (std::is_same_v<Edge, WEdgeList>) {
-            ret.if_weighted = true;
+            this->if_weighted = true;
         }
+        // 1. import vertex
+        const int& num_of_v = VexInit.size();
+        size                = num_of_v;
+        int curr_idx        = 0;
+        for (auto&& curr_vex : VexInit) {
+            V_Index_Map[curr_vex] = curr_idx;
+            Index_V_Map[curr_idx] = curr_vex;
+            ++curr_idx;
+        }
+        // 2. init Mat
+        init_mat(size);
+        // 3. add edges
+        if constexpr (std::is_same_v<Edge, WEdgeList>) {
+            for (auto&& [a_vex, b_vex, weight] : EdgeInit) {
+                InsertArc(a_vex, b_vex, weight);
+            }
+        } else {
+            for (auto&& [a_vex, b_vex] : EdgeInit) {
+                InsertArc(a_vex, b_vex);
+            }
+        }
+    }
+
+public:
+    /// @brief @b vex_opt
+    bool if_has_vex(const T& v_name) {
+        if (!V_Index_Map.contains(v_name)) {
+            return false;
+        }
+        return true;
+    }
+    bool if_has_index(const int& index) {
+        if (index < 0 || index >= size) {
+            return false;
+        }
+        return true;
+    }
+    void make_sure_has_vex(const T& v_name) {
+        if (!V_Index_Map.contains(v_name)) {
+            throw std::logic_error("Undirected graph doesn't contain all of input vertexes!");
+        }
+    }
+    void make_sure_has_index(const int& index) {
+        if (index < 0 || index >= size) {
+            throw std::out_of_range("Input `index` is out of range!");
+        }
+    }
+    int GetIndex(const T& v_name) {
+        int res = -1;
+        if (V_Index_Map.contains(v_name)) {
+            res = V_Index_Map[v_name];
+        }
+        return res;
+    }
+    T GetVex(const int& index) {
+        if (index < 0 || index >= size) {
+            throw std::out_of_range("Input `index` is out of range!");
+        }
+        return Index_V_Map[index];
+    }
+    void InsertVex(const T& NewVex) {
+        if (if_has_vex(NewVex)) {
+            std::cout << "Already have the input vertex, escape insertion... " << std::endl;
+            return;
+        }
+        // 1. update map
+        const int& curr_inserted_idx   = size;
+        V_Index_Map[NewVex]            = curr_inserted_idx;
+        Index_V_Map[curr_inserted_idx] = NewVex;
+        // 2. update size
+        ++size;
+        // 3. update Mat
+        Mat.resize(size);
+        int value = (if_weighted) ? 0 : LIM;
+        for (std::vector<int>& row_vec : Mat) {
+            row_vec.push_back(value);
+        }
+        auto&& new_row = std::vector<int>(size, value);
+        Mat.emplace_back(new_row);
+    }
+    void DeleteVex(const T& DelVex) {
+        if (!if_has_vex(DelVex)) {
+            throw std::logic_error("Input Vertex is NOT exist!");
+            // return;
+        }
+        int DelIdx = V_Index_Map[DelVex];
+
+        MatType    NewMat;
+        MatRowType TempRow;
+        NewMat.reserve(size);
+        TempRow.reserve(size);
+        for (int row_idx = 0; row_idx < size; ++row_idx) {
+            if (row_idx == DelIdx) {
+                continue;
+            }
+            for (int col_idx = 0; col_idx < size; ++col_idx) {
+                if (col_idx == DelIdx) {
+                    continue;
+                }
+                TempRow.emplace_back(Mat[row_idx][col_idx]);
+            }
+            NewMat.emplace_back(TempRow);
+            TempRow.clear();
+        }
+
+        Mat = std::move(NewMat);
+    }
+    /// @brief @b arc_opt
+    void ArcOpt(
+        const T&    from_vex,
+        const T&    to_vex,
+        const bool& if_delete = false,
+        const int&  weight    = 0
+    ) {
+        if (!if_has_vex(from_vex) || !if_has_vex(to_vex)) {
+            throw std::logic_error("Undirected graph doesn't contain all of input vertexes!");
+        }
+        int from_idx = V_Index_Map[from_vex];
+        int to_idx   = V_Index_Map[to_vex];
+        if (!if_weighted) {
+            Mat[from_idx][to_idx] = (if_delete) ? 0 : 1;
+            if (if_directed) {
+                Mat[to_idx][from_idx] = (if_delete) ? 0 : 1;
+            }
+        } else {
+            Mat[from_idx][to_idx] = (if_delete) ? LIM : weight;
+            if (if_directed) {
+                Mat[to_idx][from_idx] = (if_delete) ? LIM : weight;
+            }
+        }
+    }
+    void ArcOpt(
+        const int&  from_idx,
+        const int&  to_idx,
+        const bool& if_delete = false,
+        const int&  weight    = 0
+    ) {
+        bool if_a_out_of_range = from_idx < 0 || from_idx >= size;
+        bool if_b_out_of_range = to_idx < 0 || to_idx >= size;
+        if (if_a_out_of_range || if_b_out_of_range) {
+            throw std::out_of_range("Input indexes have at least one which is out of range!");
+        }
+        if (!if_weighted) {
+            Mat[from_idx][to_idx] = (if_delete) ? 0 : 1;
+            if (if_directed) {
+                Mat[to_idx][from_idx] = (if_delete) ? 0 : 1;
+            }
+        } else {
+            Mat[from_idx][to_idx] = (if_delete) ? LIM : weight;
+            if (if_directed) {
+                Mat[to_idx][from_idx] = (if_delete) ? LIM : weight;
+            }
+        }
+    }
+    void InsertArc(
+        const T&   from_vex,
+        const T&   to_vex,
+        const int& weight = 0
+    ) {
+        ArcOpt(from_vex, to_vex, false, weight);
+    }
+    void InsertArc(
+        const int& from_idx,
+        const int& to_idx,
+        const int& weight = 0
+    ) {
+        ArcOpt(from_idx, to_idx, false, weight);
+    }
+    void DeleteArc(
+        const T&   from_vex,
+        const T&   to_vex,
+        const int& weight = 0
+    ) {
+        ArcOpt(from_vex, to_vex, true, weight);
+    }
+    void DeleteArc(
+        const int& from_idx,
+        const int& to_idx,
+        const int& weight = 0
+    ) {
+        ArcOpt(from_idx, to_idx, true, weight);
+    }
+
+public:
+    void make_sure_weighted() {
+        if (!if_weighted) {
+            throw std::logic_error("This function requires a `WeightedGraph`!");
+        }
+    }
+    void make_sure_undirected() {
+        if (if_directed) {
+            throw std::logic_error("This function requires a `UndirectedGraph`!");
+        }
+    }
+    int get_low_cost_of(const T& a_vex, const T& b_vex) {
+        make_sure_weighted();
+        make_sure_has_vex(a_vex);
+        make_sure_has_vex(b_vex);
+        return get_low_cost_of(V_Index_Map[a_vex], V_Index_Map[b_vex]);
+    }
+    int get_low_cost_of(const int& a_idx, const int& b_idx) {
+        make_sure_weighted();
+        make_sure_has_index(a_idx);
+        make_sure_has_index(b_idx);
+        return Mat[a_idx][b_idx]; //==> LIM / 0 / weight
+    }
+
+public:
+    /// @brief @b MST
+    Graph<T> MST_Kruskal(const int& start_idx) {
+        make_sure_weighted();
+        make_sure_undirected();
+    }
+    Graph<T> MST_Prim(const int& start_idx) {
+        make_sure_weighted();
+        make_sure_undirected();
+        std::vector<int> Adj(size, 0);
+        std::vector<int> LowCost(size);
+        std::vector<int> Flag(size, 0);
+    }
+
+    /// @brief @b MinRoute
+    int MinRoute_Dijkstra(const T& start_vex, const T& end_vex) {
+        make_sure_weighted();
+        std::unordered_map<int, int> all_min_route = MinRoute_Dijkstra(start_vex);
+
+        int end_idx = V_Index_Map[end_vex];
+        int res     = all_min_route[end_idx];
+        return res;
+    }
+    int MinRoute_Dijkstra(const int& start_idx, const int& end_idx) {
+        make_sure_weighted();
+        std::unordered_map<int, int> all_min_route = MinRoute_Dijkstra(start_idx);
+
+        int res = all_min_route[end_idx];
+        return res;
+    }
+    std::unordered_map<int, int> MinRoute_Dijkstra(const T& start_vex) {
+        make_sure_weighted();
+        int start_idx = V_Index_Map[start_vex];
+        return MinRoute_Dijkstra(start_idx);
+    }
+    std::unordered_map<int, int> MinRoute_Dijkstra(const int& start_idx) {
+        make_sure_weighted();
+        std::vector<int> Path(size); // store the index of adj_vex_idx on the path
+        std::vector<int> Dist(size); // store current minium route
+        std::vector<int> Flag(size, 0);
+        // 1. init Dist
+        for (int idx = 0; idx < size; ++idx) {
+            Dist[idx] = Mat[start_idx][idx];
+            Path[idx] = (Mat[start_idx][idx] == LIM) ? -1 : start_idx;
+        }
+        // 2. init flag
+        Flag[start_idx] = 1;
+        // 3. add all vex
+        int unjoined_vex_num = size - 1;
+        while (unjoined_vex_num > 0) {
+            // need to join a new vex
+            --unjoined_vex_num;
+        }
+    }
+    std::vector<std::vector<int>> MinRoutes_Floyd() {
+        // return all minium routes
     }
 };
 
