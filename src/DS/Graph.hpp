@@ -41,7 +41,71 @@ class Prim;
 
 namespace DS {
 
+struct Integer {
+    int  value          = 0;
+    bool upper_lim_flag = false;
+    bool lower_lim_flag = false;
+    explicit Integer(int value)
+        : value(value) { }
+    bool operator==(const Integer& another) {
+        bool res = false;
+
+        bool if_this_upper_lim    = this->upper_lim_flag;
+        bool if_this_lower_lim    = this->lower_lim_flag;
+        bool if_another_upper_lim = another.upper_lim_flag;
+        bool if_another_lower_lim = another.lower_lim_flag;
+        bool if_this_lim          = if_this_lower_lim && if_this_upper_lim;
+        bool if_another_lim       = if_another_lower_lim && if_another_upper_lim;
+
+        if (!if_this_lim && !if_another_lim) {
+            res = value == another.value;
+        } else {
+            if (if_this_upper_lim && if_another_upper_lim) {
+                res = true;
+            }
+            if (if_this_lower_lim && if_another_lower_lim) {
+                res = true;
+            }
+        }
+
+        return res;
+    }
+    bool operator!=(const Integer& another) {
+        return !(*this == another);
+    }
+    bool operator>(const Integer& another) {
+        bool res = true;
+
+        bool if_this_upper_lim    = this->upper_lim_flag;
+        bool if_this_lower_lim    = this->lower_lim_flag;
+        bool if_another_upper_lim = another.upper_lim_flag;
+        bool if_another_lower_lim = another.lower_lim_flag;
+        bool if_this_lim          = if_this_lower_lim && if_this_upper_lim;
+        bool if_another_lim       = if_another_lower_lim && if_another_upper_lim;
+
+        if (!if_this_lim && !if_another_lim) {
+            return this->value > another.value;
+        } else {
+            if (if_another_upper_lim) {
+                res = false;
+            }
+        }
+
+        return res;
+    }
+    bool operator<(const Integer& another) {
+        return !(*this > another);
+    }
+    bool operator>=(const Integer& another) {
+        return (*this > another) || (*this == another);
+    }
+    bool operator<=(const Integer& another) {
+        return (*this < another) || (*this == another);
+    }
+};
+
 template <typename T>
+requires(!std::is_same_v<T, int>)
 class Graph {
     friend class Algo::Dijkstra<T>;
     friend class Algo::Floyd<T>;
@@ -57,8 +121,8 @@ public:
     using WEdgeList        = std::vector<std::tuple<T, T, int>>;
     using VertexList       = std::vector<T>;
 
-    // static constexpr int LIM = std::numeric_limits<int>::max();
-    static constexpr int LIM = -1; // This won't cause overflow!
+    static constexpr int LIM = std::numeric_limits<int>::max();
+    // static constexpr int LIM = -1; // This won't cause overflow!
 
 private:
     std::vector<std::vector<int>> Mat;
@@ -87,7 +151,7 @@ private:
         if_weighted = std::move(moved.if_weighted);
     }
     void init_mat(const int& the_size) {
-        int value = (if_weighted) ? 0 : LIM;
+        int value = (if_weighted) ? LIM : 0;
         Mat       = MatType(the_size, MatRowType(the_size, value));
         if (if_weighted) {
             for (int idx = 0; idx < size; ++idx) {
@@ -201,7 +265,7 @@ public:
         ++size;
         // 3. update Mat
         Mat.resize(size);
-        int value = (if_weighted) ? 0 : LIM;
+        int value = (if_weighted) ? LIM : 0;
         for (std::vector<int>& row_vec : Mat) {
             row_vec.push_back(value);
         }
@@ -314,12 +378,17 @@ public:
 public:
     void make_sure_weighted() {
         if (!if_weighted) {
-            throw std::logic_error("This function requires a `WeightedGraph`!");
+            throw std::logic_error("This function requires a `Weighted_Graph`!");
         }
     }
     void make_sure_undirected() {
         if (if_directed) {
-            throw std::logic_error("This function requires a `UndirectedGraph`!");
+            throw std::logic_error("This function requires a `Undirected_Graph`!");
+        }
+    }
+    void make_sure_non_empty() {
+        if (!size) {
+            throw std::logic_error("This function requires a `NonEmpty_Graph`!");
         }
     }
     int get_low_cost_of(const T& a_vex, const T& b_vex) {
