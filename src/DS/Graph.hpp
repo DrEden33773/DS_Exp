@@ -249,12 +249,12 @@ public:
         int to_idx   = V_Index_Map[to_vex];
         if (!if_weighted) {
             Mat[from_idx][to_idx] = (if_delete) ? 0 : 1;
-            if (if_directed) {
+            if (!if_directed) {
                 Mat[to_idx][from_idx] = (if_delete) ? 0 : 1;
             }
         } else {
             Mat[from_idx][to_idx] = (if_delete) ? LIM : weight;
-            if (if_directed) {
+            if (!if_directed) {
                 Mat[to_idx][from_idx] = (if_delete) ? LIM : weight;
             }
         }
@@ -272,12 +272,12 @@ public:
         }
         if (!if_weighted) {
             Mat[from_idx][to_idx] = (if_delete) ? 0 : 1;
-            if (if_directed) {
+            if (!if_directed) {
                 Mat[to_idx][from_idx] = (if_delete) ? 0 : 1;
             }
         } else {
             Mat[from_idx][to_idx] = (if_delete) ? LIM : weight;
-            if (if_directed) {
+            if (!if_directed) {
                 Mat[to_idx][from_idx] = (if_delete) ? LIM : weight;
             }
         }
@@ -333,64 +333,6 @@ public:
         make_sure_has_index(a_idx);
         make_sure_has_index(b_idx);
         return Mat[a_idx][b_idx]; //==> LIM / 0 / weight
-    }
-
-public:
-    /// @brief @b MST
-    Graph<T> MST_Kruskal(const int& start_idx) {
-        make_sure_weighted();
-        make_sure_undirected();
-    }
-    Graph<T> MST_Prim(const int& start_idx) {
-        make_sure_weighted();
-        make_sure_undirected();
-        std::vector<int> Adj(size, 0);
-        std::vector<int> LowCost(size);
-        std::vector<int> Flag(size, 0);
-    }
-
-    /// @brief @b MinRoute
-    int MinRoute_Dijkstra(const T& start_vex, const T& end_vex) {
-        make_sure_weighted();
-        std::unordered_map<int, int> all_min_route = MinRoute_Dijkstra(start_vex);
-
-        int end_idx = V_Index_Map[end_vex];
-        int res     = all_min_route[end_idx];
-        return res;
-    }
-    int MinRoute_Dijkstra(const int& start_idx, const int& end_idx) {
-        make_sure_weighted();
-        std::unordered_map<int, int> all_min_route = MinRoute_Dijkstra(start_idx);
-
-        int res = all_min_route[end_idx];
-        return res;
-    }
-    std::unordered_map<int, int> MinRoute_Dijkstra(const T& start_vex) {
-        make_sure_weighted();
-        int start_idx = V_Index_Map[start_vex];
-        return MinRoute_Dijkstra(start_idx);
-    }
-    std::unordered_map<int, int> MinRoute_Dijkstra(const int& start_idx) {
-        make_sure_weighted();
-        std::vector<int> Path(size); // store the index of adj_vex_idx on the path
-        std::vector<int> Dist(size); // store current minium route
-        std::vector<int> Flag(size, 0);
-        // 1. init Dist
-        for (int idx = 0; idx < size; ++idx) {
-            Dist[idx] = Mat[start_idx][idx];
-            Path[idx] = (Mat[start_idx][idx] == LIM) ? -1 : start_idx;
-        }
-        // 2. init flag
-        Flag[start_idx] = 1;
-        // 3. add all vex
-        int unjoined_vex_num = size - 1;
-        while (unjoined_vex_num > 0) {
-            // need to join a new vex
-            --unjoined_vex_num;
-        }
-    }
-    std::vector<std::vector<int>> MinRoutes_Floyd() {
-        // return all minium routes
     }
 };
 
