@@ -1,7 +1,7 @@
 /**
  * @file Dijkstra.hpp
  * @author Eden (edwardwang33773@gmail.com)
- * @brief Dijkstra Algo
+ * @brief Dijkstra Algorithm Manager
  * @version 0.1
  * @date 2022-11-16
  *
