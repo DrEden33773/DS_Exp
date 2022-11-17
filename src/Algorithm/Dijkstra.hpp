@@ -116,11 +116,22 @@ public:
         }
         // 2. all min route detail
     }
-    void execute_algo(const T& source) {
+    void execute_algorithm(const T& source) {
         // 0. check
         Data.make_sure_has_vex(source);
         // 1. trans
         execute_algo(Data.V_Index_Map[source]);
+    }
+    void show_all_min_dist() {
+        T& source_vex = Data.V_Index_Map[source];
+        for (auto&& pair : AllMinRoute) {
+            T&  end_vex  = Data.V_Index_Map[pair.first];
+            int min_dist = pair.second;
+            std::cout << "{ " << source_vex << " -> " << end_vex << " } : ";
+            std::cout << min_dist;
+            std::cout << std::endl;
+        }
+        std::cout << std::endl;
     }
 };
 
