@@ -19,37 +19,40 @@ namespace Test {
 void first_test() {
     std::cout << std::boolalpha;
 
-    DS::BinaryTree<int> BiTree_1_2_3 = DS::BinaryTree<int>::CreateBiTree(
-        std::vector<std::string> { "1", "2", "3" }
+    DS::BinaryTree<int> BiTree = DS::BinaryTree<int>::CreateBiTree(
+        std::vector<std::string> {
+            "1", "2", "3",
+            "4", "5", "6",
+            "7" }
     );
-    DS::BinaryTree<int> BiTree_1_2_3_copied = BiTree_1_2_3;
+    DS::BinaryTree<int> BiTree_copied = BiTree;
 
-    BiTree_1_2_3.LevelOrderTraverse();
+    BiTree.LevelOrderTraverse();
     std::cout << std::endl;
-    BiTree_1_2_3_copied.LevelOrderTraverse();
+    BiTree_copied.LevelOrderTraverse();
     std::cout << std::endl;
 
-    std::cout << "If BiTree_1_2_3 Complete => "
-              << BiTree_1_2_3.IfCompleteBiTree()
+    std::cout << "If BiTree Complete => "
+              << BiTree.IfCompleteBiTree()
               << std::endl;
 
-    BiTree_1_2_3.emplace_unselect(
+    BiTree.emplace_unselect(
         [](int a) -> bool {
             return a == 2;
         }
     );
-    BiTree_1_2_3_copied.emplace_unselect(
+    BiTree_copied.emplace_unselect(
         [](int a) -> bool {
             return a == 3;
         }
     );
-    BiTree_1_2_3.LevelOrderTraverse();
+    BiTree.LevelOrderTraverse();
     std::cout << std::endl;
-    BiTree_1_2_3_copied.LevelOrderTraverse();
+    BiTree_copied.LevelOrderTraverse();
     std::cout << std::endl;
 
-    std::cout << "If BiTree_1_2_3 Complete => "
-              << BiTree_1_2_3.IfCompleteBiTree()
+    std::cout << "If BiTree Complete => "
+              << BiTree.IfCompleteBiTree()
               << std::endl;
 
     std::cout << std::endl;

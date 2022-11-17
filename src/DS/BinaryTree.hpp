@@ -236,7 +236,9 @@ public:
         return res;
     }
     std::pair<Node*, int>
-    DeserializeFromVec(const std::vector<std::string>& data) {
+    DeserializeFromVec(const std::vector<std::string>& data)
+    requires std::is_same_v<T, int>
+    {
         Node* root        = nullptr;
         int   num_of_node = 0;
 
@@ -307,7 +309,9 @@ public:
     }
 
     /// @brief @b copy_constructor_and_assigner
-    BinaryTree(BinaryTree& copied) {
+    BinaryTree(BinaryTree& copied)
+    requires std::is_same_v<T, int>
+    {
         // Deserialize and then Serialize
         std::vector<std::string> DeserializedData
             = copied.SerializeToVec();
@@ -316,7 +320,9 @@ public:
         TheRoot = root_num_pair.first;
         size    = root_num_pair.second;
     }
-    BinaryTree& operator=(BinaryTree& copied) {
+    BinaryTree& operator=(BinaryTree& copied)
+    requires std::is_same_v<T, int>
+    {
         if (&copied == this) {
             return *this;
         }
@@ -567,8 +573,10 @@ public:
         }
         if (LR == 0) {
             PostOrderOpt(node->left, DeleteNode);
+            node->left = nullptr; // must set to nullptr
         } else {
             PostOrderOpt(node->right, DeleteNode);
+            node->right = nullptr; // must set to nullptr
         }
     }
 
@@ -588,7 +596,9 @@ public:
     CreateBiTree(
         const std::vector<std::string>& data,
         Order                           order = Order::LevelOrder
-    ) {
+    )
+    requires std::is_same_v<T, int> // only support int
+    {
         return CreateBiTree_LevelOrder(data);
     }
 
