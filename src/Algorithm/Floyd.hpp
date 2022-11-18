@@ -93,9 +93,9 @@ public:
         for (int passed = 0; passed < size; ++passed) {
             for (int source = 0; source < size; ++source) {
                 for (int end = 0; end < size; ++end) {
-                    int source_to_end    = Data->Mat[source][end];
-                    int source_to_passed = Data->Mat[source][passed];
-                    int passed_to_end    = Data->Mat[passed][end];
+                    int source_to_end    = Dist[source][end];
+                    int source_to_passed = Dist[source][passed];
+                    int passed_to_end    = Dist[passed][end];
                     if (if_closer_judger(
                             source_to_passed,
                             passed_to_end,
@@ -115,7 +115,11 @@ public:
                 T& src = Data->Index_V_Map[source];
                 T& ed  = Data->Index_V_Map[end];
                 std::cout << "{ " << src << " -> " << ed << " } min distance : ";
-                std::cout << Dist[source][end] << std::endl;
+                if (Dist[source][end] == Data->LIM) {
+                    std::cout << "NaN" << std::endl;
+                } else {
+                    std::cout << Dist[source][end] << std::endl;
+                }
             }
         }
         std::cout << std::endl;

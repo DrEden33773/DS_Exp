@@ -15,10 +15,12 @@
 
 #include <algorithm>
 #include <iostream>
+#include <iterator>
 #include <list>
 #include <stdexcept>
 #include <type_traits>
 #include <unordered_map>
+#include <unordered_set>
 #include <utility>
 #include <vector>
 
@@ -39,6 +41,7 @@ class Dijkstra {
     std::vector<int> Adj;  // Adj index
 
     std::unordered_map<T, std::list<T>> AllMinRoute;
+    std::unordered_set<int>             NoRouteIdx;
 
     int find_closest_unjoined_idx() {
         int min_idx = 0;
@@ -173,17 +176,32 @@ public:
             T&            end_vex = Data->Index_V_Map[end_idx];
             std::list<T>& curr    = AllMinRoute.at(end_vex);
 
-            int trace_back_idx = end_idx;
+            int  trace_back_idx        = end_idx;
+            bool if_no_route_to_source = false;
+
             while (trace_back_idx != source_idx) {
 
                 int adj_idx = Adj[trace_back_idx];
-                T&  adj_vex = Data->Index_V_Map[adj_idx];
+                if (adj_idx == -1) {
+                    curr.clear();
+                    if_no_route_to_source = true;
+                    break;
+                }
+
+                T& adj_vex = Data->Index_V_Map[adj_idx];
 
                 curr.push_front(adj_vex);
                 trace_back_idx = adj_idx;
             }
+
+            if (if_no_route_to_source) {
+                NoRouteIdx.insert(end_idx);
+            }
         }
         for (int end_idx = 0; end_idx < size; ++end_idx) {
+            if (NoRouteIdx.contains(end_idx)) {
+                continue;
+            }
             T&            end_vex = Data->Index_V_Map[end_idx];
             std::list<T>& curr    = AllMinRoute.at(end_vex);
             curr.push_back(end_vex);
@@ -193,7 +211,11 @@ public:
         for (int end_idx = 0; end_idx < size; ++end_idx) {
             T& end_vex = Data->Index_V_Map[end_idx];
             std::cout << "{ " << source << " -> " << end_vex << " } min distance : ";
-            std::cout << Dist[end_idx];
+            if (Dist[end_idx] == Data->LIM) {
+                std::cout << "NaN";
+            } else {
+                std::cout << Dist[end_idx];
+            }
             std::cout << std::endl;
         }
         std::cout << std::endl;
@@ -210,6 +232,9 @@ public:
                     std::cout << vex << " ";
                 }
             );
+            if (!curr_path.size()) {
+                std::cout << "No route!";
+            }
             std::cout << std::endl;
         }
         std::cout << std::endl;

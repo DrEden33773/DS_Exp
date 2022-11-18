@@ -12,6 +12,7 @@
 #pragma once
 
 #include "Algorithm/DijkstraTest.hpp"
+#include "Algorithm/FloydTest.hpp"
 #include "Algorithm/MergeUniqueTest.hpp"
 #include "DS/BinaryTreeTest.hpp"
 #include "DS/DoubleListTest.hpp"
@@ -42,8 +43,8 @@ void run_all_test() {
         BinaryTreeTest,      // success, but not complete
         UndirectedGraphTest, // success, but not complete
         HuffmanTreeTest,     // success, but not complete
-        DijkstraTest,
-
+        DijkstraTest,        // success
+        FloydTest,
     };
     for (auto&& func : test_list) {
         func();

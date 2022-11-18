@@ -1,9 +1,9 @@
 /**
- * @file DijkstraTest.hpp
- * @author Eden (edwardwang@gmail.com)
+ * @file FloydTest.hpp
+ * @author Eden (edwardwang33773@gmail.com)
  * @brief
  * @version 0.1
- * @date 2022-11-17
+ * @date 2022-11-18
  *
  * @copyright Copyright (c) 2022
  *
@@ -11,14 +11,14 @@
 
 #pragma once
 
-#include "../../src/Algorithm/Dijkstra.hpp"
+#include "../../src/Algorithm/Floyd.hpp"
 #include "../../src/DS/Graph.hpp"
 #include "../../tools/TestTool.hpp"
 
 namespace Test {
 
-void DijkstraTest() {
-    Tool::title_info("Dijkstra_Algorithm");
+void FloydTest() {
+    Tool::title_info("Floyd_Algorithm");
 
     using VexSetType           = DS::Graph<std::string>::VertexList;
     using WeightedEdgeListType = DS::Graph<std::string>::WeightedEdgeList;
@@ -42,13 +42,12 @@ void DijkstraTest() {
         WeightedEdgeList,
         true
     };
-    Algo::Dijkstra<std::string> DijkstraAlgorithm(TestGraph);
+    Algo::Floyd<std::string> FloydAlgorithm(TestGraph);
 
-    DijkstraAlgorithm.execute_algorithm("a");
-    DijkstraAlgorithm.show_all_min_dist();
-    DijkstraAlgorithm.show_all_min_route();
+    FloydAlgorithm.execute_algorithm();
+    FloydAlgorithm.show_all_min_dist();
 
-    Tool::end_info("Dijkstra_Algorithm");
+    Tool::end_info("Floyd_Algorithm");
 }
 
 } // namespace Test

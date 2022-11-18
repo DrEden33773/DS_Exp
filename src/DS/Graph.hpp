@@ -126,8 +126,8 @@ public:
     using WEdgeList        = std::vector<std::tuple<T, T, int>>;
     using VertexList       = std::vector<T>;
 
-    static constexpr int LIM = std::numeric_limits<int>::max();
-    // static constexpr int LIM = -1; // This won't cause overflow!
+    // static constexpr int LIM = std::numeric_limits<int>::max();
+    static constexpr int LIM = -1; // This won't cause overflow!
 
 private:
     std::vector<std::vector<int>> Mat;
