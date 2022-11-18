@@ -12,6 +12,7 @@
 #pragma once
 
 #include <iostream>
+#include <ostream>
 #include <queue>
 #include <stdexcept>
 #include <tuple>

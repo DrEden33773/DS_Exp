@@ -1,7 +1,7 @@
 /**
  * @file Graph.hpp
  * @author Eden (edwardwang33773@gmail.com)
- * @brief Directed/Undirected, Weighted/Unweighted, Aint-in-one
+ * @brief Directed/Undirected, Weighted/Unweighted, All-in-one
  * @version 0.1
  * @date 2022-11-15
  *
@@ -40,6 +40,11 @@ class Prim;
 } // namespace Algo
 
 namespace DS {
+
+template <class T>
+concept Printable = requires(T a) {
+    { std::ostream() << a };
+};
 
 struct Integer {
     int  value          = 0;
@@ -105,7 +110,7 @@ struct Integer {
 };
 
 template <typename T>
-requires(!std::is_same_v<T, int>)
+requires Printable<T>
 class Graph {
     friend class Algo::Dijkstra<T>;
     friend class Algo::Floyd<T>;
@@ -323,29 +328,6 @@ public:
             }
         }
     }
-    void ArcOpt(
-        const int&  from_idx,
-        const int&  to_idx,
-        const bool& if_delete = false,
-        const int&  weight    = 0
-    ) {
-        bool if_a_out_of_range = from_idx < 0 || from_idx >= size;
-        bool if_b_out_of_range = to_idx < 0 || to_idx >= size;
-        if (if_a_out_of_range || if_b_out_of_range) {
-            throw std::out_of_range("Input indexes have at least one which is out of range!");
-        }
-        if (!if_weighted) {
-            Mat[from_idx][to_idx] = (if_delete) ? 0 : 1;
-            if (!if_directed) {
-                Mat[to_idx][from_idx] = (if_delete) ? 0 : 1;
-            }
-        } else {
-            Mat[from_idx][to_idx] = (if_delete) ? LIM : weight;
-            if (!if_directed) {
-                Mat[to_idx][from_idx] = (if_delete) ? LIM : weight;
-            }
-        }
-    }
     void InsertArc(
         const T&   from_vex,
         const T&   to_vex,
@@ -353,26 +335,12 @@ public:
     ) {
         ArcOpt(from_vex, to_vex, false, weight);
     }
-    void InsertArc(
-        const int& from_idx,
-        const int& to_idx,
-        const int& weight = 0
-    ) {
-        ArcOpt(from_idx, to_idx, false, weight);
-    }
     void DeleteArc(
         const T&   from_vex,
         const T&   to_vex,
         const int& weight = 0
     ) {
         ArcOpt(from_vex, to_vex, true, weight);
-    }
-    void DeleteArc(
-        const int& from_idx,
-        const int& to_idx,
-        const int& weight = 0
-    ) {
-        ArcOpt(from_idx, to_idx, true, weight);
     }
 
 public:
@@ -395,12 +363,8 @@ public:
         make_sure_weighted();
         make_sure_has_vex(a_vex);
         make_sure_has_vex(b_vex);
-        return get_low_cost_of(V_Index_Map[a_vex], V_Index_Map[b_vex]);
-    }
-    int get_low_cost_of(const int& a_idx, const int& b_idx) {
-        make_sure_weighted();
-        make_sure_has_index(a_idx);
-        make_sure_has_index(b_idx);
+        const int& a_idx = V_Index_Map[a_vex];
+        const int& b_idx = V_Index_Map[b_vex];
         return Mat[a_idx][b_idx]; //==> LIM / 0 / weight
     }
 };
