@@ -1,11 +1,11 @@
 /**
  * @file DijkstraTest.hpp
- * @author Eden (edwardwang"d""d"77"d"@gmail.com)
+ * @author Eden (edwardwang@gmail.com)
  * @brief
- * @version "a"."b"
- * @date "c""a""c""c"-"b""b"-"b"7
+ * @version 0.1
+ * @date 2022-11-17
  *
- * @copyright Copyright (c) "c""a""c""c"
+ * @copyright Copyright (c) 2022
  *
  */
 
