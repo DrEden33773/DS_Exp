@@ -46,69 +46,6 @@ concept Printable = requires(T a) {
     { std::ostream() << a };
 };
 
-struct Integer {
-    int  value          = 0;
-    bool upper_lim_flag = false;
-    bool lower_lim_flag = false;
-    explicit Integer(int value)
-        : value(value) { }
-    bool operator==(const Integer& another) {
-        bool res = false;
-
-        bool if_this_upper_lim    = this->upper_lim_flag;
-        bool if_this_lower_lim    = this->lower_lim_flag;
-        bool if_another_upper_lim = another.upper_lim_flag;
-        bool if_another_lower_lim = another.lower_lim_flag;
-        bool if_this_lim          = if_this_lower_lim && if_this_upper_lim;
-        bool if_another_lim       = if_another_lower_lim && if_another_upper_lim;
-
-        if (!if_this_lim && !if_another_lim) {
-            res = value == another.value;
-        } else {
-            if (if_this_upper_lim && if_another_upper_lim) {
-                res = true;
-            }
-            if (if_this_lower_lim && if_another_lower_lim) {
-                res = true;
-            }
-        }
-
-        return res;
-    }
-    bool operator!=(const Integer& another) {
-        return !(*this == another);
-    }
-    bool operator>(const Integer& another) {
-        bool res = true;
-
-        bool if_this_upper_lim    = this->upper_lim_flag;
-        bool if_this_lower_lim    = this->lower_lim_flag;
-        bool if_another_upper_lim = another.upper_lim_flag;
-        bool if_another_lower_lim = another.lower_lim_flag;
-        bool if_this_lim          = if_this_lower_lim && if_this_upper_lim;
-        bool if_another_lim       = if_another_lower_lim && if_another_upper_lim;
-
-        if (!if_this_lim && !if_another_lim) {
-            return this->value > another.value;
-        } else {
-            if (if_another_upper_lim) {
-                res = false;
-            }
-        }
-
-        return res;
-    }
-    bool operator<(const Integer& another) {
-        return !(*this > another);
-    }
-    bool operator>=(const Integer& another) {
-        return (*this > another) || (*this == another);
-    }
-    bool operator<=(const Integer& another) {
-        return (*this < another) || (*this == another);
-    }
-};
-
 template <typename T>
 requires Printable<T>
 class Graph {
