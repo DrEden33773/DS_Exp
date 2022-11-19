@@ -14,6 +14,7 @@
 #include "Algorithm/DijkstraTest.hpp"
 #include "Algorithm/FloydTest.hpp"
 #include "Algorithm/MergeUniqueTest.hpp"
+#include "Algorithm/PrimTest.hpp"
 #include "DS/BinaryTreeTest.hpp"
 #include "DS/DoubleListTest.hpp"
 #include "DS/DynamicArrayTest.hpp"
@@ -45,6 +46,7 @@ void run_all_test() {
         HuffmanTreeTest,     // success, but not complete
         DijkstraTest,        // success
         FloydTest,
+        PrimTest,
     };
     for (auto&& func : test_list) {
         func();

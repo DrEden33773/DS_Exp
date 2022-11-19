@@ -304,6 +304,8 @@ public:
         const int& b_idx = V_Index_Map[b_vex];
         return Mat[a_idx][b_idx]; //==> LIM / 0 / weight
     }
+
+public:
 };
 
 } // namespace DS
