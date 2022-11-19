@@ -65,7 +65,7 @@ private:
         return res;
     }
 
-    Floyd<T>() = default;
+    Floyd() = default;
 
 public:
     explicit Floyd<T>(DS::Graph<T>& graph)

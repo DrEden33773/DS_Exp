@@ -1,10 +1,9 @@
 [
   {
-    "directory": "/workspaces/DS_Exp",
+    "directory": "/home/eden/CollegeLearningRepo/DS_Exp",
     "arguments": [
-      "/usr/bin/clang",
+      "/usr/local/bin/gcc",
       "-c",
-      "-Qunused-arguments",
       "-m64",
       "-g",
       "-O0",

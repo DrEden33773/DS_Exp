@@ -13,13 +13,9 @@
 
 #include "../DS/Graph.hpp"
 
-#include <algorithm>
 #include <iomanip>
 #include <iostream>
-#include <list>
 #include <stdexcept>
-#include <type_traits>
-#include <unordered_map>
 #include <utility>
 #include <vector>
 
@@ -37,8 +33,6 @@ class Prim {
     std::vector<int> LowCost; // min_dist of curr(index)-->joined
     std::vector<int> Flag;    // flag ( 0 or 1 )
     std::vector<int> Adj;     // Adj index
-
-    std::list<T> MSTPath;
 
     int find_closest_unjoined_idx() {
         int min_idx = 0;

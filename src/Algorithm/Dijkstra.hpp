@@ -69,7 +69,6 @@ class Dijkstra {
 
     Dijkstra() = default;
 
-    // source_to_passed + passed_to_curr < source_to_curr
     bool if_closer_judger(
         int source_to_passed,
         int passed_to_curr,
