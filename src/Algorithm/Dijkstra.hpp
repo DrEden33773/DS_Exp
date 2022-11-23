@@ -221,17 +221,17 @@ public:
     }
     void show_all_min_route() {
         for (int end_idx = 0; end_idx < size; ++end_idx) {
-            T&            end_vex   = Data->Index_V_Map[end_idx];
-            std::list<T>& curr_path = AllMinRoute.at(end_vex);
+            T&            end_vex    = Data->Index_V_Map[end_idx];
+            std::list<T>& curr_route = AllMinRoute.at(end_vex);
             std::cout << "{ " << source << " -> " << end_vex << " } min route : ";
             std::for_each(
-                curr_path.begin(),
-                curr_path.end(),
+                curr_route.begin(),
+                curr_route.end(),
                 [](const T& vex) {
                     std::cout << vex << " ";
                 }
             );
-            if (!curr_path.size()) {
+            if (!curr_route.size()) {
                 std::cout << "No route!";
             }
             std::cout << std::endl;

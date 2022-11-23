@@ -46,6 +46,7 @@ void FloydTest() {
 
     FloydAlgorithm.execute_algorithm();
     FloydAlgorithm.show_all_min_dist();
+    FloydAlgorithm.show_all_min_route();
 
     Tool::end_info("Floyd_Algorithm");
 }
