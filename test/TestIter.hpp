@@ -15,6 +15,7 @@
 #include "Algorithm/FloydTest.hpp"
 #include "Algorithm/MergeUniqueTest.hpp"
 #include "Algorithm/PrimTest.hpp"
+#include "DS/BSTTest.hpp"
 #include "DS/BinaryTreeTest.hpp"
 #include "DS/ChildSiblingTreeTest.hpp"
 #include "DS/DoubleListTest.hpp"
@@ -49,6 +50,7 @@ void run_all_test() {
         FloydTest,            // success
         PrimTest,             // success
         ChildSiblingTreeTest, // success
+        BSTTest,              //
     };
     for (auto&& func : test_list) {
         func();
