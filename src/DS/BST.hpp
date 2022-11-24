@@ -39,8 +39,34 @@ class BST {
 
 public:
     void insert(const T& val) {
+        Node* toInsert = new Node(val);
+        if (!TheRoot) {
+            TheRoot = toInsert;
+            ++size;
+            return;
+        }
+        Node* parent  = nullptr;
+        Node* current = TheRoot;
+        while (current) {
+            if (val < current->elem) {
+                parent  = current;
+                current = current->left;
+            } else if (val > current->elem) {
+                parent  = current;
+                current = current->right;
+            } else {
+                return;
+            }
+        }
+        if (val < parent->elem) {
+            parent->left = toInsert;
+        } else {
+            parent->right = toInsert;
+        }
+        ++size;
     }
     void remove(const T& val) {
+        // TODO(eden):
     }
     void print_tree() {
         Node* node = TheRoot;
