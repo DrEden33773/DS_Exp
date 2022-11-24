@@ -16,6 +16,7 @@
 #include "Algorithm/MergeUniqueTest.hpp"
 #include "Algorithm/PrimTest.hpp"
 #include "DS/BinaryTreeTest.hpp"
+#include "DS/ChildSiblingTreeTest.hpp"
 #include "DS/DoubleListTest.hpp"
 #include "DS/DynamicArrayTest.hpp"
 #include "DS/HuffmanTreeTest.hpp"
@@ -33,20 +34,21 @@ namespace Test {
 
 void run_all_test() {
     std::vector<std::function<void()>> test_list = {
-        DynamicArrayTest,    // success
-        SingleListTest,      // success
-        DoubleListTest,      // success
-        ListTest,            // success
-        MergeUniqueTest,     // success
-        SeqStackTest,        // success
-        ChainedQueueTest,    // success
-        SparseMatrixTest,    // success
-        BinaryTreeTest,      // success, but not complete
-        UndirectedGraphTest, // success, but not complete
-        HuffmanTreeTest,     // success, but not complete
-        DijkstraTest,        // success
-        FloydTest,
-        PrimTest,
+        DynamicArrayTest,     // success
+        SingleListTest,       // success
+        DoubleListTest,       // success
+        ListTest,             // success
+        MergeUniqueTest,      // success
+        SeqStackTest,         // success
+        ChainedQueueTest,     // success
+        SparseMatrixTest,     // success
+        BinaryTreeTest,       // success, but not complete
+        UndirectedGraphTest,  // success, but not complete
+        HuffmanTreeTest,      // success, but not complete
+        DijkstraTest,         // success
+        FloydTest,            // success
+        PrimTest,             // success
+        ChildSiblingTreeTest, // success
     };
     for (auto&& func : test_list) {
         func();

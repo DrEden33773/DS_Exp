@@ -12,6 +12,7 @@
 #pragma once
 #include <algorithm>
 #include <functional>
+#include <initializer_list>
 #include <iostream>
 #include <queue>
 #include <set>
@@ -49,27 +50,30 @@ public:
             Members.insert(curr_member);
         }
     }
-
-public:
     void make_sure_exist(const T& in) {
         if (!Members.contains(in)) {
-            throw std::logic_error("Input member doesn't exist on the full list!");
+            throw std::logic_error("Input member doesn't exist! Consider `add_member()` first!");
         }
     }
     void make_sure_non_statistic(const T& in) {
         if (CountedMembers.contains(in)) {
-            throw std::logic_error("Input member is statistic(on the tree)!");
+            throw std::logic_error("Input member isn't on the tree!");
         }
     }
     void make_sure_statistic(const T& in) {
         if (!CountedMembers.contains(in)) {
-            throw std::logic_error("Input member is statistic(on the tree)!");
+            throw std::logic_error("Input member is already on the tree!");
         }
     }
     void make_sure_have_ancestor() {
         if (!Ancestor) {
             throw std::logic_error("There's no ancestor! You should `set_ancestor()` first!");
         }
+    }
+
+public:
+    void add_member(const T& toAdd) {
+        Members.insert(toAdd);
     }
     void set_ancestor(const T& in) {
         make_sure_exist(in);
@@ -82,17 +86,13 @@ public:
         MemberPtrMap.insert(
             std::make_pair(in, Ancestor)
         );
-        ++size;
     }
     void set_child_of(
         const T&              parent,
         const std::vector<T>& children
     ) {
-        if (children.empty()) {
-            return;
-        }
-
         make_sure_have_ancestor();
+
         make_sure_exist(parent);
         make_sure_statistic(parent); // parent should on the tree
         for (auto&& child : children) {
@@ -120,8 +120,77 @@ public:
                 MemberPtrMap.insert(std::make_pair(child, new_sibling));
                 closest_sibling = new_sibling;
             }
-            ++size;
+            ++index;
         }
+    }
+    void debug_print_tree() {
+        if (!Ancestor) {
+            std::cout << "Tree is empty!" << std::endl;
+            std::cout << std::endl;
+            return;
+        }
+        Node*             node = Ancestor;
+        std::stack<Node*> stack;
+        int               indentation = 0;
+        while (!stack.empty() || node) {
+            while (node) {
+                // print
+                int curr_indentation = indentation;
+                while (curr_indentation-- > 0) {
+                    std::cout << "  ";
+                }
+                std::cout << node->elem << std::endl;
+                // notation
+                stack.push(node);
+                // move to child
+                node = node->child;
+                // add indentation
+                ++indentation;
+            }
+            // trace back
+            node = stack.top();
+            stack.pop();
+            --indentation;
+            // move to sibling
+            node = node->sibling;
+        }
+        std::cout << std::endl;
+    }
+    void print_layer(const size_t& layer) {
+        if (layer < 1) {
+            throw std::logic_error("Layer must >= 1 !");
+        }
+        // BFS
+        if (!Ancestor) {
+            return;
+        }
+        Node*             node = Ancestor;
+        std::queue<Node*> queue;
+        queue.push(Ancestor);
+        size_t curr_layer = 1;
+        while (!queue.empty()) {
+            size_t curr_layer_size = queue.size();
+            while (curr_layer_size-- > 0) {
+                node = queue.front();
+                if (curr_layer == layer) {
+                    std::cout << node->elem << " ";
+                }
+                queue.pop();
+                if (node->child) {
+                    queue.push(node->child);
+                    Node* closest_sibling = node->child->sibling;
+                    while (closest_sibling) {
+                        queue.push(closest_sibling);
+                        closest_sibling = closest_sibling->sibling;
+                    }
+                }
+            }
+            if (curr_layer == layer) {
+                break;
+            }
+            ++curr_layer;
+        }
+        std::cout << std::endl;
     }
 };
 
