@@ -409,26 +409,11 @@ public:
         Mat[a_idx][b_idx] = (if_delete) ? 0 : 1;
         Mat[b_idx][a_idx] = (if_delete) ? 0 : 1;
     }
-    void ArcOpt(const int& a_idx, const int& b_idx, bool if_delete = false) {
-        bool if_a_out_of_range = a_idx < 0 || a_idx >= size;
-        bool if_b_out_of_range = b_idx < 0 || b_idx >= size;
-        if (if_a_out_of_range || if_b_out_of_range) {
-            throw std::out_of_range("Input indexes have at least one which is out of range!");
-        }
-        Mat[a_idx][b_idx] = (if_delete) ? 0 : 1;
-        Mat[b_idx][a_idx] = (if_delete) ? 0 : 1;
-    }
     void InsertArc(const T& a_vex, const T& b_vex) {
         ArcOpt(a_vex, b_vex);
     }
-    void InsertArc(const int& a_idx, const int& b_idx) {
-        ArcOpt(a_idx, b_idx);
-    }
     void DeleteArc(const T& a_vex, const T& b_vex) {
         ArcOpt(a_vex, b_vex, true);
-    }
-    void DeleteArc(const int& a_idx, const int& b_idx) {
-        ArcOpt(a_idx, b_idx, true);
     }
 };
 

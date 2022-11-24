@@ -13,8 +13,6 @@
 
 #include "../../src/DS/BST.hpp"
 #include "../../tools/TestTool.hpp"
-#include <string>
-#include <vector>
 
 namespace Test {
 

@@ -178,18 +178,8 @@ public:
     }
 
     /// @brief @b constructors
-    explicit HuffmanTree(InitPairList& init) { Generate(init); }
-    explicit HuffmanTree(InitList& init)
-    requires std::is_same_v<T, std::string>
-        or std::is_same_v<T, int>
-        or std::is_same_v<T, char>
-    {
-        InitPairList true_init;
-        true_init.reserve(init.size());
-        for (auto&& weight : init) {
-            true_init.emplace_back(std::make_pair(weight, weight));
-        }
-        Generate(true_init);
+    explicit HuffmanTree(InitPairList& init) {
+        Generate(init);
     }
 
     /// @brief @b View_the_table
