@@ -61,7 +61,7 @@ class Dijkstra {
             if (Dist[idx] == Data->LIM) {
                 continue;
             }
-            min_idx = (Dist[idx] < Dist[min_idx]) ? idx : min_idx;
+            min_idx = (if_closer_judger(Dist[idx], Dist[min_idx])) ? idx : min_idx;
         }
         // 3. return
         return min_idx;
@@ -69,6 +69,28 @@ class Dijkstra {
 
     Dijkstra() = default;
 
+    bool if_closer_judger(
+        int joined_to_curr,
+        int source_to_curr
+    ) {
+        bool res = false;
+        // joined_to_curr < source_to_curr
+        // b < c
+        const int& b            = joined_to_curr;
+        const int& c            = source_to_curr;
+        bool       if_b_lim     = b == Data->LIM;
+        bool       if_c_lim     = c == Data->LIM;
+        bool       if_bc_no_lim = !if_b_lim && !if_c_lim;
+        if (if_bc_no_lim) {
+            res = ((b) < (c));
+        } else {
+            if (!if_b_lim && if_c_lim) {
+                res = true;
+            }
+            // all cases else should be `false`
+        }
+        return res;
+    }
     bool if_closer_judger(
         int source_to_passed,
         int passed_to_curr,
