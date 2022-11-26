@@ -13,9 +13,9 @@
 
 #include "Algorithm/DijkstraTest.hpp"
 #include "Algorithm/FloydTest.hpp"
-// #include "Algorithm/MergeUniqueTest.hpp"
 #include "Algorithm/PrimTest.hpp"
 #include "DS/BSTTest.hpp"
+// #include "Algorithm/MergeUniqueTest.hpp"
 // #include "DS/BinaryTreeTest.hpp"
 // #include "DS/ChildSiblingTreeTest.hpp"
 // #include "DS/DoubleListTest.hpp"
@@ -45,7 +45,7 @@ void run_all_test() {
         // SparseMatrixTest,     // success
         // BinaryTreeTest,       // success, but not complete
         // UndirectedGraphTest,  // success, but not complete
-        // HuffmanTreeTest,      // success, but not complete
+        // HuffmanTreeTest,      // success
         // ChildSiblingTreeTest, // success
         DijkstraTest, // success
         FloydTest,    // success
