@@ -88,6 +88,7 @@ public:
         // basic check
         Data->make_sure_non_empty();
         Data->make_sure_weighted();
+        Data->make_sure_directed();
         // init `Adj` and `Dist`
         Dist = Matrix<int>(size, SubMatrix<int>(size, 0));
         Adj  = Matrix<int>(size, SubMatrix<int>(size, 0));

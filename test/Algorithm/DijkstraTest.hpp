@@ -46,7 +46,7 @@ void DijkstraTest() {
         };
         Algo::Dijkstra<std::string> DijkstraAlgorithm(TestGraph);
 
-        DijkstraAlgorithm.execute_algorithm("a");
+        DijkstraAlgorithm.execute_algorithm_from_source("a");
         DijkstraAlgorithm.show_all_min_dist();
         DijkstraAlgorithm.show_all_min_route();
     }
@@ -75,7 +75,7 @@ void DijkstraTest() {
         };
         Algo::Dijkstra<int> DijkstraAlgorithm(TestGraph);
 
-        DijkstraAlgorithm.execute_algorithm(2);
+        DijkstraAlgorithm.execute_algorithm_from_source(2);
         DijkstraAlgorithm.show_all_min_dist();
         DijkstraAlgorithm.show_all_min_route();
     }

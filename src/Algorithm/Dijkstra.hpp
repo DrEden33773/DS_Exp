@@ -28,9 +28,6 @@ namespace Algo {
 
 template <typename T>
 class Dijkstra {
-    template <class K, class V>
-    using HashMap = std::unordered_map<K, V>;
-
     DS::Graph<T>* Data       = nullptr;
     int           size       = 0;
     int           source_idx = 0;
@@ -40,7 +37,7 @@ class Dijkstra {
     std::vector<int> Flag; // flag ( 0 or 1 )
     std::vector<int> Adj;  // Adj index
 
-    std::unordered_map<T, std::list<T>> AllMinRoute;
+    std::unordered_map<T, std::list<T>> MinRoute;
     std::unordered_set<int>             NoRouteIdx;
 
     int find_closest_unjoined_idx() {
@@ -128,7 +125,7 @@ public:
         // init Path
         for (int idx = 0; idx < graph.size; ++idx) {
             T vex = graph.Index_V_Map[idx];
-            ret.AllMinRoute.insert(std::make_pair(vex, std::list<T>()));
+            ret.MinRoute.insert(std::make_pair(vex, std::list<T>()));
         }
         return ret;
     }
@@ -139,10 +136,10 @@ public:
         Data->make_sure_weighted();
         for (int idx = 0; idx < graph.size; ++idx) {
             T vex = graph.Index_V_Map[idx];
-            AllMinRoute.insert(std::make_pair(vex, std::list<T>()));
+            MinRoute.insert(std::make_pair(vex, std::list<T>()));
         }
     }
-    void execute_algorithm(const T& source) {
+    void execute_algorithm_from_source(const T& source) {
         // check
         Data->make_sure_has_vex(source);
         // bound
@@ -195,7 +192,7 @@ public:
         // 4. update the Path
         for (int end_idx = 0; end_idx < size; ++end_idx) {
             T&            end_vex = Data->Index_V_Map[end_idx];
-            std::list<T>& curr    = AllMinRoute.at(end_vex);
+            std::list<T>& curr    = MinRoute.at(end_vex);
 
             int  trace_back_idx        = end_idx;
             bool if_no_route_to_source = false;
@@ -224,7 +221,7 @@ public:
                 continue;
             }
             T&            end_vex = Data->Index_V_Map[end_idx];
-            std::list<T>& curr    = AllMinRoute.at(end_vex);
+            std::list<T>& curr    = MinRoute.at(end_vex);
             curr.push_back(end_vex);
         }
     }
@@ -244,7 +241,7 @@ public:
     void show_all_min_route() {
         for (int end_idx = 0; end_idx < size; ++end_idx) {
             T&            end_vex    = Data->Index_V_Map[end_idx];
-            std::list<T>& curr_route = AllMinRoute.at(end_vex);
+            std::list<T>& curr_route = MinRoute.at(end_vex);
             std::cout << "{ " << source << " -> " << end_vex << " } min route : ";
             std::for_each(
                 curr_route.begin(),

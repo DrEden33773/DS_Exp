@@ -43,8 +43,8 @@ namespace DS {
 
 template <class T>
 concept Printable = requires(T a, std::ostream& b) {
-    { b << a };
-};
+                        { b << a };
+                    };
 
 template <typename T>
 requires Printable<T>
@@ -294,6 +294,11 @@ public:
     void make_sure_non_empty() {
         if (!size) {
             throw std::logic_error("This function requires a `NonEmpty_Graph`!");
+        }
+    }
+    void make_sure_directed() {
+        if (!if_directed) {
+            throw std::logic_error("This function requires a `Directed_Graph`!");
         }
     }
     int get_low_cost_of(const T& a_vex, const T& b_vex) {
