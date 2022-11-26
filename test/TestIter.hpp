@@ -50,7 +50,7 @@ void run_all_test() {
         DijkstraTest, // success
         FloydTest,    // success
         PrimTest,     // success
-        BSTTest,      // success, but not complete
+        BSTTest,      // success
     };
     for (auto&& func : test_list) {
         func();

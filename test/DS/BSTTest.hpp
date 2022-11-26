@@ -21,14 +21,24 @@ void BSTTest() {
 
     DS::BST<int> BST;
 
-    BST.insert(1);
-    BST.insert(1);
-    BST.insert(4);
-    BST.insert(4);
-    BST.insert(3);
-    BST.insert(2);
-    BST.insert(2);
-    BST.insert(5);
+    std::vector<int> InsertList {
+        76, 50, 80, 30,
+        60, 78, 90, 5,
+        40, 55, 70, 35,
+        54, 73, 71, 72
+    };
+
+    for (auto&& insert : InsertList) {
+        BST.insert(insert);
+    }
+
+    BST.print_tree();
+
+    BST.remove(90); // easy
+    BST.remove(40); // medium
+    BST.remove(60); // hard
+
+    // success
 
     BST.print_tree();
 
