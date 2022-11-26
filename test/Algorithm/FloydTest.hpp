@@ -58,21 +58,20 @@ void FloydTest() {
         using std::make_tuple;
 
         VexSetType VexSet {
-            1, 2, 3, 4, 5, 6, 7
+            0, 1, 2
         };
         WeightedEdgeListType WeightedEdgeList {
-            make_tuple(1, 4, 1),
-            make_tuple(1, 6, 1),
-            make_tuple(4, 5, 1),
-            make_tuple(4, 7, 1),
-            make_tuple(5, 2, 1),
-            make_tuple(5, 3, 1),
+            make_tuple(0, 1, 4),
+            make_tuple(1, 0, 6),
+            make_tuple(0, 2, 11),
+            make_tuple(2, 0, 3),
+            make_tuple(1, 2, 2),
         };
 
         DS::Graph<int> TestGraph {
             VexSet,
             WeightedEdgeList,
-            false
+            true
         };
         Algo::Floyd<int> FloydAlgorithm(TestGraph);
 
