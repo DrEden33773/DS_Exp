@@ -37,6 +37,8 @@ void BSTTest() {
     BST.remove(90); // easy
     BST.remove(40); // medium
     BST.remove(60); // hard
+    BST.remove(76);
+    BST.remove(50);
 
     // success
 
