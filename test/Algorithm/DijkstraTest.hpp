@@ -19,7 +19,7 @@ namespace Test {
 
 void DijkstraTest() {
     Tool::title_info("Dijkstra_Algorithm");
-
+    // directed
     {
         using VexSetType           = DS::Graph<std::string>::VertexList;
         using WeightedEdgeListType = DS::Graph<std::string>::WeightedEdgeList;
@@ -50,7 +50,7 @@ void DijkstraTest() {
         DijkstraAlgorithm.show_all_min_dist();
         DijkstraAlgorithm.show_all_min_route();
     }
-
+    // undirected
     {
         using VexSetType           = DS::Graph<int>::VertexList;
         using WeightedEdgeListType = DS::Graph<int>::WeightedEdgeList;

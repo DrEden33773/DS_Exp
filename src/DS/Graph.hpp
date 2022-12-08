@@ -315,16 +315,42 @@ public:
         if (!if_has_vex(v_name)) {
             return -1;
         }
-        int idx_of_input = GetIndex(v_name);
-        return FindAdjIndex(idx_of_input);
+        int ret       = -1;
+        int input_idx = GetIndex(v_name);
+        for (int col_idx = 0; col_idx < size; ++col_idx) {
+            bool if_adj = false;
+            if (if_weighted) {
+                if_adj = Mat[input_idx][col_idx] != 0
+                    && Mat[input_idx][col_idx] != LIM;
+            } else {
+                if_adj = Mat[input_idx][col_idx] != 0;
+            }
+            if (if_adj) {
+                ret = input_idx;
+                break;
+            }
+        }
+        return ret;
     }
     std::vector<int> FindAllAdjIndex(const T& v_name) {
         std::vector<int> res;
         if (!if_has_vex(v_name)) {
             return res;
         }
-        int idx_of_input = GetIndex(v_name);
-        return FindAllAdjIndex(idx_of_input);
+        int input_idx = GetIndex(v_name);
+        for (int col_idx = 0; col_idx < size; ++col_idx) {
+            bool if_adj = false;
+            if (if_weighted) {
+                if_adj = Mat[input_idx][col_idx] != 0
+                    && Mat[input_idx][col_idx] != LIM;
+            } else {
+                if_adj = Mat[input_idx][col_idx] != 0;
+            }
+            if (if_adj) {
+                res.push_back(col_idx);
+            }
+        }
+        return res;
     }
 
 public:

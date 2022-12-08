@@ -26,7 +26,7 @@
 // #include "DS/SingleListTest.hpp"
 // #include "DS/SparseMatrixTest.hpp"
 // #include "DS/StackTest.hpp"
-// #include "DS/UndirectedGraphTest.hpp"
+#include "DS/UndirectedGraphTest.hpp"
 
 #include <functional>
 #include <vector>
@@ -44,7 +44,7 @@ void run_all_test() {
         // ChainedQueueTest,     // success
         // SparseMatrixTest,     // success
         // BinaryTreeTest,       // success, but not complete
-        // UndirectedGraphTest,  // success, but not complete
+        UndirectedGraphTest, // success, but not complete
         // HuffmanTreeTest,      // success
         // ChildSiblingTreeTest, // success
         DijkstraTest, // success

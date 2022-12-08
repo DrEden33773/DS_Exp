@@ -41,13 +41,13 @@ class Dijkstra {
     std::unordered_set<int>             NoRouteIdx;
 
     int find_closest_unjoined_idx() {
-        int min_idx = 0;
+        int closest_idx = 0;
         // 1. locate first available idx
         for (int idx = 0; idx < Data->size; ++idx) {
             if (Flag[idx]) {
                 continue;
             }
-            min_idx = idx;
+            closest_idx = idx;
             break;
         }
         // 2. find
@@ -58,10 +58,10 @@ class Dijkstra {
             if (Dist[idx] == Data->LIM) {
                 continue;
             }
-            min_idx = (if_closer_judger(Dist[idx], Dist[min_idx])) ? idx : min_idx;
+            closest_idx = (if_closer_judger(Dist[idx], Dist[closest_idx])) ? idx : closest_idx;
         }
         // 3. return
-        return min_idx;
+        return closest_idx;
     }
 
     Dijkstra() = default;
@@ -165,9 +165,9 @@ public:
             // 2) set visited
             Flag[passed]         = 1;
             int source_to_passed = Dist[passed];
-            if (source_to_passed == Data->LIM) {
-                continue;
-            }
+            // if (source_to_passed == Data->LIM) {
+            //     continue;
+            // }
             // 3) update all other dist
             for (int curr = 0; curr < Data->size; ++curr) {
                 int source_to_curr = Dist[curr];
