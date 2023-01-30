@@ -44,6 +44,8 @@ void BSTTest() {
 
     BST.print_tree();
 
+    std::cout << std::endl;
+
     Tool::end_info("Binary_Search_Tree");
 }
 
